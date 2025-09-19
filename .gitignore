@@ -39,3 +39,12 @@
 
 # debug information files
 *.dwo
+
+# Build directory
+build/
+
+# Cache directory
+.cache/
+
+# Compilation database
+compile_commands.json
