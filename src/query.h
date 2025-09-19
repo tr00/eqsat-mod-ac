@@ -26,5 +26,5 @@ public:
 
     void add_constraint(const Constraint& constraint);
     void add_constraint(symbol_t op, const std::vector<var_t>& vars);
-    void set_head(const std::vector<var_t>& head_vars);
+    void add_head_var(var_t var);
 };

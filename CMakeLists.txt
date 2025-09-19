@@ -12,6 +12,8 @@ set(SOURCES
     src/symbol_table.cpp
     src/sorted_set.cpp
     src/set_interface.cpp
+    src/query.cpp
+    src/pattern_compiler.cpp
 )
 
 # Create main executable
@@ -39,12 +41,15 @@ set(TEST_SOURCES
     src/symbol_table.cpp
     src/sorted_set.cpp
     src/set_interface.cpp
+    src/query.cpp
+    src/pattern_compiler.cpp
 )
 
-# Create test executable
+# Create unified test executable
 add_executable(tests
     test/test_sorted_set.cpp
     test/test_set_interface.cpp
+    test/test_pattern_compiler.cpp
     ${TEST_SOURCES}
 )
 
@@ -53,4 +58,11 @@ target_link_libraries(tests PRIVATE Catch2::Catch2WithMain)
 
 # Enable testing
 enable_testing()
-add_test(NAME unit_tests COMMAND tests)
+add_test(NAME all_tests COMMAND tests)
+
+# Add custom target for easy testing
+add_custom_target(runtest
+    COMMAND ${CMAKE_CTEST_COMMAND} --output-on-failure
+    DEPENDS tests
+    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+)
