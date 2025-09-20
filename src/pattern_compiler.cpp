@@ -7,23 +7,39 @@ var_t PatternCompiler::compile_expression_recursive(
     std::unordered_map<symbol_t, var_t>& symbol_to_var,
     Query& query
 ) {
-    // Assign a new variable ID for this expression
-    var_t id = next_var_id++;
+    if (expr->is_variable()) {
+        // Handle pattern variables
+        auto it = symbol_to_var.find(expr->symbol);
+        if (it != symbol_to_var.end()) {
+            // Variable already seen, return existing var_t
+            return it->second;
+        } else {
+            // New variable, create new var_t and add to map and head
+            var_t var_id = next_var_id++;
+            symbol_to_var[expr->symbol] = var_id;
+            query.add_head_var(var_id);
+            return var_id;
+        }
+    } else {
+        // Handle operators
+        // Assign a new variable ID for this expression
+        var_t id = next_var_id++;
 
-    // Create constraint variables list: first is the expression's own variable
-    std::vector<var_t> constraint_vars;
-    constraint_vars.push_back(id);
+        // Create constraint variables list: first is the expression's own variable
+        std::vector<var_t> constraint_vars;
+        constraint_vars.push_back(id);
 
-    // Recursively compile children and add their variable IDs to constraint
-    for (const auto& child : expr->children) {
-        var_t child_var = compile_expression_recursive(child, symbol_to_var, query);
-        constraint_vars.push_back(child_var);
+        // Recursively compile children and add their variable IDs to constraint
+        for (const auto& child : expr->children) {
+            var_t child_var = compile_expression_recursive(child, symbol_to_var, query);
+            constraint_vars.push_back(child_var);
+        }
+
+        // Create and add constraint for this expression
+        query.add_constraint(expr->symbol, constraint_vars);
+
+        return id;
     }
-
-    // Create and add constraint for this expression
-    query.add_constraint(expr->operator_symbol, constraint_vars);
-
-    return id;
 }
 
 Query PatternCompiler::compile_pattern(const std::shared_ptr<Expression>& pattern) {
@@ -42,21 +58,16 @@ Query PatternCompiler::compile_pattern(const std::shared_ptr<Expression>& patter
     // Add the root variable to the head
     query.add_head_var(root);
 
-    // Add all variables from symbol_to_var map to the head
-    for (const auto& pair : symbol_to_var) {
-        query.add_head_var(pair.second);
-    }
-
     return query;
 }
 
 std::vector<Query> PatternCompiler::compile_patterns(const std::vector<std::shared_ptr<Expression>>& patterns) {
     std::vector<Query> queries;
     queries.reserve(patterns.size());
-    
+
     for (const auto& pattern : patterns) {
         queries.push_back(compile_pattern(pattern));
     }
-    
+
     return queries;
 }

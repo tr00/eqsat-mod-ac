@@ -1,9 +1,23 @@
 #include "theory.h"
+#include <memory>
+#include <vector>
 
-Expression::Expression(symbol_t op) : operator_symbol(op) {}
+Expression::Expression(NodeKind k, symbol_t sym) : kind(k), symbol(sym) {}
 
-Expression::Expression(symbol_t op, const std::vector<std::shared_ptr<Expression>>& children)
-    : operator_symbol(op), children(children) {}
+Expression::Expression(NodeKind k, symbol_t op, const std::vector<std::shared_ptr<Expression>>& children)
+    : kind(k), symbol(op), children(children) {}
+
+std::shared_ptr<Expression> Expression::make_variable(symbol_t var_name) {
+    return std::shared_ptr<Expression>(new Expression(NodeKind::VARIABLE, var_name));
+}
+
+std::shared_ptr<Expression> Expression::make_operator(symbol_t op) {
+    return std::shared_ptr<Expression>(new Expression(NodeKind::OPERATOR, op));
+}
+
+std::shared_ptr<Expression> Expression::make_operator(symbol_t op, const std::vector<std::shared_ptr<Expression>>& children) {
+    return std::shared_ptr<Expression>(new Expression(NodeKind::OPERATOR, op, children));
+}
 
 void Signature::add_operator(symbol_t symbol, int arity) {
     operators[symbol] = arity;
