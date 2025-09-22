@@ -3,38 +3,38 @@
 
 #include <catch2/catch_test_macros.hpp>
 
-#include "set_interface.h"
+#include "abstract_set.h"
 #include "sorted_set.h"
 
-TEST_CASE("SetInterface basic operations") {
+TEST_CASE("AbstractSet basic operations") {
     SortedSet sorted_set;
     sorted_set.insert(1);
     sorted_set.insert(2);
     sorted_set.insert(3);
 
-    AbstractSet set_interface(sorted_set);
+    AbstractSet abstract_set(sorted_set);
 
     SECTION("Size and contains work correctly") {
-        REQUIRE(set_interface.size() == 3);
-        REQUIRE(set_interface.contains(1) == true);
-        REQUIRE(set_interface.contains(2) == true);
-        REQUIRE(set_interface.contains(3) == true);
-        REQUIRE(set_interface.contains(4) == false);
+        REQUIRE(abstract_set.size() == 3);
+        REQUIRE(abstract_set.contains(1) == true);
+        REQUIRE(abstract_set.contains(2) == true);
+        REQUIRE(abstract_set.contains(3) == true);
+        REQUIRE(abstract_set.contains(4) == false);
     }
 
     SECTION("Insert works correctly") {
-        REQUIRE(set_interface.insert(4) == true);
-        REQUIRE(set_interface.size() == 4);
-        REQUIRE(set_interface.contains(4) == true);
+        REQUIRE(abstract_set.insert(4) == true);
+        REQUIRE(abstract_set.size() == 4);
+        REQUIRE(abstract_set.contains(4) == true);
 
         // Inserting duplicate should return false
-        REQUIRE(set_interface.insert(4) == false);
-        REQUIRE(set_interface.size() == 4);
+        REQUIRE(abstract_set.insert(4) == false);
+        REQUIRE(abstract_set.size() == 4);
     }
 
     SECTION("for_each works correctly") {
         std::vector<id_t> collected;
-        set_interface.for_each([&collected](id_t id) {
+        abstract_set.for_each([&collected](id_t id) {
             collected.push_back(id);
         });
 
@@ -45,7 +45,7 @@ TEST_CASE("SetInterface basic operations") {
     }
 }
 
-TEST_CASE("SetInterface copy and move semantics") {
+TEST_CASE("AbstractSet copy and move semantics") {
     SortedSet sorted_set;
     sorted_set.insert(1);
     sorted_set.insert(2);
@@ -96,15 +96,15 @@ TEST_CASE("Intersection of multiple sets") {
     set3.insert(5);
     set3.insert(6);
 
-    AbstractSet interface1(set1);
-    AbstractSet interface2(set2);
-    AbstractSet interface3(set3);
+    AbstractSet abstract1(set1);
+    AbstractSet abstract2(set2);
+    AbstractSet abstract3(set3);
 
     SECTION("Intersection of all three sets") {
         std::vector<std::reference_wrapper<const AbstractSet>> sets = {
-            std::cref(interface1),
-            std::cref(interface2),
-            std::cref(interface3)
+            std::cref(abstract1),
+            std::cref(abstract2),
+            std::cref(abstract3)
         };
 
         AbstractSet result = intersect(sets);
@@ -120,8 +120,8 @@ TEST_CASE("Intersection of multiple sets") {
 
     SECTION("Intersection of two sets") {
         std::vector<std::reference_wrapper<const AbstractSet>> sets = {
-            std::cref(interface1),
-            std::cref(interface2)
+            std::cref(abstract1),
+            std::cref(abstract2)
         };
 
         AbstractSet result = intersect(sets);
@@ -142,7 +142,7 @@ TEST_CASE("Intersection of multiple sets") {
 
     SECTION("Intersection of single set") {
         std::vector<std::reference_wrapper<const AbstractSet>> sets = {
-            std::cref(interface1)
+            std::cref(abstract1)
         };
 
         AbstractSet result = intersect(sets);
@@ -154,16 +154,16 @@ TEST_CASE("Intersection of multiple sets") {
     }
 }
 
-TEST_CASE("SetInterface copy_into functionality") {
+TEST_CASE("AbstractSet copy_into functionality") {
     SortedSet original_set;
     original_set.insert(10);
     original_set.insert(20);
     original_set.insert(30);
 
-    AbstractSet set_interface(original_set);
+    AbstractSet abstract_set(original_set);
 
     SECTION("Member function copy_into works") {
-        SortedSet copied_set = set_interface.copy_into<SortedSet>();
+        SortedSet copied_set = abstract_set.copy_into<SortedSet>();
 
         REQUIRE(copied_set.size() == 3);
         REQUIRE(copied_set.contains(10) == true);
@@ -173,11 +173,11 @@ TEST_CASE("SetInterface copy_into functionality") {
         // Modifying copied set shouldn't affect the interface
         copied_set.insert(40);
         REQUIRE(copied_set.size() == 4);
-        REQUIRE(set_interface.size() == 3);
+        REQUIRE(abstract_set.size() == 3);
     }
 
     SECTION("Free function copy_into works") {
-        SortedSet copied_set = copy_into<SortedSet>(set_interface);
+        SortedSet copied_set = copy_into<SortedSet>(abstract_set);
 
         REQUIRE(copied_set.size() == 3);
         REQUIRE(copied_set.contains(10) == true);

@@ -40,6 +40,7 @@ endif()
 # Create unified unit test executable
 add_executable(unittests
     unittests/test_sorted_set.cpp
+    unittests/test_abstract_set.cpp
     unittests/test_pattern_compiler.cpp
     unittests/test_union_find.cpp
 )
@@ -47,13 +48,35 @@ add_executable(unittests
 target_include_directories(unittests PRIVATE src)
 target_link_libraries(unittests PRIVATE eqsat Catch2::Catch2WithMain)
 
+# Create system test executable
+add_executable(systemtests
+    systemtests/test_egraph_basic.cpp
+)
+
+target_include_directories(systemtests PRIVATE src)
+target_link_libraries(systemtests PRIVATE eqsat Catch2::Catch2WithMain)
+
 # Enable testing
 enable_testing()
 add_test(NAME unit_tests COMMAND unittests)
+add_test(NAME system_tests COMMAND systemtests)
 
 # Add custom target for easy testing
 add_custom_target(runtest
-    COMMAND ${CMAKE_CTEST_COMMAND} --output-on-failure
+    COMMAND ${CMAKE_CTEST_COMMAND} --output-on-failure --progress
+    DEPENDS unittests systemtests
+    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+)
+
+# Add separate targets for unit and system tests
+add_custom_target(rununit
+    COMMAND ${CMAKE_CTEST_COMMAND} -R unit_tests --output-on-failure --progress
     DEPENDS unittests
+    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+)
+
+add_custom_target(runsystem
+    COMMAND ${CMAKE_CTEST_COMMAND} -R system_tests --output-on-failure --progress
+    DEPENDS systemtests
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
 )

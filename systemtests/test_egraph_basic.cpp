@@ -1,0 +1,91 @@
+#include <catch2/catch_test_macros.hpp>
+#include "egraph.h"
+#include "theory.h"
+#include "symbol_table.h"
+
+TEST_CASE("EGraph can insert simple terms", "[egraph][basic]") {
+    // Create symbol table and theory
+    SymbolTable symbols;
+    Theory theory;
+
+    // Create some operators
+    symbol_t zero_sym = symbols.intern("0");
+    symbol_t one_sym = symbols.intern("1");
+    symbol_t add_sym = symbols.intern("+");
+    symbol_t mul_sym = symbols.intern("*");
+
+    // Add operators to theory
+    theory.add_operator(zero_sym, 0);
+    theory.add_operator(one_sym, 0);
+    theory.add_operator(add_sym, 2);
+    theory.add_operator(mul_sym, 2);
+
+    // Create EGraph with theory
+    EGraph egraph(theory);
+
+    SECTION("Insert constant terms") {
+        // Create constant expressions
+        auto zero_expr = Expression::make_operator(zero_sym);
+        auto one_expr = Expression::make_operator(one_sym);
+
+        // Insert terms into e-graph
+        id_t zero_id = egraph.insert_term(zero_expr);
+        id_t one_id = egraph.insert_term(one_expr);
+
+        // Should get different IDs for different terms
+        REQUIRE(zero_id != one_id);
+
+        // Inserting the same term again should return the same ID
+        id_t zero_id2 = egraph.insert_term(zero_expr);
+        REQUIRE(zero_id == zero_id2);
+    }
+
+    SECTION("Insert composite terms") {
+        // Create expressions: 0, 1, (+ 0 1)
+        auto zero_expr = Expression::make_operator(zero_sym);
+        auto one_expr = Expression::make_operator(one_sym);
+        auto add_expr = Expression::make_operator(add_sym, {zero_expr, one_expr});
+
+        // Insert terms
+        id_t zero_id = egraph.insert_term(zero_expr);
+        id_t one_id = egraph.insert_term(one_expr);
+        id_t add_id = egraph.insert_term(add_expr);
+
+        // All should have different IDs
+        REQUIRE(zero_id != one_id);
+        REQUIRE(zero_id != add_id);
+        REQUIRE(one_id != add_id);
+
+        // Inserting equivalent expression should return same ID
+        auto add_expr2 = Expression::make_operator(add_sym, {zero_expr, one_expr});
+        id_t add_id2 = egraph.insert_term(add_expr2);
+        REQUIRE(add_id == add_id2);
+    }
+
+    SECTION("Insert nested terms") {
+        // Create expressions: 0, 1, (+ 0 1), (* (+ 0 1) 1)
+        auto zero_expr = Expression::make_operator(zero_sym);
+        auto one_expr = Expression::make_operator(one_sym);
+        auto add_expr = Expression::make_operator(add_sym, {zero_expr, one_expr});
+        auto mul_expr = Expression::make_operator(mul_sym, {add_expr, one_expr});
+
+        // Insert nested term
+        id_t mul_id = egraph.insert_term(mul_expr);
+
+        // Should succeed and return a valid ID
+        REQUIRE(mul_id > 0);
+
+        // Inserting again should return same ID
+        id_t mul_id2 = egraph.insert_term(mul_expr);
+        REQUIRE(mul_id == mul_id2);
+    }
+
+    SECTION("Cannot insert pattern variables") {
+        // Create a pattern variable
+        symbol_t x_sym = symbols.intern("x");
+        auto var_expr = Expression::make_variable(x_sym);
+
+        // Should throw when trying to insert a variable
+        REQUIRE_THROWS_AS(egraph.insert_term(var_expr), std::runtime_error);
+    }
+}

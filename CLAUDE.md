@@ -8,7 +8,9 @@ The library performs algebraic reasoning by pattern matching and rewriting.
 
 ### Build System
 - **CMake** (C++17): `cmake --build build` (builds static library `libeqsat.a`)
-- **Unit Testing**: `cmake --build build && ./build/unittests` or `make runtest`
+- **Unit Testing**: `cmake --build build && ./build/unittests` or `make rununit`
+- **System Testing**: `cmake --build build && ./build/systemtests` or `make runsystem`
+- **All Tests**: `make runtest` (runs both unit and system tests)
 - **Dependencies**: Catch2 for testing (auto-fetched)
 - **Library Usage**: Link against `eqsat` target and include `src/` directory
 
@@ -75,13 +77,6 @@ auto expr = Expression::make_operator(add_sym, {x_expr, y_expr});
 id_t term_id = egraph.insert_term(expr);
 ```
 
-### Query Creation
-```cpp
-Query query; // Q(z) :- add(x, y, z)
-query.add_constraint(add_sym, {var1, var2, var3});
-query.add_head_var(var3);
-```
-
 ### Pattern Compilation
 ```cpp
 PatternCompiler compiler;
@@ -95,19 +90,23 @@ src/
 │   symbol_table.{h,cpp}
 │   theory.{h,cpp}
 │   database.{h,cpp}
-│   set_interface.{h,cpp}
+│   abstract_set.{h,cpp}
 │   sorted_set.{h,cpp}
 │   union_find.{h,cpp}
 │   egraph.{h,cpp}
 │   query.{h,cpp}
 │   pattern_compiler.{h,cpp}
-└── engine.{h,cpp}
+│   engine.{h,cpp}
+└── trie.{h,cpp}
 
 unittests/
 │   test_sorted_set.cpp
-│   test_set_interface.cpp
+│   test_abstract_set.cpp
 │   test_pattern_compiler.cpp
 └── test_union_find.cpp
+
+systemtests/
+└── test_egraph_basic.cpp
 ```
 
 ## Development Notes
