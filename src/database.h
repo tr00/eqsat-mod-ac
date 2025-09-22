@@ -10,9 +10,10 @@ class Relation {
 private:
     std::vector<id_t> data;
     int arity;
+    symbol_t operator_symbol;
 
 public:
-    Relation(int arity) : arity(arity) {}
+    Relation(symbol_t op_symbol, int arity) : arity(arity), operator_symbol(op_symbol) {}
 
     void add_tuple(const std::vector<id_t>& tuple) {
         if (tuple.size() != static_cast<size_t>(arity)) {
@@ -44,6 +45,10 @@ public:
         return arity;
     }
 
+    symbol_t get_operator_symbol() const {
+        return operator_symbol;
+    }
+
     const std::vector<id_t>& get_data() const {
         return data;
     }
@@ -55,7 +60,7 @@ private:
 
 public:
     void add_relation(symbol_t name, int arity) {
-        relations.emplace(name, Relation(arity));
+        relations.emplace(name, Relation(name, arity));
     }
 
     void add_tuple(symbol_t relation_name, const std::vector<id_t>& tuple) {

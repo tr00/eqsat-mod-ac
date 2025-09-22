@@ -55,7 +55,7 @@ private:
     std::vector<id_t> worklist;
 
 public:
-    EGraph() = default;
+    EGraph(const Theory& theory);
     ~EGraph() = default;
 
     EGraph(const EGraph&) = delete;

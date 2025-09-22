@@ -23,7 +23,7 @@ public:
 
     inline id_t find_root(id_t x) {
         // quick check which helps the branch predictor
-        // since most of our data is already canonical
+        // since most of our ids are already canonical
         if (vec[x] == x)
             return x;
 

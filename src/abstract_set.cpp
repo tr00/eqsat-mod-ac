@@ -1,17 +1,17 @@
 #include <algorithm>
 
-#include "set_interface.h"
+#include "abstract_set.h"
 #include "sorted_set.h"
 
-SetInterface intersect(const std::vector<std::reference_wrapper<const SetInterface>>& sets) {
+AbstractSet intersect(const std::vector<std::reference_wrapper<const AbstractSet>>& sets) {
     if (sets.empty()) {
-        return SetInterface(SortedSet{});
+        return AbstractSet(SortedSet{});
     }
 
     if (sets.size() == 1) {
         // Create a copy of the single set using copy_into
         SortedSet result = sets[0].get().copy_into<SortedSet>();
-        return SetInterface(std::move(result));
+        return AbstractSet(std::move(result));
     }
 
     // Find the smallest set to start with (optimization)
@@ -36,5 +36,5 @@ SetInterface intersect(const std::vector<std::reference_wrapper<const SetInterfa
         }
     });
 
-    return SetInterface(std::move(result));
+    return AbstractSet(std::move(result));
 }

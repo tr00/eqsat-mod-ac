@@ -6,7 +6,7 @@
 
 #include "id.h"
 
-class SetInterface {
+class AbstractSet {
 private:
     struct Concept {
         virtual ~Concept() = default;
@@ -22,35 +22,35 @@ private:
     template<typename T>
     struct Model : Concept {
         T data;
-        
+
         explicit Model(T t) : data(std::move(t)) {}
-        
+
         bool insert(id_t id) override {
             return data.insert(id);
         }
-        
+
         bool contains(id_t id) const override {
             return data.contains(id);
         }
-        
+
         size_t size() const override {
             return data.size();
         }
-        
+
         bool empty() const override {
             return data.empty();
         }
-        
+
         void clear() override {
             data.clear();
         }
-        
+
         void for_each(std::function<void(id_t)> func) const override {
             for (auto it = data.begin(); it != data.end(); ++it) {
                 func(*it);
             }
         }
-        
+
         std::unique_ptr<Concept> clone() const override {
             return std::make_unique<Model<T>>(data);
         }
@@ -60,54 +60,49 @@ private:
 
 public:
     template<typename T>
-    explicit SetInterface(T t) : impl(std::make_unique<Model<T>>(std::move(t))) {}
-    
-    // Copy constructor
-    SetInterface(const SetInterface& other) : impl(other.impl->clone()) {}
-    
-    // Move constructor
-    SetInterface(SetInterface&& other) noexcept = default;
-    
-    // Copy assignment
-    SetInterface& operator=(const SetInterface& other) {
+    explicit AbstractSet(T t) : impl(std::make_unique<Model<T>>(std::move(t))) {}
+
+    AbstractSet(const AbstractSet& other) : impl(other.impl->clone()) {}
+    AbstractSet(AbstractSet&& other) noexcept = default;
+
+    AbstractSet& operator=(const AbstractSet& other) {
         if (this != &other) {
             impl = other.impl->clone();
         }
         return *this;
     }
-    
-    // Move assignment
-    SetInterface& operator=(SetInterface&& other) noexcept = default;
-    
+
+    AbstractSet& operator=(AbstractSet&& other) noexcept = default;
+
     bool insert(id_t id) {
         return impl->insert(id);
     }
-    
+
     bool contains(id_t id) const {
         return impl->contains(id);
     }
-    
+
     size_t size() const {
         return impl->size();
     }
-    
+
     bool empty() const {
         return impl->empty();
     }
-    
+
     void clear() {
         impl->clear();
     }
-    
+
     void for_each(std::function<void(id_t)> func) const {
         impl->for_each(func);
     }
-    
+
     template<typename Func>
     void for_each(Func func) const {
         impl->for_each([&func](id_t id) { func(id); });
     }
-    
+
     template<typename SetType>
     SetType copy_into() const {
         SetType result;
@@ -119,10 +114,10 @@ public:
 };
 
 // Intersection function for multiple sets
-SetInterface intersect(const std::vector<std::reference_wrapper<const SetInterface>>& sets);
+AbstractSet intersect(const std::vector<std::reference_wrapper<const AbstractSet>>& sets);
 
 // Template function to copy a SetInterface into a specific set type
 template<typename SetType>
-SetType copy_into(const SetInterface& source) {
+SetType copy_into(const AbstractSet& source) {
     return source.copy_into<SetType>();
 }

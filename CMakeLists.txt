@@ -5,22 +5,24 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-# Add source files
-set(SOURCES
-    src/main.cpp
+# Add library source files
+set(LIB_SOURCES
     src/theory.cpp
     src/symbol_table.cpp
     src/sorted_set.cpp
-    src/set_interface.cpp
+    src/abstract_set.cpp
+    src/union_find.cpp
     src/query.cpp
     src/pattern_compiler.cpp
+    src/database.cpp
+    src/egraph.cpp
 )
 
-# Create main executable
-add_executable(main ${SOURCES})
+# Create static library
+add_library(eqsat STATIC ${LIB_SOURCES})
 
 # Include directories
-target_include_directories(main PRIVATE src)
+target_include_directories(eqsat PUBLIC src)
 
 # Find or fetch Catch2
 find_package(Catch2 3 QUIET)
@@ -35,34 +37,23 @@ if(NOT Catch2_FOUND)
     FetchContent_MakeAvailable(Catch2)
 endif()
 
-# Test sources (exclude main.cpp)
-set(TEST_SOURCES
-    src/theory.cpp
-    src/symbol_table.cpp
-    src/sorted_set.cpp
-    src/set_interface.cpp
-    src/query.cpp
-    src/pattern_compiler.cpp
+# Create unified unit test executable
+add_executable(unittests
+    unittests/test_sorted_set.cpp
+    unittests/test_pattern_compiler.cpp
+    unittests/test_union_find.cpp
 )
 
-# Create unified test executable
-add_executable(tests
-    test/test_sorted_set.cpp
-    test/test_set_interface.cpp
-    test/test_pattern_compiler.cpp
-    ${TEST_SOURCES}
-)
-
-target_include_directories(tests PRIVATE src)
-target_link_libraries(tests PRIVATE Catch2::Catch2WithMain)
+target_include_directories(unittests PRIVATE src)
+target_link_libraries(unittests PRIVATE eqsat Catch2::Catch2WithMain)
 
 # Enable testing
 enable_testing()
-add_test(NAME all_tests COMMAND tests)
+add_test(NAME unit_tests COMMAND unittests)
 
 # Add custom target for easy testing
 add_custom_target(runtest
     COMMAND ${CMAKE_CTEST_COMMAND} --output-on-failure
-    DEPENDS tests
+    DEPENDS unittests
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
 )
