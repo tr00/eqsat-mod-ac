@@ -15,6 +15,70 @@ uint32_t factorial(int n) {
     return result;
 }
 
+void apply_permutation(uint32_t index, std::vector<uint32_t>& vec) {
+    if (vec.empty()) {
+        if (index != 0) {
+            throw std::invalid_argument("Index too large for empty vector");
+        }
+        return; // Nothing to do for empty vector with index 0
+    }
+    
+    size_t n = vec.size();
+    if (n > 12) {
+        throw std::invalid_argument("Vector too large (max size is 12)");
+    }
+    
+    // Check if index is valid for this vector size
+    uint32_t max_index = factorial(n);
+    if (index >= max_index) {
+        throw std::invalid_argument("Index too large for given vector size");
+    }
+    
+    if (index == 0) {
+        return; // Identity permutation - nothing to do
+    }
+    
+    // Create indices vector [0, 1, 2, ..., n-1]
+    std::vector<uint32_t> indices(n);
+    for (size_t i = 0; i < n; ++i) {
+        indices[i] = static_cast<uint32_t>(i);
+    }
+    
+    // Get the permutation of indices
+    std::vector<uint32_t> perm_indices = index_to_permutation(index, indices);
+    
+    // Apply the permutation in-place using a temporary copy
+    std::vector<uint32_t> temp = vec;
+    for (size_t i = 0; i < n; ++i) {
+        vec[i] = temp[perm_indices[i]];
+    }
+}
+
+void apply_permutation(const std::vector<uint32_t>& perm_indices, std::vector<uint32_t>& vec) {
+    if (perm_indices.size() != vec.size()) {
+        throw std::invalid_argument("Permutation indices size must match vector size");
+    }
+    
+    if (vec.empty()) {
+        return; // Nothing to do for empty vector
+    }
+    
+    size_t n = vec.size();
+    
+    // Validate that all indices are within bounds
+    for (size_t i = 0; i < n; ++i) {
+        if (perm_indices[i] >= n) {
+            throw std::out_of_range("Permutation index out of bounds");
+        }
+    }
+    
+    // Apply the permutation in-place using a temporary copy
+    std::vector<uint32_t> temp = vec;
+    for (size_t i = 0; i < n; ++i) {
+        vec[i] = temp[perm_indices[i]];
+    }
+}
+
 bool is_valid_permutation(const std::vector<uint32_t>& perm) {
     if (perm.empty()) {
         return true;
