@@ -74,7 +74,7 @@ The library performs algebraic reasoning by pattern matching and rewriting.
 ```cpp
 EGraph egraph;
 auto expr = Expression::make_operator(add_sym, {x_expr, y_expr});
-id_t term_id = egraph.insert_term(expr);
+id_t expr_id = egraph.add_expr(expr);
 ```
 
 ### Pattern Compilation
@@ -97,7 +97,7 @@ src/
 │   query.{h,cpp}
 │   pattern_compiler.{h,cpp}
 │   engine.{h,cpp}
-└── trie.{h,cpp}
+└── trie_index.{h,cpp}
 
 unittests/
 │   test_sorted_set.cpp

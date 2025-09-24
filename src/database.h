@@ -3,8 +3,11 @@
 #include <stdexcept>
 #include <vector>
 #include <unordered_map>
+#include <iostream>
+#include <memory>
 #include "id.h"
 #include "symbol_table.h"
+#include "trie_index.h"
 
 class Relation {
 private:
@@ -52,11 +55,31 @@ public:
     const std::vector<id_t>& get_data() const {
         return data;
     }
+
+    void dump(std::ostream& os, const SymbolTable& symbol_table) const;
+};
+
+// Key for indexing: combines operator symbol and permutation id
+struct IndexKey {
+    symbol_t operator_symbol;
+    uint32_t permutation_id;
+
+    bool operator==(const IndexKey& other) const {
+        return operator_symbol == other.operator_symbol && permutation_id == other.permutation_id;
+    }
+};
+
+// Hash function for IndexKey
+struct IndexKeyHash {
+    std::size_t operator()(const IndexKey& key) const {
+        return std::hash<uint64_t>{}((static_cast<uint64_t>(key.operator_symbol) << 32) | key.permutation_id);
+    }
 };
 
 class Database {
 private:
     std::unordered_map<symbol_t, Relation> relations;
+    std::unordered_map<IndexKey, std::shared_ptr<TrieIndex>, IndexKeyHash> indices;
 
 public:
     void add_relation(symbol_t name, int arity) {
@@ -83,5 +106,28 @@ public:
 
     bool has_relation(symbol_t name) const {
         return relations.find(name) != relations.end();
+    }
+
+    // Create an empty index for a given operator symbol and permutation
+    void add_index(symbol_t operator_symbol, uint32_t permutation_id) {
+        IndexKey key{operator_symbol, permutation_id};
+
+        auto trie_node = std::make_shared<TrieNode>();
+        auto trie_index = std::make_shared<TrieIndex>(*trie_node);
+
+        indices[key] = trie_index;
+    }
+
+    // Retrieve an index by operator symbol and permutation id
+    std::shared_ptr<TrieIndex> get_index(symbol_t operator_symbol, uint32_t permutation_id) const {
+        IndexKey key{operator_symbol, permutation_id};
+        auto it = indices.find(key);
+        return (it != indices.end()) ? it->second : nullptr;
+    }
+
+    // Check if an index exists for the given operator symbol and permutation
+    bool has_index(symbol_t operator_symbol, uint32_t permutation_id) const {
+        IndexKey key{operator_symbol, permutation_id};
+        return indices.find(key) != indices.end();
     }
 };

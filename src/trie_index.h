@@ -7,7 +7,7 @@
 class TrieNode {
 public:
     std::vector<id_t> keys;
-    std::vector<std::unique_ptr<TrieNode>> children;
+    std::vector<std::shared_ptr<TrieNode>> children;
 
     TrieNode() = default;
 
@@ -18,7 +18,7 @@ public:
 
 class TrieIndex {
 private:
-    TrieNode& current_node;
+    TrieNode* current_node;
     std::vector<TrieNode *> parent_stack;
 
 public:

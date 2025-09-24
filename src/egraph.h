@@ -64,6 +64,8 @@ public:
     EGraph(EGraph&&) = default;
     EGraph& operator=(EGraph&&) = default;
 
-    id_t insert_term(std::shared_ptr<Expression> expression);
+    id_t add_expr(std::shared_ptr<Expression> expression);
     id_t unify(id_t a, id_t b);
+    bool is_equiv(id_t a, id_t b) { return uf.same(a, b); }
+    void saturate(size_t max_iters);
 };

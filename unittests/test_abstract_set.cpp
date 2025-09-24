@@ -107,7 +107,9 @@ TEST_CASE("Intersection of multiple sets") {
             std::cref(abstract3)
         };
 
-        AbstractSet result = intersect(sets);
+        SortedSet result_set;
+        intersect(result_set, sets);
+        AbstractSet result(result_set);
 
         // Expected intersection: {3, 4}
         REQUIRE(result.size() == 2);
@@ -124,7 +126,9 @@ TEST_CASE("Intersection of multiple sets") {
             std::cref(abstract2)
         };
 
-        AbstractSet result = intersect(sets);
+        SortedSet result_set;
+        intersect(result_set, sets);
+        AbstractSet result(result_set);
 
         // Expected intersection: {2, 3, 4}
         REQUIRE(result.size() == 3);
@@ -135,7 +139,9 @@ TEST_CASE("Intersection of multiple sets") {
 
     SECTION("Intersection of empty vector") {
         std::vector<std::reference_wrapper<const AbstractSet>> empty_sets;
-        AbstractSet result = intersect(empty_sets);
+        SortedSet result_set;
+        intersect(result_set, empty_sets);
+        AbstractSet result(result_set);
         REQUIRE(result.size() == 0);
         REQUIRE(result.empty() == true);
     }
@@ -145,7 +151,9 @@ TEST_CASE("Intersection of multiple sets") {
             std::cref(abstract1)
         };
 
-        AbstractSet result = intersect(sets);
+        SortedSet result_set;
+        intersect(result_set, sets);
+        AbstractSet result(result_set);
         REQUIRE(result.size() == 4);
         REQUIRE(result.contains(1) == true);
         REQUIRE(result.contains(2) == true);

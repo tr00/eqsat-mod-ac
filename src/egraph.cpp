@@ -1,6 +1,8 @@
 #include <cassert>
+#include <cstddef>
 #include <stdexcept>
 #include "egraph.h"
+#include "pattern_compiler.h"
 
 EGraph::EGraph(const Theory& theory) : theory(theory) {
 
@@ -8,9 +10,23 @@ EGraph::EGraph(const Theory& theory) : theory(theory) {
     for (const auto& [symbol, arity] : theory.signature.operators)
         db.add_relation(symbol, arity + 1);
 
+    // compile rewrite rule patterns to queries
+    if (!theory.rewrite_rules.empty()) {
+        PatternCompiler compiler;
+
+        std::vector<std::shared_ptr<Expression>> patterns;
+        for (const auto& rule : theory.rewrite_rules)
+            patterns.push_back(rule.left_side);
+
+        std::vector<Query> queries = compiler.compile_patterns(patterns);
+
+        // queries now contains the compiled patterns
+        // (future work: store these for use in saturation)
+    }
+
 }
 
-id_t EGraph::insert_term(std::shared_ptr<Expression> expression) {
+id_t EGraph::add_expr(std::shared_ptr<Expression> expression) {
     if (expression->is_variable()) {
         // Variables are not supported in e-graphs, only concrete terms
         throw std::runtime_error("Cannot insert pattern variables into e-graph");
@@ -21,7 +37,7 @@ id_t EGraph::insert_term(std::shared_ptr<Expression> expression) {
     child_ids.reserve(expression->children.size());
 
     for (const auto& child : expression->children) {
-        id_t child_id = insert_term(child);
+        id_t child_id = add_expr(child);
         child_ids.push_back(child_id);
     }
 
@@ -42,7 +58,6 @@ id_t EGraph::insert_term(std::shared_ptr<Expression> expression) {
     tuple.push_back(new_id);
 
     assert(db.has_relation(expression->symbol));
-
     db.add_tuple(expression->symbol, tuple);
 
     return new_id;
@@ -54,4 +69,19 @@ id_t EGraph::unify(id_t a, id_t b) {
     worklist.push_back(id);
 
     return id;
+}
+
+void EGraph::saturate(std::size_t max_iters) {
+    for(std::size_t iter = 0; iter < max_iters; ++iter) {
+        // vector matches;
+
+        // for query in queries
+            // res = engine.execute(query, db)
+            // push(matches, res)
+
+        // for match in matches
+            // match.instantiate()
+
+        // rebuilding
+    }
 }

@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "id.h"
+#include "sorted_set.h"
 
 class AbstractSet {
 private:
@@ -113,8 +114,7 @@ public:
     }
 };
 
-// Intersection function for multiple sets
-AbstractSet intersect(const std::vector<std::reference_wrapper<const AbstractSet>>& sets);
+void intersect(SortedSet& output, const std::vector<std::reference_wrapper<const AbstractSet>>& sets);
 
 // Template function to copy a SetInterface into a specific set type
 template<typename SetType>

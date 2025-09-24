@@ -3,6 +3,33 @@
 #include "theory.h"
 #include "symbol_table.h"
 
+TEST_CASE("EGraph can do simple pattern matching", "[egraph]") {
+    SymbolTable symbols;
+
+    symbol_t var = symbols.intern("v");
+    symbol_t one = symbols.intern("1");
+    symbol_t mul = symbols.intern("*");
+
+    Theory theory;
+
+    theory.add_operator(var, 0);
+    theory.add_operator(one, 0);
+    theory.add_operator(mul, 2);
+
+    EGraph egraph(theory);
+
+    auto var_expr = Expression::make_operator(var);
+    auto one_expr = Expression::make_operator(one);
+    auto mul_expr = Expression::make_operator(mul, {one_expr, var_expr});
+
+    auto var_id = egraph.add_expr(var_expr);
+    auto mul_id = egraph.add_expr(mul_expr);
+
+    REQUIRE( egraph.is_equiv(var_id, mul_id) == false );
+
+    egraph.saturate(1);
+}
+
 TEST_CASE("EGraph can insert simple terms", "[egraph][basic]") {
     // Create symbol table and theory
     SymbolTable symbols;
@@ -29,14 +56,14 @@ TEST_CASE("EGraph can insert simple terms", "[egraph][basic]") {
         auto one_expr = Expression::make_operator(one_sym);
 
         // Insert terms into e-graph
-        id_t zero_id = egraph.insert_term(zero_expr);
-        id_t one_id = egraph.insert_term(one_expr);
+        id_t zero_id = egraph.add_expr(zero_expr);
+        id_t one_id = egraph.add_expr(one_expr);
 
         // Should get different IDs for different terms
         REQUIRE(zero_id != one_id);
 
         // Inserting the same term again should return the same ID
-        id_t zero_id2 = egraph.insert_term(zero_expr);
+        id_t zero_id2 = egraph.add_expr(zero_expr);
         REQUIRE(zero_id == zero_id2);
     }
 
@@ -47,9 +74,9 @@ TEST_CASE("EGraph can insert simple terms", "[egraph][basic]") {
         auto add_expr = Expression::make_operator(add_sym, {zero_expr, one_expr});
 
         // Insert terms
-        id_t zero_id = egraph.insert_term(zero_expr);
-        id_t one_id = egraph.insert_term(one_expr);
-        id_t add_id = egraph.insert_term(add_expr);
+        id_t zero_id = egraph.add_expr(zero_expr);
+        id_t one_id = egraph.add_expr(one_expr);
+        id_t add_id = egraph.add_expr(add_expr);
 
         // All should have different IDs
         REQUIRE(zero_id != one_id);
@@ -58,7 +85,7 @@ TEST_CASE("EGraph can insert simple terms", "[egraph][basic]") {
 
         // Inserting equivalent expression should return same ID
         auto add_expr2 = Expression::make_operator(add_sym, {zero_expr, one_expr});
-        id_t add_id2 = egraph.insert_term(add_expr2);
+        id_t add_id2 = egraph.add_expr(add_expr2);
         REQUIRE(add_id == add_id2);
     }
 
@@ -70,13 +97,13 @@ TEST_CASE("EGraph can insert simple terms", "[egraph][basic]") {
         auto mul_expr = Expression::make_operator(mul_sym, {add_expr, one_expr});
 
         // Insert nested term
-        id_t mul_id = egraph.insert_term(mul_expr);
+        id_t mul_id = egraph.add_expr(mul_expr);
 
         // Should succeed and return a valid ID
         REQUIRE(mul_id > 0);
 
         // Inserting again should return same ID
-        id_t mul_id2 = egraph.insert_term(mul_expr);
+        id_t mul_id2 = egraph.add_expr(mul_expr);
         REQUIRE(mul_id == mul_id2);
     }
 
@@ -86,6 +113,6 @@ TEST_CASE("EGraph can insert simple terms", "[egraph][basic]") {
         auto var_expr = Expression::make_variable(x_sym);
 
         // Should throw when trying to insert a variable
-        REQUIRE_THROWS_AS(egraph.insert_term(var_expr), std::runtime_error);
+        REQUIRE_THROWS_AS(egraph.add_expr(var_expr), std::runtime_error);
     }
 }

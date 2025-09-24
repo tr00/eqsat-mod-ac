@@ -16,6 +16,8 @@ set(LIB_SOURCES
     src/pattern_compiler.cpp
     src/database.cpp
     src/egraph.cpp
+    src/trie_index.cpp
+    src/permutation.cpp
 )
 
 # Create static library
@@ -43,6 +45,8 @@ add_executable(unittests
     unittests/test_abstract_set.cpp
     unittests/test_pattern_compiler.cpp
     unittests/test_union_find.cpp
+    unittests/test_trie_index.cpp
+    unittests/test_permutation.cpp
 )
 
 target_include_directories(unittests PRIVATE src)
@@ -51,6 +55,8 @@ target_link_libraries(unittests PRIVATE eqsat Catch2::Catch2WithMain)
 # Create system test executable
 add_executable(systemtests
     systemtests/test_egraph_basic.cpp
+    systemtests/test_egraph_rewrite.cpp
+    systemtests/test_database.cpp
 )
 
 target_include_directories(systemtests PRIVATE src)

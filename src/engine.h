@@ -1,5 +1,7 @@
 #pragma once
 
+#include "sorted_set.h"
+#include "trie_index.h"
 #include <cstdint>
 #include <vector>
 
@@ -12,7 +14,10 @@ class Selection {
     Variable var;
 };
 
+class Engine;
+
 class State {
+public:
     std::vector<Selection> selections;
 
     /**
@@ -20,10 +25,16 @@ class State {
      * we will intersect these when entering this state
      */
     std::vector<Index> indices;
+
+    SortedSet candidates;
 };
 
 class Engine {
     std::vector<Variable> vars;
-    std::vector<Index> indices;
+
+    // register file refering to the indices
+    std::vector<TrieIndex> indices;
     std::vector<State> states;
+
+    void run();
 };
