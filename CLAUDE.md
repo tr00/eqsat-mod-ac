@@ -1,74 +1,60 @@
 # EqSat-Mod-AC: E-Graph with Custom Database for Conjunctive Queries
 
-## Project Overview
-This C++17 library implements an e-graph (equality saturation) built on top of a custom database for answering conjunctive queries.
-The library performs algebraic reasoning by pattern matching and rewriting.
+C++17 library implementing e-graph (equality saturation) with custom database for conjunctive queries.
 
-## Core Architecture
+## Build System
+- **Build**: `cmake --build build` (creates `libeqsat.a`)
+- **Unit Tests**: `make rununit` 
+- **System Tests**: `make runsystem`
+- **All Tests**: `make runtest`
 
-### Build System
-- **CMake** (C++17): `cmake --build build` (builds static library `libeqsat.a`)
-- **Unit Testing**: `cmake --build build && ./build/unittests` or `make rununit`
-- **System Testing**: `cmake --build build && ./build/systemtests` or `make runsystem`
-- **All Tests**: `make runtest` (runs both unit and system tests)
-- **Dependencies**: Catch2 for testing (auto-fetched)
-- **Library Usage**: Link against `eqsat` target and include `src/` directory
+## Core Components
 
-### Key Data Structures
+### Basic Types (`src/id.h`)
+- `id_t`, `symbol_t`, `var_t`: 32-bit identifiers
 
-#### Basic Types (`src/id.h`)
-- `id_t`: 32-bit unsigned integer for node identifiers
-- `symbol_t`: 32-bit unsigned integer for symbol identifiers
-- `var_t`: 32-bit unsigned integer for query variables
+### Symbol Management (`src/symbol_table.h`)
+- `SymbolTable`: Thread-safe string ↔ symbol_t mapping
 
-#### Symbol Management (`src/symbol_table.h`)
-- `SymbolTable`: Bidirectional string ↔ symbol_t mapping
-- Thread-safe symbol interning for efficient string handling
+### Theory (`src/theory.h`)
+- `Expression`: AST nodes for algebraic expressions
+- `Signature`: Operator definitions
+- `RewriteRule`: LHS → RHS transformations
+- `Theory`: Operators and rewrite rules collection
 
-#### Theory & Expressions (`src/theory.h`)
-- `Expression`: AST nodes for algebraic expressions (operators/variables)
-- `Signature`: Operator definitions with arity constraints
-- `RewriteRule`: Left-hand-side → right-hand-side transformations
-- `Theory`: Collection of operators and rewrite rules
+### Database (`src/database.h`)
+- `Relation`: Fixed-arity tuple storage
+- `Database`: Named relation container
 
-### Database Layer
+### Set Operations (`src/abstract_set.h`, `src/sorted_set.h`)
+- `AbstractSet`: Type-erased set wrapper
+- `SortedSet`: Concrete sorted set implementation
 
-#### Relations (`src/database.h`)
-- `Relation`: Fixed-arity tuple storage with efficient access
-- `Database`: Named relation container with tuple insertion/lookup
+### Union-Find (`src/union_find.h`)
+- `UnionFind`: Disjoint sets for equivalence classes
 
-#### Set Operations (`src/set_interface.h`)
-- `SetInterface`: Type-erased wrapper for different set implementations
-- Supports intersection, iteration, and type conversion
-- Template-based design for performance-critical operations
+### E-Graph (`src/egraph.h`)
+- `ENode`: Hash-consed expression nodes
+- `EGraph`: Main e-graph with term insertion/unification
 
-#### Union-Find (`src/union_find.h`)
-- `UnionFind`: Disjoint set data structure for equivalence classes
-- Path halving optimization and union-by-smaller-id for efficient operations
+### Query System
+- `Query` (`src/query.h`): Conjunctive queries with constraints
+- `PatternCompiler` (`src/pattern_compiler.h`): Expression → query conversion
+- `QueryCompiler` (`src/query_compiler.h`): Query compilation
+- `Engine` (`src/engine.h`): Query execution engine
 
-### E-Graph Implementation
+### Additional Components
+- `TrieIndex` (`src/trie_index.h`): Trie-based indexing
+- `Permutation` (`src/permutation.h`): Permutation utilities
 
-#### Core E-Graph (`src/egraph.h`)
-- `ENode`: Hash-consed expression nodes (operator + children)
-- `EGraph`: Main e-graph with term insertion and unification
-- Integrates theory, database, and union-find for equality reasoning
+## File Structure
+```
+src/: 14 headers, 14 implementations + main.cpp
+unittests/: 6 test files  
+systemtests/: 3 test files
+```
 
-#### Query Processing (`src/query.h`)
-- `Constraint`: Operator applications over query variables
-- `Query`: Conjunctive queries with constraints and head variables
-- Supports complex pattern matching and variable binding
-
-#### Pattern Compilation (`src/pattern_compiler.h`)
-- `PatternCompiler`: Converts expressions to executable queries
-- Handles variable binding and constraint generation
-- Supports multiple pattern compilation for batch processing
-
-### Query Engine (`src/engine.h`)
-- `Engine`: Main query execution engine (work in progress)
-- `State`: Query execution states with variable selections
-- Set intersection and iteration for conjunctive query answering
-
-## Key Operations
+## Usage Examples
 
 ### Term Insertion
 ```cpp
@@ -82,43 +68,3 @@ id_t expr_id = egraph.add_expr(expr);
 PatternCompiler compiler;
 Query compiled = compiler.compile_pattern(pattern_expr);
 ```
-
-## File Structure
-```
-src/
-│   id.h
-│   symbol_table.{h,cpp}
-│   theory.{h,cpp}
-│   database.{h,cpp}
-│   abstract_set.{h,cpp}
-│   sorted_set.{h,cpp}
-│   union_find.{h,cpp}
-│   egraph.{h,cpp}
-│   query.{h,cpp}
-│   pattern_compiler.{h,cpp}
-│   engine.{h,cpp}
-└── trie_index.{h,cpp}
-
-unittests/
-│   test_sorted_set.cpp
-│   test_abstract_set.cpp
-│   test_pattern_compiler.cpp
-└── test_union_find.cpp
-
-systemtests/
-└── test_egraph_basic.cpp
-```
-
-## Development Notes
-
-### Current Status
-- Core data structures implemented and tested
-- E-graph foundation complete with union-find integration
-- Pattern compilation working for expression → query transformation
-- Query engine architecture defined but implementation incomplete
-
-### Next Steps
-- Complete query engine implementation in `src/engine.cpp`
-- Add trie-based indexing for efficient query execution
-- Implement rewrite rule application and saturation
-- Add benchmarking and performance optimization
