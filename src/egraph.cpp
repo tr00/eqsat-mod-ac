@@ -75,6 +75,12 @@ void EGraph::saturate(std::size_t max_iters) {
     for(std::size_t iter = 0; iter < max_iters; ++iter) {
         // vector matches;
 
+        db.clear_indices();
+
+        // schedule queries
+
+        db.build_indices();
+
         // for query in queries
             // res = engine.execute(query, db)
             // push(matches, res)

@@ -2,7 +2,9 @@
 
 #include <memory>
 #include <vector>
+
 #include "id.h"
+#include "../sets/abstract_set.h"
 
 class TrieNode {
 public:
@@ -24,7 +26,7 @@ private:
 public:
     TrieIndex(TrieNode &trie);
 
-    bool select(id_t key);
-    bool backtrack();
-    std::vector<id_t> project() const;
+    void select(id_t key);
+    void backtrack();
+    AbstractSet project() const;
 };

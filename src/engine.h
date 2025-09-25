@@ -1,39 +1,32 @@
 #pragma once
 
-#include "sorted_set.h"
-#include "trie_index.h"
-#include <cstdint>
+#include <memory>
 #include <vector>
 
-using Variable = std::uint8_t;
-
-using Index = std::uint8_t;
-
-class Selection {
-    Index idx;
-    Variable var;
-};
-
-class Engine;
+#include "indices/abstract_index.h"
 
 class State {
+
+    template<typename T>
+    using Vec = std::vector<T>;
+    using IndexPtr = std::shared_ptr<AbstractIndex>;
+    using Iterator = std::vector<id_t>::const_iterator;
+
 public:
-    std::vector<Selection> selections;
 
-    /**
-     * all indices which contain this variable
-     * we will intersect these when entering this state
-     */
-    std::vector<Index> indices;
+    SortedVecSet candidates;
+    Iterator candidate;
 
-    SortedSet candidates;
+
+    const Vec<IndexPtr> indices;
+
+    void prepare();
+    bool empty() const;
+    id_t next();
+    size_t intersect();
 };
 
 class Engine {
-    std::vector<Variable> vars;
-
-    // register file refering to the indices
-    std::vector<TrieIndex> indices;
     std::vector<State> states;
 
     void run();

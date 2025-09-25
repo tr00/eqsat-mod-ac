@@ -3,11 +3,11 @@
 
 #include <catch2/catch_test_macros.hpp>
 
-#include "abstract_set.h"
-#include "sorted_set.h"
+#include "sets/abstract_set.h"
+#include "sets/sorted_set.h"
 
 TEST_CASE("AbstractSet basic operations") {
-    SortedSet sorted_set;
+    SortedVecSet sorted_set;
     sorted_set.insert(1);
     sorted_set.insert(2);
     sorted_set.insert(3);
@@ -22,14 +22,21 @@ TEST_CASE("AbstractSet basic operations") {
         REQUIRE(abstract_set.contains(4) == false);
     }
 
-    SECTION("Insert works correctly") {
-        REQUIRE(abstract_set.insert(4) == true);
-        REQUIRE(abstract_set.size() == 4);
-        REQUIRE(abstract_set.contains(4) == true);
-
-        // Inserting duplicate should return false
-        REQUIRE(abstract_set.insert(4) == false);
-        REQUIRE(abstract_set.size() == 4);
+    SECTION("Creating new AbstractSet with additional element") {
+        // Create a new SortedVecSet, insert elements, then create AbstractSet
+        SortedVecSet new_sorted_set;
+        new_sorted_set.insert(1);
+        new_sorted_set.insert(2);
+        new_sorted_set.insert(3);
+        new_sorted_set.insert(4);
+        
+        AbstractSet new_abstract_set(std::move(new_sorted_set));
+        
+        REQUIRE(new_abstract_set.size() == 4);
+        REQUIRE(new_abstract_set.contains(4) == true);
+        REQUIRE(new_abstract_set.contains(1) == true);
+        REQUIRE(new_abstract_set.contains(2) == true);
+        REQUIRE(new_abstract_set.contains(3) == true);
     }
 
     SECTION("for_each works correctly") {
@@ -45,38 +52,23 @@ TEST_CASE("AbstractSet basic operations") {
     }
 }
 
-TEST_CASE("AbstractSet copy and move semantics") {
-    SortedSet sorted_set;
+TEST_CASE("AbstractSet move semantics") {
+    SortedVecSet sorted_set;
     sorted_set.insert(1);
     sorted_set.insert(2);
 
-    AbstractSet original(sorted_set);
+    AbstractSet original(std::move(sorted_set));
 
-    SECTION("Copy constructor works") {
-        AbstractSet copy(original);
-        REQUIRE(copy.size() == 2);
-        REQUIRE(copy.contains(1) == true);
-        REQUIRE(copy.contains(2) == true);
-
-        // Modifying copy shouldn't affect original
-        copy.insert(3);
-        REQUIRE(copy.size() == 3);
-        REQUIRE(original.size() == 2);
-    }
-
-    SECTION("Copy assignment works") {
-        SortedSet empty_set;
-        AbstractSet copy(empty_set);
-        copy = original;
-
-        REQUIRE(copy.size() == 2);
-        REQUIRE(copy.contains(1) == true);
-        REQUIRE(copy.contains(2) == true);
+    SECTION("Move constructor works") {
+        AbstractSet moved(std::move(original));
+        REQUIRE(moved.size() == 2);
+        REQUIRE(moved.contains(1) == true);
+        REQUIRE(moved.contains(2) == true);
     }
 }
 
 TEST_CASE("Intersection of multiple sets") {
-    SortedSet set1, set2, set3;
+    SortedVecSet set1, set2, set3;
 
     // Set1: {1, 2, 3, 4}
     set1.insert(1);
@@ -107,8 +99,8 @@ TEST_CASE("Intersection of multiple sets") {
             std::cref(abstract3)
         };
 
-        SortedSet result_set;
-        intersect(result_set, sets);
+        SortedVecSet result_set;
+        intersect_many(result_set, sets);
         AbstractSet result(result_set);
 
         // Expected intersection: {3, 4}
@@ -126,8 +118,8 @@ TEST_CASE("Intersection of multiple sets") {
             std::cref(abstract2)
         };
 
-        SortedSet result_set;
-        intersect(result_set, sets);
+        SortedVecSet result_set;
+        intersect_many(result_set, sets);
         AbstractSet result(result_set);
 
         // Expected intersection: {2, 3, 4}
@@ -139,8 +131,8 @@ TEST_CASE("Intersection of multiple sets") {
 
     SECTION("Intersection of empty vector") {
         std::vector<std::reference_wrapper<const AbstractSet>> empty_sets;
-        SortedSet result_set;
-        intersect(result_set, empty_sets);
+        SortedVecSet result_set;
+        intersect_many(result_set, empty_sets);
         AbstractSet result(result_set);
         REQUIRE(result.size() == 0);
         REQUIRE(result.empty() == true);
@@ -151,8 +143,8 @@ TEST_CASE("Intersection of multiple sets") {
             std::cref(abstract1)
         };
 
-        SortedSet result_set;
-        intersect(result_set, sets);
+        SortedVecSet result_set;
+        intersect_many(result_set, sets);
         AbstractSet result(result_set);
         REQUIRE(result.size() == 4);
         REQUIRE(result.contains(1) == true);
@@ -162,40 +154,4 @@ TEST_CASE("Intersection of multiple sets") {
     }
 }
 
-TEST_CASE("AbstractSet copy_into functionality") {
-    SortedSet original_set;
-    original_set.insert(10);
-    original_set.insert(20);
-    original_set.insert(30);
 
-    AbstractSet abstract_set(original_set);
-
-    SECTION("Member function copy_into works") {
-        SortedSet copied_set = abstract_set.copy_into<SortedSet>();
-
-        REQUIRE(copied_set.size() == 3);
-        REQUIRE(copied_set.contains(10) == true);
-        REQUIRE(copied_set.contains(20) == true);
-        REQUIRE(copied_set.contains(30) == true);
-
-        // Modifying copied set shouldn't affect the interface
-        copied_set.insert(40);
-        REQUIRE(copied_set.size() == 4);
-        REQUIRE(abstract_set.size() == 3);
-    }
-
-    SECTION("Free function copy_into works") {
-        SortedSet copied_set = copy_into<SortedSet>(abstract_set);
-
-        REQUIRE(copied_set.size() == 3);
-        REQUIRE(copied_set.contains(10) == true);
-        REQUIRE(copied_set.contains(20) == true);
-        REQUIRE(copied_set.contains(30) == true);
-
-        // Verify elements are in sorted order
-        auto data = copied_set.get_data();
-        REQUIRE(data[0] == 10);
-        REQUIRE(data[1] == 20);
-        REQUIRE(data[2] == 30);
-    }
-}

@@ -9,15 +9,17 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(LIB_SOURCES
     src/theory.cpp
     src/symbol_table.cpp
-    src/sorted_set.cpp
-    src/abstract_set.cpp
     src/union_find.cpp
     src/query.cpp
     src/pattern_compiler.cpp
-    src/database.cpp
     src/egraph.cpp
-    src/trie_index.cpp
     src/permutation.cpp
+    src/engine.cpp
+    src/database.cpp
+    src/relations/row_store.cpp
+    src/indices/trie_index.cpp
+    src/sets/sorted_set.cpp
+    src/sets/abstract_set.cpp
 )
 
 # Create static library

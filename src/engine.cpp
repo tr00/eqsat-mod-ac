@@ -1,10 +1,10 @@
 #include "engine.h"
-#include "abstract_set.h"
-#include <cstddef>
+#include "sets/abstract_set.h"
 #include <functional>
 #include <vector>
+
 //                            ▲
-// descend into   │           │ ascend out
+// descend into   │           │ ascend out / backtrack
 //                │           │
 //                ▼
 //               ┌─────────────┐
@@ -17,22 +17,76 @@
 //  descend out   │           │
 //                ▼
 
+void State::prepare() {
+    candidate = candidates.begin();
+}
+
+bool State::empty() const {
+    return candidate != candidates.end();
+}
+
+id_t State::next() {
+    return *candidate++;
+}
+
+size_t State::intersect() {
+    std::vector<AbstractSet> buffer;
+
+    for (auto index : indices)
+        buffer.push_back(index->project());
+
+    intersect_many(candidates, buffer);
+    return candidates.size();
+}
+
 void Engine::run() {
-    std::vector<std::reference_wrapper<const AbstractSet>> ncap_input_buffer;
+    std::vector<id_t> results;
+    auto state = states.begin();
 
+    id_t cand;
 
-    std::size_t pc = 0;
+DEEPER:
+    if (state == states.end())
+        goto YIELD;
 
-    // descend into
-    std::vector<std::reference_wrapper<const AbstractSet>> sets;
+    if(state->intersect() == 0)
+        goto BACKTRACK;
 
-    State& current_state = states[pc];
+    state->prepare();
 
-    for (std::uint8_t reg : current_state.indices) {
-        auto index = indices[reg];
+    // first candidate
+    cand = state->next();
 
-        ncap_input_buffer.push_back(index.project());
+    for (auto index : state->indices)
+        index->select(cand);
+
+    ++state;
+
+    goto DEEPER;
+
+BACKTRACK:
+
+    --state;
+
+    for (auto index : state->indices)
+        index->backtrack();
+
+    if (state->empty())
+        goto BACKTRACK;
+
+    // ith candidate
+    cand = state->next();
+    for (auto index : state->indices)
+        index->select(cand);
+
+    ++state;
+
+    goto DEEPER;
+
+YIELD:
+
+    for (auto state : states) {
+        results.push_back(*state.candidate);
     }
 
-    intersect(current_state.candidates, ncap_input_buffer);
 }

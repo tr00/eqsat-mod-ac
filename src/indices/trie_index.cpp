@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <cassert>
+
 #include "trie_index.h"
 
 int TrieNode::find_key_index(id_t key) const {
@@ -38,25 +39,21 @@ void TrieNode::insert_path(const std::vector<id_t>& path) {
 
 TrieIndex::TrieIndex(TrieNode& node) : current_node(&node) {}
 
-bool TrieIndex::select(id_t key) {
+void TrieIndex::select(id_t key) {
     int index = current_node->find_key_index(key);
-    if (index == -1) {
-        return false;
-    }
+    assert(index != -1);
 
     parent_stack.push_back(current_node);
     current_node = current_node->children[index].get();
-    return true;
 }
 
-bool TrieIndex::backtrack() {
+void TrieIndex::backtrack() {
     assert(!parent_stack.empty());
 
     current_node = parent_stack.back();
     parent_stack.pop_back();
-    return true;
 }
 
-std::vector<id_t> TrieIndex::project() const {
-    return current_node->keys;
+AbstractSet TrieIndex::project() const {
+    return AbstractSet(SortedIterSet(current_node->keys));
 }

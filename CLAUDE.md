@@ -4,7 +4,7 @@ C++17 library implementing e-graph (equality saturation) with custom database fo
 
 ## Build System
 - **Build**: `cmake --build build` (creates `libeqsat.a`)
-- **Unit Tests**: `make rununit` 
+- **Unit Tests**: `make rununit`
 - **System Tests**: `make runsystem`
 - **All Tests**: `make runtest`
 
@@ -26,9 +26,10 @@ C++17 library implementing e-graph (equality saturation) with custom database fo
 - `Relation`: Fixed-arity tuple storage
 - `Database`: Named relation container
 
-### Set Operations (`src/abstract_set.h`, `src/sorted_set.h`)
-- `AbstractSet`: Type-erased set wrapper
-- `SortedSet`: Concrete sorted set implementation
+### Set Operations (`src/sets/`)
+- `AbstractSet`: Set wrapper with tagged-union polymorphism
+- `SortedSet`: Vector-based sorted set implementation
+- `SortedIterSet`: Iterator-based sorted set implementation
 
 ### Union-Find (`src/union_find.h`)
 - `UnionFind`: Disjoint sets for equivalence classes
@@ -43,14 +44,24 @@ C++17 library implementing e-graph (equality saturation) with custom database fo
 - `QueryCompiler` (`src/query_compiler.h`): Query compilation
 - `Engine` (`src/engine.h`): Query execution engine
 
+### Indexing (`src/indices/`)
+- `AbstractIndex`: Type-erased index wrapper
+- `TrieIndex`: Trie-based indexing for relations
+
+### Relations (`src/relations/`)
+- `AbstractRelation`: Base relation interface
+- `RowStore`: Row-oriented relation storage
+
 ### Additional Components
-- `TrieIndex` (`src/trie_index.h`): Trie-based indexing
 - `Permutation` (`src/permutation.h`): Permutation utilities
 
 ## File Structure
 ```
-src/: 14 headers, 14 implementations + main.cpp
-unittests/: 6 test files  
+src/: Core components (16 headers, 15 implementations)
+├── sets/: Set implementations (abstract_set, sorted_set, sorted_iter_set)
+├── indices/: Indexing structures (abstract_index, trie_index)
+├── relations/: Relation storage (abstract_relation, row_store)
+unittests/: 6 test files
 systemtests/: 3 test files
 ```
 
