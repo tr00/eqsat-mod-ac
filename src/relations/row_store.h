@@ -32,7 +32,7 @@ public:
      * @throws std::invalid_argument if tuple size doesn't match relation arity
      */
     void add_tuple(const std::vector<id_t>& tuple) {
-        assert(tuple.size() != static_cast<size_t>(arity));
+        assert(tuple.size() == static_cast<size_t>(arity));
 
         data.insert(data.end(), tuple.begin(), tuple.end());
     }

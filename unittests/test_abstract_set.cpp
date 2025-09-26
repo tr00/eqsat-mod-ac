@@ -1,4 +1,3 @@
-#include <functional>
 #include <vector>
 
 #include <catch2/catch_test_macros.hpp>
@@ -29,9 +28,9 @@ TEST_CASE("AbstractSet basic operations") {
         new_sorted_set.insert(2);
         new_sorted_set.insert(3);
         new_sorted_set.insert(4);
-        
+
         AbstractSet new_abstract_set(std::move(new_sorted_set));
-        
+
         REQUIRE(new_abstract_set.size() == 4);
         REQUIRE(new_abstract_set.contains(4) == true);
         REQUIRE(new_abstract_set.contains(1) == true);
@@ -88,16 +87,12 @@ TEST_CASE("Intersection of multiple sets") {
     set3.insert(5);
     set3.insert(6);
 
-    AbstractSet abstract1(set1);
-    AbstractSet abstract2(set2);
-    AbstractSet abstract3(set3);
 
     SECTION("Intersection of all three sets") {
-        std::vector<std::reference_wrapper<const AbstractSet>> sets = {
-            std::cref(abstract1),
-            std::cref(abstract2),
-            std::cref(abstract3)
-        };
+        std::vector<AbstractSet> sets;
+        sets.emplace_back(AbstractSet(set1));
+        sets.emplace_back(AbstractSet(set2));
+        sets.emplace_back(AbstractSet(set3));
 
         SortedVecSet result_set;
         intersect_many(result_set, sets);
@@ -113,10 +108,9 @@ TEST_CASE("Intersection of multiple sets") {
     }
 
     SECTION("Intersection of two sets") {
-        std::vector<std::reference_wrapper<const AbstractSet>> sets = {
-            std::cref(abstract1),
-            std::cref(abstract2)
-        };
+        std::vector<AbstractSet> sets;
+        sets.emplace_back(AbstractSet(set1));
+        sets.emplace_back(AbstractSet(set2));
 
         SortedVecSet result_set;
         intersect_many(result_set, sets);
@@ -130,7 +124,7 @@ TEST_CASE("Intersection of multiple sets") {
     }
 
     SECTION("Intersection of empty vector") {
-        std::vector<std::reference_wrapper<const AbstractSet>> empty_sets;
+        std::vector<AbstractSet> empty_sets;
         SortedVecSet result_set;
         intersect_many(result_set, empty_sets);
         AbstractSet result(result_set);
@@ -139,9 +133,8 @@ TEST_CASE("Intersection of multiple sets") {
     }
 
     SECTION("Intersection of single set") {
-        std::vector<std::reference_wrapper<const AbstractSet>> sets = {
-            std::cref(abstract1)
-        };
+        std::vector<AbstractSet> sets;
+        sets.emplace_back(AbstractSet(set1));
 
         SortedVecSet result_set;
         intersect_many(result_set, sets);
@@ -153,5 +146,3 @@ TEST_CASE("Intersection of multiple sets") {
         REQUIRE(result.contains(4) == true);
     }
 }
-
-

@@ -15,24 +15,24 @@ private:
 
 public:
     explicit AbstractIndex(TrieIndex index) : kind(TRIE), trie(std::move(index)) {}
-    
+
     ~AbstractIndex() {
         switch (kind) {
             case TRIE: trie.~TrieIndex(); break;
         }
     }
-    
+
     // Delete copy constructor and assignment operator
     AbstractIndex(const AbstractIndex&) = delete;
     AbstractIndex& operator=(const AbstractIndex&) = delete;
-    
+
     // Move constructor
     AbstractIndex(AbstractIndex&& other) : kind(other.kind) {
         switch (kind) {
             case TRIE: new(&trie) TrieIndex(std::move(other.trie)); break;
         }
     }
-    
+
     // Move assignment operator
     AbstractIndex& operator=(AbstractIndex&& other) {
         if (this != &other) {
@@ -53,6 +53,7 @@ public:
         switch (kind) {
             case TRIE: return trie.project();
         }
+        assert(0);
     }
 
     void select(id_t key);
