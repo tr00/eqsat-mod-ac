@@ -5,18 +5,16 @@
 
 #include "indices/abstract_index.h"
 
-class State {
+class State
+{
 
-    template<typename T>
-    using Vec = std::vector<T>;
+    template <typename T> using Vec = std::vector<T>;
     using IndexPtr = std::shared_ptr<AbstractIndex>;
     using Iterator = std::vector<id_t>::const_iterator;
 
-public:
-
+  public:
     SortedVecSet candidates;
     Iterator candidate;
-
 
     const Vec<IndexPtr> indices;
 
@@ -26,7 +24,8 @@ public:
     size_t intersect();
 };
 
-class Engine {
+class Engine
+{
     std::vector<State> states;
 
     void run();

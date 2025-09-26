@@ -1,7 +1,7 @@
 #pragma once
 
-#include <vector>
 #include <cstdint>
+#include <vector>
 
 /**
  * @brief Permutation utilities for converting between permutation vectors and indices
@@ -36,7 +36,7 @@
  * uint32_t index = permutation_to_index(perm); // Returns 4
  * ```
  */
-uint32_t permutation_to_index(const std::vector<uint32_t>& perm);
+uint32_t permutation_to_index(const std::vector<uint32_t> &perm);
 
 /**
  * @brief Convert a lexicographic index to its corresponding permutation vector
@@ -56,7 +56,7 @@ uint32_t permutation_to_index(const std::vector<uint32_t>& perm);
  * std::vector<uint32_t> perm = index_to_permutation(4, elements); // Returns {2, 0, 1}
  * ```
  */
-std::vector<uint32_t> index_to_permutation(uint32_t index, const std::vector<uint32_t>& elements);
+std::vector<uint32_t> index_to_permutation(uint32_t index, const std::vector<uint32_t> &elements);
 
 /**
  * @brief Calculate the factorial of n
@@ -88,7 +88,7 @@ uint32_t factorial(int n);
  * bool is_valid2 = is_valid_permutation(invalid); // Returns false
  * ```
  */
-bool is_valid_permutation(const std::vector<uint32_t>& perm);
+bool is_valid_permutation(const std::vector<uint32_t> &perm);
 
 /**
  * @brief Apply a permutation to a vector in-place using its lexicographic index
@@ -109,7 +109,7 @@ bool is_valid_permutation(const std::vector<uint32_t>& perm);
  * // Index 4 corresponds to permutation [2,0,1], so vec[2], vec[0], vec[1]
  * ```
  */
-void apply_permutation(uint32_t index, std::vector<uint32_t>& vec);
+void apply_permutation(uint32_t index, std::vector<uint32_t> &vec);
 
 /**
  * @brief Apply a permutation to a vector in-place using precomputed indices
@@ -131,4 +131,4 @@ void apply_permutation(uint32_t index, std::vector<uint32_t>& vec);
  * apply_permutation(perm_indices, vec); // vec becomes {30, 10, 20}
  * ```
  */
-void apply_permutation(const std::vector<uint32_t>& perm_indices, std::vector<uint32_t>& vec);
+void apply_permutation(const std::vector<uint32_t> &perm_indices, std::vector<uint32_t> &vec);

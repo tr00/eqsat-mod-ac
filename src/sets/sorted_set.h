@@ -4,43 +4,49 @@
 
 #include "../id.h"
 
-class SortedVecSet {
-private:
+class SortedVecSet
+{
+  private:
     std::vector<id_t> data;
 
-public:
+  public:
     SortedVecSet() {};
-
 
     bool insert(id_t id);
 
-    bool contains(id_t id) const {
+    bool contains(id_t id) const
+    {
         auto it = std::lower_bound(data.begin(), data.end(), id);
         return it != data.end() && *it == id;
     }
 
-    size_t size() const {
+    size_t size() const
+    {
         return data.size();
     }
 
-    bool empty() const {
+    bool empty() const
+    {
         return data.empty();
     }
 
-    void clear() {
+    void clear()
+    {
         data.clear();
     }
 
-    std::vector<id_t>::const_iterator begin() const {
+    std::vector<id_t>::const_iterator begin() const
+    {
         return data.begin();
     }
 
-    std::vector<id_t>::const_iterator end() const {
+    std::vector<id_t>::const_iterator end() const
+    {
         return data.end();
     }
 
-    template<typename Func>
-    void for_each(Func f) const {
+    template <typename Func> void for_each(Func f) const
+    {
         for (auto it = begin(); it != end(); ++it)
             f(*it);
     }

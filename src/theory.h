@@ -1,7 +1,7 @@
 #pragma once
 
-#include <unordered_map>
 #include <memory>
+#include <unordered_map>
 #include <vector>
 
 #include "symbol_table.h"
@@ -9,7 +9,8 @@
 /**
  * @brief Enumeration for distinguishing between different kinds of expression nodes.
  */
-enum class NodeKind {
+enum class NodeKind
+{
     OPERATOR,
     VARIABLE
 };
@@ -30,8 +31,9 @@ enum class NodeKind {
  * @note Use the static factory methods make_variable() and make_operator()
  *       instead of constructors to create Expression instances.
  */
-class Expression {
-public:
+class Expression
+{
+  public:
     NodeKind kind;
     symbol_t symbol;
     std::vector<std::shared_ptr<Expression>> children;
@@ -62,21 +64,28 @@ public:
      *
      * Example: auto sum = Expression::make_operator(op_sym, {x_expr, y_expr});
      */
-    static std::shared_ptr<Expression> make_operator(symbol_t op, const std::vector<std::shared_ptr<Expression>>& children);
+    static std::shared_ptr<Expression> make_operator(symbol_t op,
+                                                     const std::vector<std::shared_ptr<Expression>> &children);
 
     /**
      * @brief Checks if this expression is a pattern variable.
      * @return true if this is a variable, false otherwise
      */
-    bool is_variable() const { return kind == NodeKind::VARIABLE; }
+    bool is_variable() const
+    {
+        return kind == NodeKind::VARIABLE;
+    }
 
     /**
      * @brief Checks if this expression is an operator application.
      * @return true if this is an operator, false otherwise
      */
-    bool is_operator() const { return kind == NodeKind::OPERATOR; }
+    bool is_operator() const
+    {
+        return kind == NodeKind::OPERATOR;
+    }
 
-private:
+  private:
     /**
      * @brief Private constructor for creating expressions.
      * @param kind Type of expression (OPERATOR or VARIABLE)
@@ -90,11 +99,12 @@ private:
      * @param op Symbol identifier for operator
      * @param children Vector of child expressions
      */
-    Expression(NodeKind kind, symbol_t op, const std::vector<std::shared_ptr<Expression>>& children);
+    Expression(NodeKind kind, symbol_t op, const std::vector<std::shared_ptr<Expression>> &children);
 };
 
-class Signature {
-public:
+class Signature
+{
+  public:
     std::unordered_map<symbol_t, int> operators;
 
     void add_operator(symbol_t symbol, int arity);
@@ -102,16 +112,18 @@ public:
     int get_arity(symbol_t symbol) const;
 };
 
-class RewriteRule {
-public:
+class RewriteRule
+{
+  public:
     std::shared_ptr<Expression> left_side;
     std::shared_ptr<Expression> right_side;
 
     RewriteRule(std::shared_ptr<Expression> lhs, std::shared_ptr<Expression> rhs);
 };
 
-class Theory {
-public:
+class Theory
+{
+  public:
     Signature signature;
     std::vector<RewriteRule> rewrite_rules;
 

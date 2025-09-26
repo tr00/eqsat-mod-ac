@@ -3,10 +3,11 @@
 C++17 library implementing e-graph (equality saturation) with custom database for conjunctive queries.
 
 ## Build System
-- **Build**: `cmake --build build` (creates `libeqsat.a`)
-- **Unit Tests**: `make rununit`
-- **System Tests**: `make runsystem`
-- **All Tests**: `make runtest`
+- **Configure**: `cmake -B build -G Ninja`
+- **Build**: `ninja -C build` (creates `libeqsat.a`)
+- **Unit Tests**: `ninja -C build rununit`
+- **System Tests**: `ninja -C build runsystem`
+- **All Tests**: `ninja -C build runtest`
 
 ## Core Components
 

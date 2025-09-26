@@ -3,11 +3,12 @@
 #include <memory>
 #include <vector>
 
-#include "id.h"
 #include "../sets/abstract_set.h"
+#include "id.h"
 
-class TrieNode {
-public:
+class TrieNode
+{
+  public:
     std::vector<id_t> keys;
     std::vector<std::shared_ptr<TrieNode>> children;
 
@@ -18,12 +19,13 @@ public:
     void insert_path(const std::vector<id_t> &path);
 };
 
-class TrieIndex {
-private:
-    TrieNode* current_node;
+class TrieIndex
+{
+  private:
+    TrieNode *current_node;
     std::vector<TrieNode *> parent_stack;
 
-public:
+  public:
     TrieIndex(TrieNode &trie);
 
     void select(id_t key);

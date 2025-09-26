@@ -1,6 +1,5 @@
 #include "engine.h"
 #include "sets/abstract_set.h"
-#include <functional>
 #include <vector>
 
 //                            ▲
@@ -17,19 +16,23 @@
 //  descend out   │           │
 //                ▼
 
-void State::prepare() {
+void State::prepare()
+{
     candidate = candidates.begin();
 }
 
-bool State::empty() const {
+bool State::empty() const
+{
     return candidate != candidates.end();
 }
 
-id_t State::next() {
+id_t State::next()
+{
     return *candidate++;
 }
 
-size_t State::intersect() {
+size_t State::intersect()
+{
     std::vector<AbstractSet> buffer;
 
     for (auto index : indices)
@@ -39,7 +42,8 @@ size_t State::intersect() {
     return candidates.size();
 }
 
-void Engine::run() {
+void Engine::run()
+{
     std::vector<id_t> results;
     auto state = states.begin();
 
@@ -49,7 +53,7 @@ DEEPER:
     if (state == states.end())
         goto YIELD;
 
-    if(state->intersect() == 0)
+    if (state->intersect() == 0)
         goto BACKTRACK;
 
     state->prepare();
@@ -85,8 +89,8 @@ BACKTRACK:
 
 YIELD:
 
-    for (auto state : states) {
+    for (auto state : states)
+    {
         results.push_back(*state.candidate);
     }
-
 }

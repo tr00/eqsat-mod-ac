@@ -2,8 +2,8 @@
 
 #include <memory>
 #include <stdexcept>
-#include <vector>
 #include <unordered_map>
+#include <vector>
 
 #include "id.h"
 #include "indices/abstract_index.h"
@@ -19,18 +19,22 @@
  * of the tuple fields, enabling efficient query processing with different
  * field orderings.
  */
-struct IndexKey {
+struct IndexKey
+{
     symbol_t operator_symbol;
     uint32_t permutation_id;
 
-    bool operator==(const IndexKey& other) const {
+    bool operator==(const IndexKey &other) const
+    {
         return operator_symbol == other.operator_symbol && permutation_id == other.permutation_id;
     }
 };
 
 // Hash function for IndexKey
-struct IndexKeyHash {
-    std::size_t operator()(const IndexKey& key) const {
+struct IndexKeyHash
+{
+    std::size_t operator()(const IndexKey &key) const
+    {
         return std::hash<uint64_t>{}((static_cast<uint64_t>(key.operator_symbol) << 32) | key.permutation_id);
     }
 };
@@ -58,12 +62,14 @@ struct IndexKeyHash {
  * db.build_indices();                       // Populate indices with data
  * ```
  */
-class Database {
-private:
+class Database
+{
+  private:
     std::unordered_map<symbol_t, AbstractRelation> relations;
     std::unordered_map<IndexKey, std::shared_ptr<AbstractIndex>, IndexKeyHash> indices;
 
-    AbstractRelation* get_relation(symbol_t rel_name) {
+    AbstractRelation *get_relation(symbol_t rel_name)
+    {
         auto it = relations.find(rel_name);
         if (it == relations.end())
             return nullptr;
@@ -71,7 +77,7 @@ private:
         return &it->second;
     }
 
-public:
+  public:
     /**
      * @brief Create a new relation in the database
      *
@@ -80,7 +86,8 @@ public:
      *
      * @note If a relation with the same name already exists, this is a no-op
      */
-    void add_relation(symbol_t name, int arity) {
+    void add_relation(symbol_t name, int arity)
+    {
         relations.emplace(name, AbstractRelation(RowStore(name, arity)));
     }
 
@@ -92,9 +99,11 @@ public:
      * @throws std::runtime_error if relation doesn't exist
      * @throws std::invalid_argument if tuple size doesn't match relation arity
      */
-    void add_tuple(symbol_t relation_name, const std::vector<id_t>& tuple) {
+    void add_tuple(symbol_t relation_name, const std::vector<id_t> &tuple)
+    {
         auto it = relations.find(relation_name);
-        if (it == relations.end()) {
+        if (it == relations.end())
+        {
             throw std::runtime_error("Relation not found");
         }
         it->second.add_tuple(tuple);
@@ -106,7 +115,8 @@ public:
      * @param name The operator symbol to check for
      * @return true if relation exists, false otherwise
      */
-    bool has_relation(symbol_t name) const {
+    bool has_relation(symbol_t name) const
+    {
         return relations.find(name) != relations.end();
     }
 
@@ -121,7 +131,8 @@ public:
      *
      * @note If an index with the same key already exists, it will be replaced
      */
-    void add_index(symbol_t operator_symbol, uint32_t permutation_id) {
+    void add_index(symbol_t operator_symbol, uint32_t permutation_id)
+    {
         IndexKey key{operator_symbol, permutation_id};
 
         auto trie_node = std::make_shared<TrieNode>();
@@ -139,12 +150,16 @@ public:
      *
      * @note Creates a new TrieIndex wrapper around the stored TrieNode
      */
-    std::shared_ptr<AbstractIndex> get_index(symbol_t operator_symbol, uint32_t permutation_id) const {
+    std::shared_ptr<AbstractIndex> get_index(symbol_t operator_symbol, uint32_t permutation_id) const
+    {
         IndexKey key{operator_symbol, permutation_id};
         auto it = indices.find(key);
-        if (it != indices.end()) {
+        if (it != indices.end())
+        {
             return it->second;
-        } else {
+        }
+        else
+        {
             return nullptr;
         }
     }
@@ -156,7 +171,8 @@ public:
      * @param permutation_id The permutation index to check
      * @return true if index exists, false otherwise
      */
-    bool has_index(symbol_t operator_symbol, uint32_t permutation_id) const {
+    bool has_index(symbol_t operator_symbol, uint32_t permutation_id) const
+    {
         IndexKey key{operator_symbol, permutation_id};
         return indices.find(key) != indices.end();
     }

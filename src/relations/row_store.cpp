@@ -1,11 +1,12 @@
-#include <algorithm>
-#include <vector>
 #include "relations/row_store.h"
 #include "indices/abstract_index.h"
 #include "indices/trie_index.h"
 #include "permutation.h"
+#include <algorithm>
+#include <vector>
 
-AbstractIndex RowStore::build_index(uint32_t vo) {
+AbstractIndex RowStore::build_index(uint32_t vo)
+{
     TrieNode trie;
 
     // precompute permutation indices
@@ -17,7 +18,8 @@ AbstractIndex RowStore::build_index(uint32_t vo) {
 
     std::vector<id_t> buffer(arity);
     const id_t *base = data.data();
-    for (size_t i = 0; i < size(); ++i) {
+    for (size_t i = 0; i < size(); ++i)
+    {
         const id_t *tuple = base + i * arity;
         std::copy(tuple, tuple + arity, buffer.begin());
         apply_permutation(permuted_indices, buffer);
