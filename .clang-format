@@ -202,7 +202,7 @@ PenaltyReturnTypeOnItsOwnLine: 1000
 PointerAlignment: Right
 PPIndentWidth:   -1
 QualifierAlignment: Leave
-ReferenceAlignment: Pointer
+ReferenceAlignment: Left
 ReflowComments:  true
 RemoveBracesLLVM: false
 RemoveParentheses: Leave
@@ -271,4 +271,3 @@ WhitespaceSensitiveMacros:
   - PP_STRINGIZE
   - STRINGIZE
 ...
-

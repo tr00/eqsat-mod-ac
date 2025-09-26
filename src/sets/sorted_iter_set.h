@@ -11,7 +11,7 @@ class SortedIterSet
     std::vector<id_t>::const_iterator end;
 
   public:
-    SortedIterSet(const std::vector<id_t> &data) : begin(data.begin()), end(data.end())
+    SortedIterSet(const std::vector<id_t>& data) : begin(data.begin()), end(data.end())
     {
     }
 

@@ -4,8 +4,8 @@ PatternCompiler::PatternCompiler() : next_id(0)
 {
 }
 
-var_t PatternCompiler::compile_expression_rec(const std::shared_ptr<Expression> &expr,
-                                              std::unordered_map<symbol_t, var_t> &symbol_to_var, Query &query)
+var_t PatternCompiler::compile_expression_rec(const std::shared_ptr<Expr>& expr,
+                                              std::unordered_map<symbol_t, var_t>& symbol_to_var, Query& query)
 {
     if (expr->is_variable())
     {
@@ -30,7 +30,7 @@ var_t PatternCompiler::compile_expression_rec(const std::shared_ptr<Expression> 
         constraint_vars.push_back(id);
 
         // Recursively compile children and add their variable IDs to constraint
-        for (const auto &child : expr->children)
+        for (const auto& child : expr->children)
         {
             var_t child_var = compile_expression_rec(child, symbol_to_var, query);
             constraint_vars.push_back(child_var);
@@ -43,7 +43,7 @@ var_t PatternCompiler::compile_expression_rec(const std::shared_ptr<Expression> 
     }
 }
 
-Query PatternCompiler::compile_pattern(const std::shared_ptr<Expression> &pattern)
+Query PatternCompiler::compile_pattern(const std::shared_ptr<Expr>& pattern)
 {
     // Reset variable counter for each compilation
     next_id = 0;
@@ -63,12 +63,12 @@ Query PatternCompiler::compile_pattern(const std::shared_ptr<Expression> &patter
     return query;
 }
 
-std::vector<Query> PatternCompiler::compile_patterns(const std::vector<std::shared_ptr<Expression>> &patterns)
+std::vector<Query> PatternCompiler::compile_patterns(const std::vector<std::shared_ptr<Expr>>& patterns)
 {
     std::vector<Query> queries;
     queries.reserve(patterns.size());
 
-    for (const auto &pattern : patterns)
+    for (const auto& pattern : patterns)
     {
         queries.push_back(compile_pattern(pattern));
     }

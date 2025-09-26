@@ -34,10 +34,10 @@ class AbstractRelation
         }
     }
 
-    AbstractRelation(const AbstractRelation &) = delete;
-    AbstractRelation &operator=(const AbstractRelation &) = delete;
+    AbstractRelation(const AbstractRelation&) = delete;
+    AbstractRelation& operator=(const AbstractRelation&) = delete;
 
-    AbstractRelation(AbstractRelation &&other) : kind(other.kind)
+    AbstractRelation(AbstractRelation&& other) : kind(other.kind)
     {
         switch (kind)
         {
@@ -47,7 +47,7 @@ class AbstractRelation
         }
     }
 
-    AbstractRelation &operator=(AbstractRelation &&other)
+    AbstractRelation& operator=(AbstractRelation&& other)
     {
         if (this != &other)
         {
@@ -90,7 +90,7 @@ class AbstractRelation
         assert(0);
     }
 
-    void add_tuple(const std::vector<id_t> &tuple)
+    void add_tuple(const std::vector<id_t>& tuple)
     {
         switch (kind)
         {

@@ -29,22 +29,22 @@ TEST_CASE("EGraph can handle rewrite rules with pattern compilation", "[egraph][
         symbol_t y_sym = symbols.intern("y");
         symbol_t z_sym = symbols.intern("z");
 
-        auto x_var = Expression::make_variable(x_sym);
-        auto y_var = Expression::make_variable(y_sym);
-        auto z_var = Expression::make_variable(z_sym);
+        auto x_var = Expr::make_variable(x_sym);
+        auto y_var = Expr::make_variable(y_sym);
+        auto z_var = Expr::make_variable(z_sym);
 
         // Rule 1: 1 * x -> x (multiplicative identity)
-        auto one_expr = Expression::make_operator(one_sym);
-        auto mul_one_x = Expression::make_operator(mul_sym, {one_expr, x_var});
-        theory.add_rewrite_rule(mul_one_x, x_var);
+        auto one_expr = Expr::make_operator(one_sym);
+        auto mul_one_x = Expr::make_operator(mul_sym, {one_expr, x_var});
+        theory.add_rewrite_rule("mul-one", mul_one_x, x_var);
 
         // Rule 2: x * (y + z) -> (x * y) + (x * z) (distributivity)
-        auto y_plus_z = Expression::make_operator(add_sym, {y_var, z_var});
-        auto x_mul_sum = Expression::make_operator(mul_sym, {x_var, y_plus_z});
-        auto x_mul_y = Expression::make_operator(mul_sym, {x_var, y_var});
-        auto x_mul_z = Expression::make_operator(mul_sym, {x_var, z_var});
-        auto distributed = Expression::make_operator(add_sym, {x_mul_y, x_mul_z});
-        theory.add_rewrite_rule(x_mul_sum, distributed);
+        auto y_plus_z = Expr::make_operator(add_sym, {y_var, z_var});
+        auto x_mul_sum = Expr::make_operator(mul_sym, {x_var, y_plus_z});
+        auto x_mul_y = Expr::make_operator(mul_sym, {x_var, y_var});
+        auto x_mul_z = Expr::make_operator(mul_sym, {x_var, z_var});
+        auto distributed = Expr::make_operator(add_sym, {x_mul_y, x_mul_z});
+        theory.add_rewrite_rule("distr", x_mul_sum, distributed);
 
         // Verify that the rules were added
         REQUIRE(theory.rewrite_rules.size() == 2);
@@ -66,9 +66,9 @@ TEST_CASE("EGraph can handle rewrite rules with pattern compilation", "[egraph][
         EGraph egraph(theory);
 
         // Insert some concrete terms to test the structure
-        auto zero_expr = Expression::make_operator(zero_sym);
-        auto one_concrete = Expression::make_operator(one_sym);
-        auto add_zero_one = Expression::make_operator(add_sym, {zero_expr, one_concrete});
+        auto zero_expr = Expr::make_operator(zero_sym);
+        auto one_concrete = Expr::make_operator(one_sym);
+        auto add_zero_one = Expr::make_operator(add_sym, {zero_expr, one_concrete});
 
         id_t zero_id = egraph.add_expr(zero_expr);
         id_t one_id = egraph.add_expr(one_concrete);
@@ -81,7 +81,7 @@ TEST_CASE("EGraph can handle rewrite rules with pattern compilation", "[egraph][
 
         // Test that we can insert a term that matches the pattern structure
         // 1 * 0 should be insertable as a concrete term
-        auto mul_one_zero = Expression::make_operator(mul_sym, {one_concrete, zero_expr});
+        auto mul_one_zero = Expr::make_operator(mul_sym, {one_concrete, zero_expr});
         id_t mul_id = egraph.add_expr(mul_one_zero);
         REQUIRE(mul_id > 0);
     }
@@ -91,18 +91,18 @@ TEST_CASE("EGraph can handle rewrite rules with pattern compilation", "[egraph][
         // Create pattern variables
         symbol_t x_sym = symbols.intern("x");
         symbol_t y_sym = symbols.intern("y");
-        auto x_var = Expression::make_variable(x_sym);
-        auto y_var = Expression::make_variable(y_sym);
+        auto x_var = Expr::make_variable(x_sym);
+        auto y_var = Expr::make_variable(y_sym);
 
         // Create multiple patterns
-        auto one_expr = Expression::make_operator(one_sym);
-        auto zero_expr = Expression::make_operator(zero_sym);
+        auto one_expr = Expr::make_operator(one_sym);
+        auto zero_expr = Expr::make_operator(zero_sym);
 
-        auto pattern1 = Expression::make_operator(mul_sym, {one_expr, x_var});  // 1 * x
-        auto pattern2 = Expression::make_operator(add_sym, {zero_expr, x_var}); // 0 + x
-        auto pattern3 = Expression::make_operator(mul_sym, {x_var, y_var});     // x * y
+        auto pattern1 = Expr::make_operator(mul_sym, {one_expr, x_var});  // 1 * x
+        auto pattern2 = Expr::make_operator(add_sym, {zero_expr, x_var}); // 0 + x
+        auto pattern3 = Expr::make_operator(mul_sym, {x_var, y_var});     // x * y
 
-        std::vector<std::shared_ptr<Expression>> patterns = {pattern1, pattern2, pattern3};
+        std::vector<std::shared_ptr<Expr>> patterns = {pattern1, pattern2, pattern3};
 
         // Compile all patterns
         PatternCompiler compiler;
@@ -111,7 +111,7 @@ TEST_CASE("EGraph can handle rewrite rules with pattern compilation", "[egraph][
         REQUIRE(queries.size() == 3);
 
         // Each query should have at least one constraint
-        for (const auto &query : queries)
+        for (const auto& query : queries)
         {
             REQUIRE(query.constraints.size() >= 1);
             REQUIRE(query.head.size() > 0);

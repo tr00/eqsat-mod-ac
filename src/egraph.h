@@ -20,7 +20,7 @@ class ENode
     {
     }
 
-    bool operator==(const ENode &other) const
+    bool operator==(const ENode& other) const
     {
         return op == other.op && children == other.children;
     }
@@ -30,7 +30,7 @@ class ENode
         return op;
     }
 
-    const std::vector<id_t> &get_children() const
+    const std::vector<id_t>& get_children() const
     {
         return children;
     }
@@ -40,13 +40,13 @@ namespace std
 {
 template <> struct hash<ENode>
 {
-    size_t operator()(const ENode &node) const
+    size_t operator()(const ENode& node) const
     {
         size_t h1 = std::hash<symbol_t>{}(node.get_operator());
         size_t h2 = 0;
 
         auto children = node.get_children();
-        for (const auto &child : children)
+        for (const auto& child : children)
         {
             h2 ^= std::hash<id_t>{}(child) + 0x9e3779b9 + (h2 << 6) + (h2 >> 2);
         }
@@ -65,20 +65,22 @@ class EGraph
     std::vector<id_t> worklist;
 
   public:
-    EGraph(const Theory &theory);
+    EGraph(const Theory& theory);
     ~EGraph() = default;
 
-    EGraph(const EGraph &) = delete;
-    EGraph &operator=(const EGraph &) = delete;
+    EGraph(const EGraph&) = delete;
+    EGraph& operator=(const EGraph&) = delete;
 
-    EGraph(EGraph &&) = default;
-    EGraph &operator=(EGraph &&) = default;
+    EGraph(EGraph&&) = default;
+    EGraph& operator=(EGraph&&) = default;
 
-    id_t add_expr(std::shared_ptr<Expression> expression);
+    id_t add_expr(std::shared_ptr<Expr> expression);
     id_t unify(id_t a, id_t b);
+
     bool is_equiv(id_t a, id_t b)
     {
         return uf.same(a, b);
     }
+
     void saturate(size_t max_iters);
 };

@@ -24,7 +24,7 @@ struct IndexKey
     symbol_t operator_symbol;
     uint32_t permutation_id;
 
-    bool operator==(const IndexKey &other) const
+    bool operator==(const IndexKey& other) const
     {
         return operator_symbol == other.operator_symbol && permutation_id == other.permutation_id;
     }
@@ -33,7 +33,7 @@ struct IndexKey
 // Hash function for IndexKey
 struct IndexKeyHash
 {
-    std::size_t operator()(const IndexKey &key) const
+    std::size_t operator()(const IndexKey& key) const
     {
         return std::hash<uint64_t>{}((static_cast<uint64_t>(key.operator_symbol) << 32) | key.permutation_id);
     }
@@ -99,7 +99,7 @@ class Database
      * @throws std::runtime_error if relation doesn't exist
      * @throws std::invalid_argument if tuple size doesn't match relation arity
      */
-    void add_tuple(symbol_t relation_name, const std::vector<id_t> &tuple)
+    void add_tuple(symbol_t relation_name, const std::vector<id_t>& tuple)
     {
         auto it = relations.find(relation_name);
         if (it == relations.end())

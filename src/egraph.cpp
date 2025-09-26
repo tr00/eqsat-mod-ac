@@ -4,11 +4,11 @@
 #include <cstddef>
 #include <stdexcept>
 
-EGraph::EGraph(const Theory &theory) : theory(theory)
+EGraph::EGraph(const Theory& theory) : theory(theory)
 {
 
     // initialize database with one relation per operator
-    for (const auto &[symbol, arity] : theory.signature.operators)
+    for (const auto& [symbol, arity] : theory.operators)
         db.add_relation(symbol, arity + 1);
 
     // compile rewrite rule patterns to queries
@@ -16,8 +16,8 @@ EGraph::EGraph(const Theory &theory) : theory(theory)
     {
         PatternCompiler compiler;
 
-        std::vector<std::shared_ptr<Expression>> patterns;
-        for (const auto &rule : theory.rewrite_rules)
+        std::vector<std::shared_ptr<Expr>> patterns;
+        for (const auto& rule : theory.rewrite_rules)
             patterns.push_back(rule.left_side);
 
         std::vector<Query> queries = compiler.compile_patterns(patterns);
@@ -27,7 +27,7 @@ EGraph::EGraph(const Theory &theory) : theory(theory)
     }
 }
 
-id_t EGraph::add_expr(std::shared_ptr<Expression> expression)
+id_t EGraph::add_expr(std::shared_ptr<Expr> expression)
 {
     if (expression->is_variable())
     {
@@ -39,7 +39,7 @@ id_t EGraph::add_expr(std::shared_ptr<Expression> expression)
     std::vector<id_t> child_ids;
     child_ids.reserve(expression->children.size());
 
-    for (const auto &child : expression->children)
+    for (const auto& child : expression->children)
     {
         id_t child_id = add_expr(child);
         child_ids.push_back(child_id);

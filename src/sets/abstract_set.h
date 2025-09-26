@@ -43,10 +43,10 @@ class AbstractSet
         }
     }
 
-    AbstractSet(const AbstractSet &other) = delete;
-    AbstractSet &operator=(const AbstractSet &other) = delete;
+    AbstractSet(const AbstractSet& other) = delete;
+    AbstractSet& operator=(const AbstractSet& other) = delete;
 
-    AbstractSet(AbstractSet &&other) : kind(other.kind)
+    AbstractSet(AbstractSet&& other) : kind(other.kind)
     {
         switch (kind)
         {
@@ -59,7 +59,7 @@ class AbstractSet
         }
     }
 
-    AbstractSet &operator=(AbstractSet &&other)
+    AbstractSet& operator=(AbstractSet&& other)
     {
         if (this != &other)
         {
@@ -130,4 +130,4 @@ class AbstractSet
     }
 };
 
-void intersect_many(SortedVecSet &output, const std::vector<AbstractSet> &sets);
+void intersect_many(SortedVecSet& output, const std::vector<AbstractSet>& sets);

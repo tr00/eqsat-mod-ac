@@ -4,7 +4,7 @@ C++17 library implementing e-graphs (equality saturation) with custom database f
 
 ## Build System
 
-- **Build**: `just` (creates `libeqsat.a`)
+- **Build**: `just build` (creates `libeqsat.a`)
 - **Test**: `just {test/unittests/systemtes}`
 - **Format**: `just format`
 - **Full**: `just all`
@@ -72,12 +72,14 @@ systemtests/: 3 test files
 ### Theory Frontend
 
 ```cpp
-SymbolTable symbols;
-symbol_t one = symbols.intern("1");
-symbol_t mul = symbols.intern("*");
 Theory theory;
+
+symbol_t one = theory.intern("1");
+symbol_t mul = theory.intern("*");
+
 theory.add_operator(one, 0);
 theory.add_operator(mul, 2);
+
 EGraph egraph(theory);
 ```
 

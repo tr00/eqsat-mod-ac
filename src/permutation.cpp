@@ -18,7 +18,7 @@ uint32_t factorial(int n)
     return result;
 }
 
-void apply_permutation(uint32_t index, std::vector<uint32_t> &vec)
+void apply_permutation(uint32_t index, std::vector<uint32_t>& vec)
 {
     if (vec.empty())
     {
@@ -65,7 +65,7 @@ void apply_permutation(uint32_t index, std::vector<uint32_t> &vec)
     }
 }
 
-void apply_permutation(const std::vector<uint32_t> &perm_indices, std::vector<uint32_t> &vec)
+void apply_permutation(const std::vector<uint32_t>& perm_indices, std::vector<uint32_t>& vec)
 {
     if (perm_indices.size() != vec.size())
     {
@@ -96,7 +96,7 @@ void apply_permutation(const std::vector<uint32_t> &perm_indices, std::vector<ui
     }
 }
 
-bool is_valid_permutation(const std::vector<uint32_t> &perm)
+bool is_valid_permutation(const std::vector<uint32_t>& perm)
 {
     if (perm.empty())
     {
@@ -127,7 +127,7 @@ bool is_valid_permutation(const std::vector<uint32_t> &perm)
     return true;
 }
 
-uint32_t permutation_to_index(const std::vector<uint32_t> &perm)
+uint32_t permutation_to_index(const std::vector<uint32_t>& perm)
 {
     if (!is_valid_permutation(perm))
     {
@@ -174,7 +174,7 @@ uint32_t permutation_to_index(const std::vector<uint32_t> &perm)
     return index;
 }
 
-std::vector<uint32_t> index_to_permutation(uint32_t index, const std::vector<uint32_t> &elements)
+std::vector<uint32_t> index_to_permutation(uint32_t index, const std::vector<uint32_t>& elements)
 {
     if (elements.empty())
     {

@@ -5,7 +5,7 @@
 
 // TODO: partially sorting.
 
-void intersect_many(SortedVecSet &output, const std::vector<AbstractSet> &sets)
+void intersect_many(SortedVecSet& output, const std::vector<AbstractSet>& sets)
 {
     output.clear();
 
@@ -23,12 +23,12 @@ void intersect_many(SortedVecSet &output, const std::vector<AbstractSet> &sets)
 
     // Find the smallest set to start with (optimization)
     auto smallest_it =
-        std::min_element(sets.begin(), sets.end(), [](const auto &a, const auto &b) { return a.size() < b.size(); });
+        std::min_element(sets.begin(), sets.end(), [](const auto& a, const auto& b) { return a.size() < b.size(); });
 
     // Iterate through the smallest set and check if each element exists in all other sets
     smallest_it->for_each([&](id_t id) {
         bool in_all_sets = true;
-        for (const auto &set : sets)
+        for (const auto& set : sets)
         {
             if (!set.contains(id))
             {

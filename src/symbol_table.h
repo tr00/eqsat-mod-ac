@@ -17,8 +17,8 @@ class SymbolTable
   public:
     SymbolTable();
 
-    symbol_t intern(const std::string &str);
-    const std::string &get_string(symbol_t symbol) const;
+    symbol_t intern(const std::string& str);
+    const std::string& get_string(symbol_t symbol) const;
     bool has_symbol(symbol_t symbol) const;
     size_t size() const;
 };

@@ -6,12 +6,12 @@
 class QueryCompiler
 {
   private:
-    Database &db;
+    Database& db;
 
   public:
-    QueryCompiler(Database &db) : db(db)
+    QueryCompiler(Database& db) : db(db)
     {
     }
 
-    void build_indices(Query &query);
+    void build_indices(Query& query);
 };

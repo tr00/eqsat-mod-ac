@@ -3,7 +3,7 @@
 
 void Database::build_indices()
 {
-    for (auto &[index_key, index] : indices)
+    for (auto& [index_key, index] : indices)
     {
         auto [rel_name, perm] = index_key;
         auto index_ref = index;

@@ -14,11 +14,11 @@ class UnionFind
     UnionFind();
     ~UnionFind() = default;
 
-    UnionFind(const UnionFind &) = delete;
-    UnionFind &operator=(const UnionFind &) = delete;
+    UnionFind(const UnionFind&) = delete;
+    UnionFind& operator=(const UnionFind&) = delete;
 
-    UnionFind(UnionFind &&) = default;
-    UnionFind &operator=(UnionFind &&) = default;
+    UnionFind(UnionFind&&) = default;
+    UnionFind& operator=(UnionFind&&) = default;
 
     id_t make_set();
     id_t unify(id_t a, id_t b);

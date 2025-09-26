@@ -10,7 +10,7 @@ TEST_CASE("Simple expression compilation", "[pattern_compiler]")
     SymbolTable symbols;
     symbol_t f = symbols.intern("f");
 
-    auto expr = Expression::make_operator(f);
+    auto expr = Expr::make_operator(f);
 
     PatternCompiler compiler;
     Query query = compiler.compile_pattern(expr);
@@ -34,9 +34,9 @@ TEST_CASE("Nested expression compilation", "[pattern_compiler]")
     symbol_t g = symbols.intern("g");
     symbol_t h = symbols.intern("h");
 
-    auto f_expr = Expression::make_operator(f);
-    auto h_expr = Expression::make_operator(h);
-    auto g_expr = Expression::make_operator(g, std::vector<std::shared_ptr<Expression>>{f_expr, h_expr});
+    auto f_expr = Expr::make_operator(f);
+    auto h_expr = Expr::make_operator(h);
+    auto g_expr = Expr::make_operator(g, std::vector<std::shared_ptr<Expr>>{f_expr, h_expr});
 
     PatternCompiler compiler;
     Query query = compiler.compile_pattern(g_expr);
@@ -76,11 +76,11 @@ TEST_CASE("Deeply nested expression compilation", "[pattern_compiler]")
     symbol_t y = symbols.intern("y");
     symbol_t z = symbols.intern("z");
 
-    auto x_expr = Expression::make_variable(x);
-    auto y_expr = Expression::make_variable(y);
-    auto z_expr = Expression::make_variable(z);
-    auto mul_expr = Expression::make_operator(mul, std::vector<std::shared_ptr<Expression>>{x_expr, y_expr});
-    auto add_expr = Expression::make_operator(add, std::vector<std::shared_ptr<Expression>>{mul_expr, z_expr});
+    auto x_expr = Expr::make_variable(x);
+    auto y_expr = Expr::make_variable(y);
+    auto z_expr = Expr::make_variable(z);
+    auto mul_expr = Expr::make_operator(mul, std::vector<std::shared_ptr<Expr>>{x_expr, y_expr});
+    auto add_expr = Expr::make_operator(add, std::vector<std::shared_ptr<Expr>>{mul_expr, z_expr});
 
     PatternCompiler compiler;
     Query query = compiler.compile_pattern(add_expr);
@@ -115,10 +115,10 @@ TEST_CASE("Multiple patterns compilation", "[pattern_compiler]")
     symbol_t f = symbols.intern("f");
     symbol_t g = symbols.intern("g");
 
-    auto f_expr = Expression::make_operator(f);
-    auto g_expr = Expression::make_operator(g);
+    auto f_expr = Expr::make_operator(f);
+    auto g_expr = Expr::make_operator(g);
 
-    std::vector<std::shared_ptr<Expression>> patterns = {f_expr, g_expr};
+    std::vector<std::shared_ptr<Expr>> patterns = {f_expr, g_expr};
 
     PatternCompiler compiler;
     std::vector<Query> queries = compiler.compile_patterns(patterns);

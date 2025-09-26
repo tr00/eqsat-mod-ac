@@ -32,7 +32,7 @@ class Constraint
      * @param op The operator symbol
      * @param vars Vector of variables for this constraint
      */
-    Constraint(symbol_t op, const std::vector<var_t> &vars);
+    Constraint(symbol_t op, const std::vector<var_t>& vars);
 };
 
 /**
@@ -65,14 +65,14 @@ class Query
      * @param constraints List of constraints for this query
      * @param head List of head variables to project in results
      */
-    Query(const std::vector<Constraint> &constraints, const std::vector<var_t> &head);
+    Query(const std::vector<Constraint>& constraints, const std::vector<var_t>& head);
 
     /**
      * @brief Add a constraint to this query
      *
      * @param constraint The constraint to add
      */
-    void add_constraint(const Constraint &constraint);
+    void add_constraint(const Constraint& constraint);
 
     /**
      * @brief Add a constraint to this query
@@ -80,7 +80,7 @@ class Query
      * @param op Operator symbol for the constraint
      * @param vars Variables for the constraint
      */
-    void add_constraint(symbol_t op, const std::vector<var_t> &vars);
+    void add_constraint(symbol_t op, const std::vector<var_t>& vars);
 
     /**
      * @brief Add a variable to the query head (result projection)
@@ -88,4 +88,17 @@ class Query
      * @param var Variable to add to the head
      */
     void add_head_var(var_t var);
+};
+
+/**
+ *
+ */
+class QueryPlan
+{
+  private:
+    symbol_t name;
+    size_t arity;
+
+  public:
+    void execute();
 };

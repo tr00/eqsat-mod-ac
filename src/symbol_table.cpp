@@ -4,7 +4,7 @@ SymbolTable::SymbolTable() : next_id(0)
 {
 }
 
-symbol_t SymbolTable::intern(const std::string &str)
+symbol_t SymbolTable::intern(const std::string& str)
 {
     auto it = string_to_symbol.find(str);
     if (it != string_to_symbol.end())
@@ -18,7 +18,7 @@ symbol_t SymbolTable::intern(const std::string &str)
     return new_symbol;
 }
 
-const std::string &SymbolTable::get_string(symbol_t symbol) const
+const std::string& SymbolTable::get_string(symbol_t symbol) const
 {
     return symbol_to_string[symbol];
 }

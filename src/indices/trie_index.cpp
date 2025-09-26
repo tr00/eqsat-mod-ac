@@ -13,7 +13,7 @@ int TrieNode::find_key_index(id_t key) const
     return -1;
 }
 
-void TrieNode::insert_path(const std::vector<id_t> &path)
+void TrieNode::insert_path(const std::vector<id_t>& path)
 {
     if (path.empty())
     {
@@ -45,7 +45,7 @@ void TrieNode::insert_path(const std::vector<id_t> &path)
     }
 }
 
-TrieIndex::TrieIndex(TrieNode &node) : current_node(&node)
+TrieIndex::TrieIndex(TrieNode& node) : current_node(&node)
 {
 }
 

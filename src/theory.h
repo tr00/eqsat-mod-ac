@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <string>
 #include <unordered_map>
 #include <vector>
 
@@ -31,12 +32,12 @@ enum class NodeKind
  * @note Use the static factory methods make_variable() and make_operator()
  *       instead of constructors to create Expression instances.
  */
-class Expression
+class Expr
 {
   public:
     NodeKind kind;
     symbol_t symbol;
-    std::vector<std::shared_ptr<Expression>> children;
+    std::vector<std::shared_ptr<Expr>> children;
 
     /**
      * @brief Creates a pattern variable expression.
@@ -45,7 +46,7 @@ class Expression
      *
      * Example: auto x = Expression::make_variable(symbols.intern("x"));
      */
-    static std::shared_ptr<Expression> make_variable(symbol_t var);
+    static std::shared_ptr<Expr> make_variable(symbol_t var);
 
     /**
      * @brief Creates a nullary operator expression (no children).
@@ -54,7 +55,7 @@ class Expression
      *
      * Example: auto zero = Expression::make_operator(symbols.intern("0"));
      */
-    static std::shared_ptr<Expression> make_operator(symbol_t op);
+    static std::shared_ptr<Expr> make_operator(symbol_t op);
 
     /**
      * @brief Creates an operator expression with child expressions.
@@ -64,8 +65,7 @@ class Expression
      *
      * Example: auto sum = Expression::make_operator(op_sym, {x_expr, y_expr});
      */
-    static std::shared_ptr<Expression> make_operator(symbol_t op,
-                                                     const std::vector<std::shared_ptr<Expression>> &children);
+    static std::shared_ptr<Expr> make_operator(symbol_t op, const std::vector<std::shared_ptr<Expr>>& children);
 
     /**
      * @brief Checks if this expression is a pattern variable.
@@ -91,7 +91,7 @@ class Expression
      * @param kind Type of expression (OPERATOR or VARIABLE)
      * @param sym Symbol identifier
      */
-    Expression(NodeKind kind, symbol_t sym);
+    Expr(NodeKind kind, symbol_t sym);
 
     /**
      * @brief Private constructor for creating operator expressions with children.
@@ -99,34 +99,54 @@ class Expression
      * @param op Symbol identifier for operator
      * @param children Vector of child expressions
      */
-    Expression(NodeKind kind, symbol_t op, const std::vector<std::shared_ptr<Expression>> &children);
-};
-
-class Signature
-{
-  public:
-    std::unordered_map<symbol_t, int> operators;
-
-    void add_operator(symbol_t symbol, int arity);
-    bool has_operator(symbol_t symbol) const;
-    int get_arity(symbol_t symbol) const;
+    Expr(NodeKind kind, symbol_t op, const std::vector<std::shared_ptr<Expr>>& children);
 };
 
 class RewriteRule
 {
   public:
-    std::shared_ptr<Expression> left_side;
-    std::shared_ptr<Expression> right_side;
+    symbol_t name;
+    std::shared_ptr<Expr> left_side;
+    std::shared_ptr<Expr> right_side;
 
-    RewriteRule(std::shared_ptr<Expression> lhs, std::shared_ptr<Expression> rhs);
+    RewriteRule(symbol_t name, std::shared_ptr<Expr> lhs, std::shared_ptr<Expr> rhs);
+};
+
+class RewriteRuleInternal
+{
+  private:
+    symbol_t name;
 };
 
 class Theory
 {
   public:
-    Signature signature;
+    SymbolTable symbols;
+    std::unordered_map<symbol_t, int> operators;
     std::vector<RewriteRule> rewrite_rules;
 
-    void add_operator(symbol_t symbol, int arity);
-    void add_rewrite_rule(std::shared_ptr<Expression> lhs, std::shared_ptr<Expression> rhs);
+    Theory()
+    {
+    }
+
+    inline symbol_t intern(const std::string& str)
+    {
+        return symbols.intern(str);
+    }
+
+    symbol_t add_operator(const std::string& op, int arity)
+    {
+        return add_operator(intern(op), arity);
+    }
+
+    symbol_t add_operator(symbol_t symbol, int arity);
+    bool has_operator(symbol_t symbol) const;
+    int get_arity(symbol_t symbol) const;
+
+    void add_rewrite_rule(const std::string& name, std::shared_ptr<Expr> lhs, std::shared_ptr<Expr> rhs)
+    {
+        add_rewrite_rule(intern(name), lhs, rhs);
+    }
+
+    void add_rewrite_rule(symbol_t name, std::shared_ptr<Expr> lhs, std::shared_ptr<Expr> rhs);
 };

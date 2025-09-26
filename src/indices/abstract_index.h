@@ -31,11 +31,11 @@ class AbstractIndex
     }
 
     // Delete copy constructor and assignment operator
-    AbstractIndex(const AbstractIndex &) = delete;
-    AbstractIndex &operator=(const AbstractIndex &) = delete;
+    AbstractIndex(const AbstractIndex&) = delete;
+    AbstractIndex& operator=(const AbstractIndex&) = delete;
 
     // Move constructor
-    AbstractIndex(AbstractIndex &&other) : kind(other.kind)
+    AbstractIndex(AbstractIndex&& other) : kind(other.kind)
     {
         switch (kind)
         {
@@ -46,7 +46,7 @@ class AbstractIndex
     }
 
     // Move assignment operator
-    AbstractIndex &operator=(AbstractIndex &&other)
+    AbstractIndex& operator=(AbstractIndex&& other)
     {
         if (this != &other)
         {

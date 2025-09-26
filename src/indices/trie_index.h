@@ -16,7 +16,7 @@ class TrieNode
 
     int find_key_index(id_t key) const;
 
-    void insert_path(const std::vector<id_t> &path);
+    void insert_path(const std::vector<id_t>& path);
 };
 
 class TrieIndex
@@ -26,7 +26,7 @@ class TrieIndex
     std::vector<TrieNode *> parent_stack;
 
   public:
-    TrieIndex(TrieNode &trie);
+    TrieIndex(TrieNode& trie);
 
     void select(id_t key);
     void backtrack();
