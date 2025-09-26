@@ -1,9 +1,10 @@
-#include <catch2/catch_test_macros.hpp>
-#include <sstream>
 #include "database.h"
 #include "symbol_table.h"
+#include <catch2/catch_test_macros.hpp>
+#include <sstream>
 
-TEST_CASE("Database basic operations", "[database]") {
+TEST_CASE("Database basic operations", "[database]")
+{
     SymbolTable symbol_table;
     Database db;
 
@@ -11,15 +12,16 @@ TEST_CASE("Database basic operations", "[database]") {
     symbol_t add_sym = symbol_table.intern("add");
     symbol_t mul_sym = symbol_table.intern("mul");
 
-    SECTION("Create relations and insert tuples") {
+    SECTION("Create relations and insert tuples")
+    {
         // Add binary relations for add and mul operators
-        db.add_relation(add_sym, 3);  // add(result, left, right)
-        db.add_relation(mul_sym, 3);  // mul(result, left, right)
+        db.add_relation(add_sym, 3); // add(result, left, right)
+        db.add_relation(mul_sym, 3); // mul(result, left, right)
 
         // Insert some tuples into add relation
-        db.add_tuple(add_sym, {1, 2, 3});  // add(1, 2, 3) means 2 + 3 = 1
-        db.add_tuple(add_sym, {4, 1, 5});  // add(4, 1, 5) means 1 + 5 = 4
-        db.add_tuple(add_sym, {6, 2, 4});  // add(6, 2, 4) means 2 + 4 = 6
+        db.add_tuple(add_sym, {1, 2, 3}); // add(1, 2, 3) means 2 + 3 = 1
+        db.add_tuple(add_sym, {4, 1, 5}); // add(4, 1, 5) means 1 + 5 = 4
+        db.add_tuple(add_sym, {6, 2, 4}); // add(6, 2, 4) means 2 + 4 = 6
 
         // Insert some tuples into mul relation
         db.add_tuple(mul_sym, {8, 2, 4});  // mul(8, 2, 4) means 2 * 4 = 8
@@ -33,7 +35,8 @@ TEST_CASE("Database basic operations", "[database]") {
         // Relations are accessible only through indices
     }
 
-    SECTION("Test dump functionality") {
+    SECTION("Test dump functionality")
+    {
         // Create a simple relation
         db.add_relation(add_sym, 2);
         db.add_tuple(add_sym, {10, 20});
@@ -45,7 +48,8 @@ TEST_CASE("Database basic operations", "[database]") {
     }
 }
 
-TEST_CASE("Database index operations", "[database]") {
+TEST_CASE("Database index operations", "[database]")
+{
     SymbolTable symbol_table;
     Database db;
 
@@ -53,10 +57,11 @@ TEST_CASE("Database index operations", "[database]") {
     symbol_t add_sym = symbol_table.intern("add");
     symbol_t mul_sym = symbol_table.intern("mul");
 
-    SECTION("Index creation and querying") {
+    SECTION("Index creation and querying")
+    {
         // Create relations first
-        db.add_relation(add_sym, 3);  // add(result, left, right)
-        db.add_relation(mul_sym, 2);  // mul(left, right)
+        db.add_relation(add_sym, 3); // add(result, left, right)
+        db.add_relation(mul_sym, 2); // mul(left, right)
 
         // Add some tuples
         db.add_tuple(add_sym, {1, 2, 3});
@@ -70,10 +75,10 @@ TEST_CASE("Database index operations", "[database]") {
         REQUIRE_FALSE(db.has_index(mul_sym, 0));
 
         // Create indices with different permutations
-        db.add_index(add_sym, 0);  // Identity permutation [0,1,2]
-        db.add_index(add_sym, 2);  // Permutation [1,0,2]
-        db.add_index(mul_sym, 0);  // Identity permutation [0,1]
-        db.add_index(mul_sym, 1);  // Permutation [1,0]
+        db.add_index(add_sym, 0); // Identity permutation [0,1,2]
+        db.add_index(add_sym, 2); // Permutation [1,0,2]
+        db.add_index(mul_sym, 0); // Identity permutation [0,1]
+        db.add_index(mul_sym, 1); // Permutation [1,0]
 
         // Verify indices exist
         REQUIRE(db.has_index(add_sym, 0));
@@ -101,19 +106,20 @@ TEST_CASE("Database index operations", "[database]") {
         REQUIRE(non_existent == nullptr);
     }
 
-    SECTION("Index building with permutations") {
+    SECTION("Index building with permutations")
+    {
         // Create a relation with known data
         db.add_relation(add_sym, 3);
 
         // Add tuples in specific order for testing
-        db.add_tuple(add_sym, {100, 200, 300});  // Tuple 0
-        db.add_tuple(add_sym, {400, 500, 600});  // Tuple 1
-        db.add_tuple(add_sym, {700, 800, 900});  // Tuple 2
+        db.add_tuple(add_sym, {100, 200, 300}); // Tuple 0
+        db.add_tuple(add_sym, {400, 500, 600}); // Tuple 1
+        db.add_tuple(add_sym, {700, 800, 900}); // Tuple 2
 
         // Create indices with different permutations
-        db.add_index(add_sym, 0);  // Permutation [0,1,2]: (100,200,300), (400,500,600), (700,800,900)
-        db.add_index(add_sym, 4);  // Permutation [2,0,1]: (300,100,200), (600,400,500), (900,700,800)
-        db.add_index(add_sym, 5);  // Permutation [2,1,0]: (300,200,100), (600,500,400), (900,800,700)
+        db.add_index(add_sym, 0); // Permutation [0,1,2]: (100,200,300), (400,500,600), (700,800,900)
+        db.add_index(add_sym, 4); // Permutation [2,0,1]: (300,100,200), (600,400,500), (900,700,800)
+        db.add_index(add_sym, 5); // Permutation [2,1,0]: (300,200,100), (600,500,400), (900,800,700)
 
         // Build all indices
         db.build_indices();
@@ -137,7 +143,8 @@ TEST_CASE("Database index operations", "[database]") {
         // and the build_indices() function completed without errors
     }
 
-    SECTION("Multiple relations with indices") {
+    SECTION("Multiple relations with indices")
+    {
         // Create multiple relations
         db.add_relation(add_sym, 2);
         db.add_relation(mul_sym, 3);
@@ -149,10 +156,10 @@ TEST_CASE("Database index operations", "[database]") {
         db.add_tuple(mul_sym, {400, 500, 600});
 
         // Create indices for both relations
-        db.add_index(add_sym, 0);  // Identity for add
-        db.add_index(add_sym, 1);  // Swap for add
-        db.add_index(mul_sym, 0);  // Identity for mul
-        db.add_index(mul_sym, 2);  // [1,0,2] for mul
+        db.add_index(add_sym, 0); // Identity for add
+        db.add_index(add_sym, 1); // Swap for add
+        db.add_index(mul_sym, 0); // Identity for mul
+        db.add_index(mul_sym, 2); // [1,0,2] for mul
 
         // Build all indices
         db.build_indices();
@@ -169,7 +176,8 @@ TEST_CASE("Database index operations", "[database]") {
         REQUIRE(db.get_index(mul_sym, 2) != nullptr);
     }
 
-    SECTION("Index clearing functionality") {
+    SECTION("Index clearing functionality")
+    {
         // Set up relations and indices
         db.add_relation(add_sym, 2);
         db.add_relation(mul_sym, 2);
@@ -215,16 +223,17 @@ TEST_CASE("Database index operations", "[database]") {
         // Would need to test relation integrity through indices or other methods
     }
 
-    SECTION("Edge cases and error conditions") {
+    SECTION("Edge cases and error conditions")
+    {
         // Test building indices without relations
-        db.build_indices();  // Should not crash
+        db.build_indices(); // Should not crash
 
         // Create relation and add index
         db.add_relation(add_sym, 2);
         db.add_index(add_sym, 0);
 
         // Build indices on empty relation
-        db.build_indices();  // Should not crash
+        db.build_indices(); // Should not crash
 
         REQUIRE(db.has_index(add_sym, 0));
         REQUIRE(db.get_index(add_sym, 0) != nullptr);
@@ -234,10 +243,11 @@ TEST_CASE("Database index operations", "[database]") {
         REQUIRE_FALSE(db.has_index(add_sym, 0));
 
         // Multiple clears should be safe
-        db.clear_indices();  // Should not crash
+        db.clear_indices(); // Should not crash
     }
 
-    SECTION("Index replacement") {
+    SECTION("Index replacement")
+    {
         db.add_relation(add_sym, 2);
         db.add_tuple(add_sym, {1, 2});
 

@@ -1,10 +1,11 @@
+#include "../src/pattern_compiler.h"
+#include "../src/symbol_table.h"
+#include "../src/theory.h"
 #include <catch2/catch_test_macros.hpp>
 #include <memory>
-#include "../src/pattern_compiler.h"
-#include "../src/theory.h"
-#include "../src/symbol_table.h"
 
-TEST_CASE("Simple expression compilation", "[pattern_compiler]") {
+TEST_CASE("Simple expression compilation", "[pattern_compiler]")
+{
     // Create a simple expression: f()
     SymbolTable symbols;
     symbol_t f = symbols.intern("f");
@@ -25,7 +26,8 @@ TEST_CASE("Simple expression compilation", "[pattern_compiler]") {
     REQUIRE(query.head[0] == 0);
 }
 
-TEST_CASE("Nested expression compilation", "[pattern_compiler]") {
+TEST_CASE("Nested expression compilation", "[pattern_compiler]")
+{
     // Create expression: g(f(), h())
     SymbolTable symbols;
     symbol_t f = symbols.intern("f");
@@ -64,7 +66,8 @@ TEST_CASE("Nested expression compilation", "[pattern_compiler]") {
     REQUIRE(query.head[0] == 0);
 }
 
-TEST_CASE("Deeply nested expression compilation", "[pattern_compiler]") {
+TEST_CASE("Deeply nested expression compilation", "[pattern_compiler]")
+{
     // Create expression: add(mul(x, y), z) where x, y, z are variables
     SymbolTable symbols;
     symbol_t add = symbols.intern("add");
@@ -106,7 +109,8 @@ TEST_CASE("Deeply nested expression compilation", "[pattern_compiler]") {
     REQUIRE(query.head[3] == 0);
 }
 
-TEST_CASE("Multiple patterns compilation", "[pattern_compiler]") {
+TEST_CASE("Multiple patterns compilation", "[pattern_compiler]")
+{
     SymbolTable symbols;
     symbol_t f = symbols.intern("f");
     symbol_t g = symbols.intern("g");

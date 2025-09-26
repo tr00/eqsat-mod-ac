@@ -1,11 +1,13 @@
+#include <algorithm>
 #include <catch2/catch_test_macros.hpp>
 #include <numeric>
-#include <algorithm>
 
 #include "permutation.h"
 
-TEST_CASE("Factorial function", "[permutation]") {
-    SECTION("Basic factorial calculations") {
+TEST_CASE("Factorial function", "[permutation]")
+{
+    SECTION("Basic factorial calculations")
+    {
         REQUIRE(factorial(0) == 1);
         REQUIRE(factorial(1) == 1);
         REQUIRE(factorial(2) == 2);
@@ -15,15 +17,18 @@ TEST_CASE("Factorial function", "[permutation]") {
         REQUIRE(factorial(6) == 720);
     }
 
-    SECTION("Edge cases") {
+    SECTION("Edge cases")
+    {
         REQUIRE_THROWS_AS(factorial(-1), std::invalid_argument);
         REQUIRE_THROWS_AS(factorial(13), std::invalid_argument);
         REQUIRE(factorial(12) == 479001600);
     }
 }
 
-TEST_CASE("is_valid_permutation function", "[permutation]") {
-    SECTION("Valid permutations") {
+TEST_CASE("is_valid_permutation function", "[permutation]")
+{
+    SECTION("Valid permutations")
+    {
         REQUIRE(is_valid_permutation({}));
         REQUIRE(is_valid_permutation({0}));
         REQUIRE(is_valid_permutation({0, 1}));
@@ -33,31 +38,37 @@ TEST_CASE("is_valid_permutation function", "[permutation]") {
         REQUIRE(is_valid_permutation({1, 2, 3})); // Non-zero based
     }
 
-    SECTION("Invalid permutations") {
-        REQUIRE_FALSE(is_valid_permutation({0, 0})); // Duplicate
-        REQUIRE_FALSE(is_valid_permutation({0, 2})); // Missing 1
+    SECTION("Invalid permutations")
+    {
+        REQUIRE_FALSE(is_valid_permutation({0, 0}));    // Duplicate
+        REQUIRE_FALSE(is_valid_permutation({0, 2}));    // Missing 1
         REQUIRE_FALSE(is_valid_permutation({1, 2, 2})); // Duplicate
         REQUIRE_FALSE(is_valid_permutation({0, 1, 3})); // Missing 2
     }
 }
 
-TEST_CASE("permutation_to_index basic cases", "[permutation]") {
-    SECTION("Empty permutation") {
+TEST_CASE("permutation_to_index basic cases", "[permutation]")
+{
+    SECTION("Empty permutation")
+    {
         std::vector<uint32_t> perm = {};
         REQUIRE(permutation_to_index(perm) == 0);
     }
 
-    SECTION("Single element") {
+    SECTION("Single element")
+    {
         std::vector<uint32_t> perm = {0};
         REQUIRE(permutation_to_index(perm) == 0);
     }
 
-    SECTION("Two elements") {
+    SECTION("Two elements")
+    {
         REQUIRE(permutation_to_index({0, 1}) == 0);
         REQUIRE(permutation_to_index({1, 0}) == 1);
     }
 
-    SECTION("Three elements - all permutations") {
+    SECTION("Three elements - all permutations")
+    {
         REQUIRE(permutation_to_index({0, 1, 2}) == 0);
         REQUIRE(permutation_to_index({0, 2, 1}) == 1);
         REQUIRE(permutation_to_index({1, 0, 2}) == 2);
@@ -67,27 +78,32 @@ TEST_CASE("permutation_to_index basic cases", "[permutation]") {
     }
 }
 
-TEST_CASE("index_to_permutation basic cases", "[permutation]") {
-    SECTION("Empty elements") {
+TEST_CASE("index_to_permutation basic cases", "[permutation]")
+{
+    SECTION("Empty elements")
+    {
         std::vector<uint32_t> elements = {};
         REQUIRE(index_to_permutation(0, elements) == std::vector<uint32_t>{});
         REQUIRE_THROWS_AS(index_to_permutation(1, elements), std::invalid_argument);
     }
 
-    SECTION("Single element") {
+    SECTION("Single element")
+    {
         std::vector<uint32_t> elements = {5};
         REQUIRE(index_to_permutation(0, elements) == std::vector<uint32_t>{5});
         REQUIRE_THROWS_AS(index_to_permutation(1, elements), std::invalid_argument);
     }
 
-    SECTION("Two elements") {
+    SECTION("Two elements")
+    {
         std::vector<uint32_t> elements = {0, 1};
         REQUIRE(index_to_permutation(0, elements) == std::vector<uint32_t>{0, 1});
         REQUIRE(index_to_permutation(1, elements) == std::vector<uint32_t>{1, 0});
         REQUIRE_THROWS_AS(index_to_permutation(2, elements), std::invalid_argument);
     }
 
-    SECTION("Three elements - all indices") {
+    SECTION("Three elements - all indices")
+    {
         std::vector<uint32_t> elements = {0, 1, 2};
         REQUIRE(index_to_permutation(0, elements) == std::vector<uint32_t>{0, 1, 2});
         REQUIRE(index_to_permutation(1, elements) == std::vector<uint32_t>{0, 2, 1});
@@ -99,17 +115,18 @@ TEST_CASE("index_to_permutation basic cases", "[permutation]") {
     }
 }
 
-TEST_CASE("Round-trip conversions", "[permutation]") {
-    SECTION("All permutations of size 3") {
+TEST_CASE("Round-trip conversions", "[permutation]")
+{
+    SECTION("All permutations of size 3")
+    {
         std::vector<uint32_t> elements = {0, 1, 2};
 
         // Test all possible permutations
-        std::vector<std::vector<uint32_t>> all_perms = {
-            {0, 1, 2}, {0, 2, 1}, {1, 0, 2},
-            {1, 2, 0}, {2, 0, 1}, {2, 1, 0}
-        };
+        std::vector<std::vector<uint32_t>> all_perms = {{0, 1, 2}, {0, 2, 1}, {1, 0, 2},
+                                                        {1, 2, 0}, {2, 0, 1}, {2, 1, 0}};
 
-        for (size_t i = 0; i < all_perms.size(); ++i) {
+        for (size_t i = 0; i < all_perms.size(); ++i)
+        {
             // perm -> index -> perm
             uint32_t index = permutation_to_index(all_perms[i]);
             std::vector<uint32_t> recovered = index_to_permutation(index, elements);
@@ -124,11 +141,13 @@ TEST_CASE("Round-trip conversions", "[permutation]") {
         }
     }
 
-    SECTION("All permutations of size 4") {
+    SECTION("All permutations of size 4")
+    {
         std::vector<uint32_t> elements = {0, 1, 2, 3};
 
         // Test round-trip for all 24 permutations
-        for (uint32_t i = 0; i < 24; ++i) {
+        for (uint32_t i = 0; i < 24; ++i)
+        {
             std::vector<uint32_t> perm = index_to_permutation(i, elements);
             uint32_t recovered_index = permutation_to_index(perm);
             REQUIRE(recovered_index == i);
@@ -136,36 +155,42 @@ TEST_CASE("Round-trip conversions", "[permutation]") {
     }
 }
 
-TEST_CASE("apply_permutation with precomputed indices", "[permutation]") {
-    SECTION("Basic functionality") {
-        std::vector<uint32_t> perm_indices = {2, 0, 1};  // [2,0,1] permutation
+TEST_CASE("apply_permutation with precomputed indices", "[permutation]")
+{
+    SECTION("Basic functionality")
+    {
+        std::vector<uint32_t> perm_indices = {2, 0, 1}; // [2,0,1] permutation
         std::vector<uint32_t> vec = {10, 20, 30};
         apply_permutation(perm_indices, vec);
         REQUIRE(vec == std::vector<uint32_t>{30, 10, 20});
     }
 
-    SECTION("Identity permutation") {
+    SECTION("Identity permutation")
+    {
         std::vector<uint32_t> perm_indices = {0, 1, 2};
         std::vector<uint32_t> vec = {10, 20, 30};
         apply_permutation(perm_indices, vec);
         REQUIRE(vec == std::vector<uint32_t>{10, 20, 30});
     }
 
-    SECTION("Reverse permutation") {
+    SECTION("Reverse permutation")
+    {
         std::vector<uint32_t> perm_indices = {2, 1, 0};
         std::vector<uint32_t> vec = {10, 20, 30};
         apply_permutation(perm_indices, vec);
         REQUIRE(vec == std::vector<uint32_t>{30, 20, 10});
     }
 
-    SECTION("Empty vectors") {
+    SECTION("Empty vectors")
+    {
         std::vector<uint32_t> perm_indices = {};
         std::vector<uint32_t> vec = {};
         apply_permutation(perm_indices, vec);
         REQUIRE(vec.empty());
     }
 
-    SECTION("Single element") {
+    SECTION("Single element")
+    {
         std::vector<uint32_t> perm_indices = {0};
         std::vector<uint32_t> vec = {42};
         apply_permutation(perm_indices, vec);
@@ -173,8 +198,10 @@ TEST_CASE("apply_permutation with precomputed indices", "[permutation]") {
     }
 }
 
-TEST_CASE("apply_permutation with precomputed indices - error handling", "[permutation]") {
-    SECTION("Size mismatch") {
+TEST_CASE("apply_permutation with precomputed indices - error handling", "[permutation]")
+{
+    SECTION("Size mismatch")
+    {
         std::vector<uint32_t> perm_indices = {0, 1};
         std::vector<uint32_t> vec = {10, 20, 30};
         REQUIRE_THROWS_AS(apply_permutation(perm_indices, vec), std::invalid_argument);
@@ -184,23 +211,27 @@ TEST_CASE("apply_permutation with precomputed indices - error handling", "[permu
         REQUIRE_THROWS_AS(apply_permutation(perm_indices2, vec2), std::invalid_argument);
     }
 
-    SECTION("Index out of bounds") {
-        std::vector<uint32_t> perm_indices = {0, 3, 1};  // 3 is out of bounds for size 3
+    SECTION("Index out of bounds")
+    {
+        std::vector<uint32_t> perm_indices = {0, 3, 1}; // 3 is out of bounds for size 3
         std::vector<uint32_t> vec = {10, 20, 30};
         REQUIRE_THROWS_AS(apply_permutation(perm_indices, vec), std::out_of_range);
 
-        std::vector<uint32_t> perm_indices2 = {0, 1, 5};  // 5 is out of bounds
+        std::vector<uint32_t> perm_indices2 = {0, 1, 5}; // 5 is out of bounds
         std::vector<uint32_t> vec2 = {10, 20, 30};
         REQUIRE_THROWS_AS(apply_permutation(perm_indices2, vec2), std::out_of_range);
     }
 }
 
-TEST_CASE("apply_permutation consistency between versions", "[permutation]") {
-    SECTION("Both versions should produce identical results") {
+TEST_CASE("apply_permutation consistency between versions", "[permutation]")
+{
+    SECTION("Both versions should produce identical results")
+    {
         std::vector<uint32_t> original = {100, 200, 300, 400};
 
         // Test all 24 permutations of 4 elements
-        for (uint32_t perm_idx = 0; perm_idx < 24; ++perm_idx) {
+        for (uint32_t perm_idx = 0; perm_idx < 24; ++perm_idx)
+        {
             // Version 1: Using permutation index
             std::vector<uint32_t> vec1 = original;
             apply_permutation(perm_idx, vec1);
@@ -217,8 +248,10 @@ TEST_CASE("apply_permutation consistency between versions", "[permutation]") {
     }
 }
 
-TEST_CASE("apply_permutation performance comparison setup", "[permutation]") {
-    SECTION("Verify precomputed version works for multiple applications") {
+TEST_CASE("apply_permutation performance comparison setup", "[permutation]")
+{
+    SECTION("Verify precomputed version works for multiple applications")
+    {
         std::vector<uint32_t> original = {10, 20, 30};
 
         // Precompute permutation indices once
@@ -226,7 +259,8 @@ TEST_CASE("apply_permutation performance comparison setup", "[permutation]") {
         std::vector<uint32_t> perm_indices = index_to_permutation(4, indices); // [2,0,1]
 
         // Apply to multiple vectors
-        for (uint32_t i = 0; i < 5; ++i) {
+        for (uint32_t i = 0; i < 5; ++i)
+        {
             std::vector<uint32_t> vec = {10 + i, 20 + i, 30 + i};
             apply_permutation(perm_indices, vec);
             REQUIRE(vec == std::vector<uint32_t>{30 + i, 10 + i, 20 + i});
@@ -234,8 +268,10 @@ TEST_CASE("apply_permutation performance comparison setup", "[permutation]") {
     }
 }
 
-TEST_CASE("Non-zero based permutations", "[permutation]") {
-    SECTION("Permutation starting from 1") {
+TEST_CASE("Non-zero based permutations", "[permutation]")
+{
+    SECTION("Permutation starting from 1")
+    {
         std::vector<uint32_t> perm1 = {1, 2, 3};
         std::vector<uint32_t> perm2 = {3, 1, 2};
 
@@ -254,7 +290,8 @@ TEST_CASE("Non-zero based permutations", "[permutation]") {
         REQUIRE(recovered2 == perm2);
     }
 
-    SECTION("Arbitrary range permutation") {
+    SECTION("Arbitrary range permutation")
+    {
         std::vector<uint32_t> elements = {5, 6, 7};
 
         // Test a few permutations
@@ -269,8 +306,10 @@ TEST_CASE("Non-zero based permutations", "[permutation]") {
     }
 }
 
-TEST_CASE("Error handling", "[permutation]") {
-    SECTION("permutation_to_index errors") {
+TEST_CASE("Error handling", "[permutation]")
+{
+    SECTION("permutation_to_index errors")
+    {
         REQUIRE_THROWS_AS(permutation_to_index({0, 0}), std::invalid_argument);
         REQUIRE_THROWS_AS(permutation_to_index({0, 2}), std::invalid_argument);
 
@@ -280,7 +319,8 @@ TEST_CASE("Error handling", "[permutation]") {
         REQUIRE_THROWS_AS(permutation_to_index(large_perm), std::invalid_argument);
     }
 
-    SECTION("index_to_permutation errors") {
+    SECTION("index_to_permutation errors")
+    {
         std::vector<uint32_t> elements = {0, 1, 2};
         REQUIRE_THROWS_AS(index_to_permutation(6, elements), std::invalid_argument);
 
@@ -291,8 +331,10 @@ TEST_CASE("Error handling", "[permutation]") {
     }
 }
 
-TEST_CASE("Performance test with larger permutations", "[permutation]") {
-    SECTION("Size 6 permutations") {
+TEST_CASE("Performance test with larger permutations", "[permutation]")
+{
+    SECTION("Size 6 permutations")
+    {
         std::vector<uint32_t> elements = {0, 1, 2, 3, 4, 5};
 
         // Test first and last permutations
@@ -308,8 +350,10 @@ TEST_CASE("Performance test with larger permutations", "[permutation]") {
     }
 }
 
-TEST_CASE("apply_permutation basic cases", "[permutation]") {
-    SECTION("Empty vector") {
+TEST_CASE("apply_permutation basic cases", "[permutation]")
+{
+    SECTION("Empty vector")
+    {
         std::vector<uint32_t> vec = {};
         apply_permutation(0, vec);
         REQUIRE(vec == std::vector<uint32_t>{});
@@ -318,7 +362,8 @@ TEST_CASE("apply_permutation basic cases", "[permutation]") {
         REQUIRE_THROWS_AS(apply_permutation(1, vec2), std::invalid_argument);
     }
 
-    SECTION("Single element") {
+    SECTION("Single element")
+    {
         std::vector<uint32_t> vec = {42};
         apply_permutation(0, vec);
         REQUIRE(vec == std::vector<uint32_t>{42});
@@ -327,7 +372,8 @@ TEST_CASE("apply_permutation basic cases", "[permutation]") {
         REQUIRE_THROWS_AS(apply_permutation(1, vec2), std::invalid_argument);
     }
 
-    SECTION("Two elements") {
+    SECTION("Two elements")
+    {
         std::vector<uint32_t> vec1 = {10, 20};
         apply_permutation(0, vec1);
         REQUIRE(vec1 == std::vector<uint32_t>{10, 20});
@@ -340,7 +386,8 @@ TEST_CASE("apply_permutation basic cases", "[permutation]") {
         REQUIRE_THROWS_AS(apply_permutation(2, vec3), std::invalid_argument);
     }
 
-    SECTION("Three elements - all permutations") {
+    SECTION("Three elements - all permutations")
+    {
         // Index 0: [0,1,2] -> [100, 200, 300]
         std::vector<uint32_t> vec0 = {100, 200, 300};
         apply_permutation(0, vec0);
@@ -376,19 +423,23 @@ TEST_CASE("apply_permutation basic cases", "[permutation]") {
     }
 }
 
-TEST_CASE("apply_permutation consistency with index_to_permutation", "[permutation]") {
-    SECTION("Four elements - verify consistency") {
+TEST_CASE("apply_permutation consistency with index_to_permutation", "[permutation]")
+{
+    SECTION("Four elements - verify consistency")
+    {
         std::vector<uint32_t> vec = {7, 11, 13, 17};
         std::vector<uint32_t> indices = {0, 1, 2, 3};
 
         // Test several permutation indices
-        for (uint32_t perm_index = 0; perm_index < 24; ++perm_index) {
+        for (uint32_t perm_index = 0; perm_index < 24; ++perm_index)
+        {
             // Get the permutation of indices
             std::vector<uint32_t> perm_indices = index_to_permutation(perm_index, indices);
 
             // Apply it manually
             std::vector<uint32_t> expected;
-            for (uint32_t idx : perm_indices) {
+            for (uint32_t idx : perm_indices)
+            {
                 expected.push_back(vec[idx]);
             }
 
@@ -400,45 +451,68 @@ TEST_CASE("apply_permutation consistency with index_to_permutation", "[permutati
     }
 }
 
-TEST_CASE("apply_permutation with duplicate values", "[permutation]") {
-    SECTION("Vector with duplicates") {
+TEST_CASE("apply_permutation with duplicate values", "[permutation]")
+{
+    SECTION("Vector with duplicates")
+    {
         std::vector<uint32_t> vec = {5, 5, 5};
 
         // All permutations should give the same result since all elements are identical
-        for (uint32_t i = 0; i < 6; ++i) {
+        for (uint32_t i = 0; i < 6; ++i)
+        {
             std::vector<uint32_t> test_vec = vec;
             apply_permutation(i, test_vec);
             REQUIRE(test_vec == std::vector<uint32_t>{5, 5, 5});
         }
     }
 
-    SECTION("Vector with some duplicates") {
+    SECTION("Vector with some duplicates")
+    {
         std::vector<uint32_t> vec = {1, 2, 1};
 
-        std::vector<uint32_t> vec0 = vec; apply_permutation(0, vec0); REQUIRE(vec0 == std::vector<uint32_t>{1, 2, 1}); // [0,1,2]
-        std::vector<uint32_t> vec1 = vec; apply_permutation(1, vec1); REQUIRE(vec1 == std::vector<uint32_t>{1, 1, 2}); // [0,2,1]
-        std::vector<uint32_t> vec2 = vec; apply_permutation(2, vec2); REQUIRE(vec2 == std::vector<uint32_t>{2, 1, 1}); // [1,0,2]
-        std::vector<uint32_t> vec3 = vec; apply_permutation(3, vec3); REQUIRE(vec3 == std::vector<uint32_t>{2, 1, 1}); // [1,2,0]
-        std::vector<uint32_t> vec4 = vec; apply_permutation(4, vec4); REQUIRE(vec4 == std::vector<uint32_t>{1, 1, 2}); // [2,0,1]
-        std::vector<uint32_t> vec5 = vec; apply_permutation(5, vec5); REQUIRE(vec5 == std::vector<uint32_t>{1, 2, 1}); // [2,1,0]
+        std::vector<uint32_t> vec0 = vec;
+        apply_permutation(0, vec0);
+        REQUIRE(vec0 == std::vector<uint32_t>{1, 2, 1}); // [0,1,2]
+        std::vector<uint32_t> vec1 = vec;
+        apply_permutation(1, vec1);
+        REQUIRE(vec1 == std::vector<uint32_t>{1, 1, 2}); // [0,2,1]
+        std::vector<uint32_t> vec2 = vec;
+        apply_permutation(2, vec2);
+        REQUIRE(vec2 == std::vector<uint32_t>{2, 1, 1}); // [1,0,2]
+        std::vector<uint32_t> vec3 = vec;
+        apply_permutation(3, vec3);
+        REQUIRE(vec3 == std::vector<uint32_t>{2, 1, 1}); // [1,2,0]
+        std::vector<uint32_t> vec4 = vec;
+        apply_permutation(4, vec4);
+        REQUIRE(vec4 == std::vector<uint32_t>{1, 1, 2}); // [2,0,1]
+        std::vector<uint32_t> vec5 = vec;
+        apply_permutation(5, vec5);
+        REQUIRE(vec5 == std::vector<uint32_t>{1, 2, 1}); // [2,1,0]
     }
 }
 
-TEST_CASE("apply_permutation error handling", "[permutation]") {
-    SECTION("Index too large for vector size") {
+TEST_CASE("apply_permutation error handling", "[permutation]")
+{
+    SECTION("Index too large for vector size")
+    {
         std::vector<uint32_t> vec = {1, 2, 3};
-        std::vector<uint32_t> vec1 = vec; REQUIRE_THROWS_AS(apply_permutation(6, vec1), std::invalid_argument);
-        std::vector<uint32_t> vec2 = vec; REQUIRE_THROWS_AS(apply_permutation(100, vec2), std::invalid_argument);
+        std::vector<uint32_t> vec1 = vec;
+        REQUIRE_THROWS_AS(apply_permutation(6, vec1), std::invalid_argument);
+        std::vector<uint32_t> vec2 = vec;
+        REQUIRE_THROWS_AS(apply_permutation(100, vec2), std::invalid_argument);
     }
 
-    SECTION("Vector too large") {
+    SECTION("Vector too large")
+    {
         std::vector<uint32_t> large_vec(13, 0);
         REQUIRE_THROWS_AS(apply_permutation(0, large_vec), std::invalid_argument);
     }
 }
 
-TEST_CASE("apply_permutation with larger vectors", "[permutation]") {
-    SECTION("Five elements - spot checks") {
+TEST_CASE("apply_permutation with larger vectors", "[permutation]")
+{
+    SECTION("Five elements - spot checks")
+    {
         std::vector<uint32_t> vec = {2, 4, 6, 8, 10};
 
         // Test first permutation
@@ -463,21 +537,28 @@ TEST_CASE("apply_permutation with larger vectors", "[permutation]") {
     }
 }
 
-TEST_CASE("apply_permutation round-trip with permutation_to_index", "[permutation]") {
-    SECTION("Verify apply_permutation gives expected ordering") {
+TEST_CASE("apply_permutation round-trip with permutation_to_index", "[permutation]")
+{
+    SECTION("Verify apply_permutation gives expected ordering")
+    {
         std::vector<uint32_t> vec = {15, 25, 35};
 
         // For each permutation index, apply it and verify we get the expected reordering
-        for (uint32_t perm_index = 0; perm_index < 6; ++perm_index) {
+        for (uint32_t perm_index = 0; perm_index < 6; ++perm_index)
+        {
             std::vector<uint32_t> result = vec;
             apply_permutation(perm_index, result);
 
             // Convert the result positions back to a permutation of indices
             std::vector<uint32_t> result_indices;
-            for (uint32_t val : result) {
-                if (val == 15) result_indices.push_back(0);
-                else if (val == 25) result_indices.push_back(1);
-                else if (val == 35) result_indices.push_back(2);
+            for (uint32_t val : result)
+            {
+                if (val == 15)
+                    result_indices.push_back(0);
+                else if (val == 25)
+                    result_indices.push_back(1);
+                else if (val == 35)
+                    result_indices.push_back(2);
             }
 
             // The permutation index of these indices should match our input

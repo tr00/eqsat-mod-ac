@@ -5,7 +5,8 @@
 #include "sets/abstract_set.h"
 #include "sets/sorted_set.h"
 
-TEST_CASE("AbstractSet basic operations") {
+TEST_CASE("AbstractSet basic operations")
+{
     SortedVecSet sorted_set;
     sorted_set.insert(1);
     sorted_set.insert(2);
@@ -13,7 +14,8 @@ TEST_CASE("AbstractSet basic operations") {
 
     AbstractSet abstract_set(sorted_set);
 
-    SECTION("Size and contains work correctly") {
+    SECTION("Size and contains work correctly")
+    {
         REQUIRE(abstract_set.size() == 3);
         REQUIRE(abstract_set.contains(1) == true);
         REQUIRE(abstract_set.contains(2) == true);
@@ -21,7 +23,8 @@ TEST_CASE("AbstractSet basic operations") {
         REQUIRE(abstract_set.contains(4) == false);
     }
 
-    SECTION("Creating new AbstractSet with additional element") {
+    SECTION("Creating new AbstractSet with additional element")
+    {
         // Create a new SortedVecSet, insert elements, then create AbstractSet
         SortedVecSet new_sorted_set;
         new_sorted_set.insert(1);
@@ -38,11 +41,10 @@ TEST_CASE("AbstractSet basic operations") {
         REQUIRE(new_abstract_set.contains(3) == true);
     }
 
-    SECTION("for_each works correctly") {
+    SECTION("for_each works correctly")
+    {
         std::vector<id_t> collected;
-        abstract_set.for_each([&collected](id_t id) {
-            collected.push_back(id);
-        });
+        abstract_set.for_each([&collected](id_t id) { collected.push_back(id); });
 
         REQUIRE(collected.size() == 3);
         REQUIRE(collected[0] == 1);
@@ -51,14 +53,16 @@ TEST_CASE("AbstractSet basic operations") {
     }
 }
 
-TEST_CASE("AbstractSet move semantics") {
+TEST_CASE("AbstractSet move semantics")
+{
     SortedVecSet sorted_set;
     sorted_set.insert(1);
     sorted_set.insert(2);
 
     AbstractSet original(std::move(sorted_set));
 
-    SECTION("Move constructor works") {
+    SECTION("Move constructor works")
+    {
         AbstractSet moved(std::move(original));
         REQUIRE(moved.size() == 2);
         REQUIRE(moved.contains(1) == true);
@@ -66,7 +70,8 @@ TEST_CASE("AbstractSet move semantics") {
     }
 }
 
-TEST_CASE("Intersection of multiple sets") {
+TEST_CASE("Intersection of multiple sets")
+{
     SortedVecSet set1, set2, set3;
 
     // Set1: {1, 2, 3, 4}
@@ -87,8 +92,8 @@ TEST_CASE("Intersection of multiple sets") {
     set3.insert(5);
     set3.insert(6);
 
-
-    SECTION("Intersection of all three sets") {
+    SECTION("Intersection of all three sets")
+    {
         std::vector<AbstractSet> sets;
         sets.emplace_back(AbstractSet(set1));
         sets.emplace_back(AbstractSet(set2));
@@ -107,7 +112,8 @@ TEST_CASE("Intersection of multiple sets") {
         REQUIRE(result.contains(5) == false);
     }
 
-    SECTION("Intersection of two sets") {
+    SECTION("Intersection of two sets")
+    {
         std::vector<AbstractSet> sets;
         sets.emplace_back(AbstractSet(set1));
         sets.emplace_back(AbstractSet(set2));
@@ -123,7 +129,8 @@ TEST_CASE("Intersection of multiple sets") {
         REQUIRE(result.contains(4) == true);
     }
 
-    SECTION("Intersection of empty vector") {
+    SECTION("Intersection of empty vector")
+    {
         std::vector<AbstractSet> empty_sets;
         SortedVecSet result_set;
         intersect_many(result_set, empty_sets);
@@ -132,7 +139,8 @@ TEST_CASE("Intersection of multiple sets") {
         REQUIRE(result.empty() == true);
     }
 
-    SECTION("Intersection of single set") {
+    SECTION("Intersection of single set")
+    {
         std::vector<AbstractSet> sets;
         sets.emplace_back(AbstractSet(set1));
 

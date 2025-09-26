@@ -1,9 +1,10 @@
-#include <catch2/catch_test_macros.hpp>
 #include "egraph.h"
-#include "theory.h"
 #include "symbol_table.h"
+#include "theory.h"
+#include <catch2/catch_test_macros.hpp>
 
-TEST_CASE("EGraph can do simple pattern matching", "[egraph]") {
+TEST_CASE("EGraph can do simple pattern matching", "[egraph]")
+{
     SymbolTable symbols;
 
     symbol_t var = symbols.intern("v");
@@ -25,12 +26,13 @@ TEST_CASE("EGraph can do simple pattern matching", "[egraph]") {
     auto var_id = egraph.add_expr(var_expr);
     auto mul_id = egraph.add_expr(mul_expr);
 
-    REQUIRE( egraph.is_equiv(var_id, mul_id) == false );
+    REQUIRE(egraph.is_equiv(var_id, mul_id) == false);
 
     egraph.saturate(1);
 }
 
-TEST_CASE("EGraph can insert simple terms", "[egraph][basic]") {
+TEST_CASE("EGraph can insert simple terms", "[egraph][basic]")
+{
     // Create symbol table and theory
     SymbolTable symbols;
     Theory theory;
@@ -50,7 +52,8 @@ TEST_CASE("EGraph can insert simple terms", "[egraph][basic]") {
     // Create EGraph with theory
     EGraph egraph(theory);
 
-    SECTION("Insert constant terms") {
+    SECTION("Insert constant terms")
+    {
         // Create constant expressions
         auto zero_expr = Expression::make_operator(zero_sym);
         auto one_expr = Expression::make_operator(one_sym);
@@ -67,7 +70,8 @@ TEST_CASE("EGraph can insert simple terms", "[egraph][basic]") {
         REQUIRE(zero_id == zero_id2);
     }
 
-    SECTION("Insert composite terms") {
+    SECTION("Insert composite terms")
+    {
         // Create expressions: 0, 1, (+ 0 1)
         auto zero_expr = Expression::make_operator(zero_sym);
         auto one_expr = Expression::make_operator(one_sym);
@@ -89,7 +93,8 @@ TEST_CASE("EGraph can insert simple terms", "[egraph][basic]") {
         REQUIRE(add_id == add_id2);
     }
 
-    SECTION("Insert nested terms") {
+    SECTION("Insert nested terms")
+    {
         // Create expressions: 0, 1, (+ 0 1), (* (+ 0 1) 1)
         auto zero_expr = Expression::make_operator(zero_sym);
         auto one_expr = Expression::make_operator(one_sym);
@@ -107,7 +112,8 @@ TEST_CASE("EGraph can insert simple terms", "[egraph][basic]") {
         REQUIRE(mul_id == mul_id2);
     }
 
-    SECTION("Cannot insert pattern variables") {
+    SECTION("Cannot insert pattern variables")
+    {
         // Create a pattern variable
         symbol_t x_sym = symbols.intern("x");
         auto var_expr = Expression::make_variable(x_sym);

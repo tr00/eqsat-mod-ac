@@ -2,25 +2,30 @@
 
 #include "indices/trie_index.h"
 
-TEST_CASE("TrieNode basic operations", "[trie_node]") {
+TEST_CASE("TrieNode basic operations", "[trie_node]")
+{
     TrieNode node;
 
-    SECTION("Empty node has no keys or children") {
+    SECTION("Empty node has no keys or children")
+    {
         REQUIRE(node.keys.empty());
         REQUIRE(node.children.empty());
         REQUIRE(node.find_key_index(42) == -1);
     }
 
-    SECTION("Find key index on empty node returns -1") {
+    SECTION("Find key index on empty node returns -1")
+    {
         REQUIRE(node.find_key_index(0) == -1);
         REQUIRE(node.find_key_index(100) == -1);
     }
 }
 
-TEST_CASE("TrieNode insert_path single element", "[trie_node]") {
+TEST_CASE("TrieNode insert_path single element", "[trie_node]")
+{
     TrieNode root;
 
-    SECTION("Insert single element path") {
+    SECTION("Insert single element path")
+    {
         std::vector<id_t> path = {42};
         root.insert_path(path);
 
@@ -31,7 +36,8 @@ TEST_CASE("TrieNode insert_path single element", "[trie_node]") {
         REQUIRE(root.find_key_index(43) == -1);
     }
 
-    SECTION("Insert multiple single-element paths") {
+    SECTION("Insert multiple single-element paths")
+    {
         root.insert_path({10});
         root.insert_path({30});
         root.insert_path({20});
@@ -48,7 +54,8 @@ TEST_CASE("TrieNode insert_path single element", "[trie_node]") {
         REQUIRE(root.find_key_index(30) == 2);
     }
 
-    SECTION("Insert duplicate single-element path") {
+    SECTION("Insert duplicate single-element path")
+    {
         root.insert_path({42});
         root.insert_path({42});
 
@@ -59,10 +66,12 @@ TEST_CASE("TrieNode insert_path single element", "[trie_node]") {
     }
 }
 
-TEST_CASE("TrieNode insert_path multiple elements", "[trie_node]") {
+TEST_CASE("TrieNode insert_path multiple elements", "[trie_node]")
+{
     TrieNode root;
 
-    SECTION("Insert two-element path") {
+    SECTION("Insert two-element path")
+    {
         std::vector<id_t> path = {10, 20};
         root.insert_path(path);
 
@@ -70,13 +79,14 @@ TEST_CASE("TrieNode insert_path multiple elements", "[trie_node]") {
         REQUIRE(root.keys[0] == 10);
         REQUIRE(root.children.size() == 1);
 
-        TrieNode* child = root.children[0].get();
+        TrieNode *child = root.children[0].get();
         REQUIRE(child->keys.size() == 1);
         REQUIRE(child->keys[0] == 20);
         REQUIRE(child->children.size() == 1);
     }
 
-    SECTION("Insert multiple paths with shared prefix") {
+    SECTION("Insert multiple paths with shared prefix")
+    {
         root.insert_path({10, 20});
         root.insert_path({10, 30});
         root.insert_path({15, 25});
@@ -88,37 +98,39 @@ TEST_CASE("TrieNode insert_path multiple elements", "[trie_node]") {
         REQUIRE(root.children.size() == 2);
 
         // First child (key 10) should have keys 20, 30
-        TrieNode* child_10 = root.children[0].get();
+        TrieNode *child_10 = root.children[0].get();
         REQUIRE(child_10->keys.size() == 2);
         REQUIRE(child_10->keys[0] == 20);
         REQUIRE(child_10->keys[1] == 30);
         REQUIRE(child_10->children.size() == 2);
 
         // Second child (key 15) should have key 25
-        TrieNode* child_15 = root.children[1].get();
+        TrieNode *child_15 = root.children[1].get();
         REQUIRE(child_15->keys.size() == 1);
         REQUIRE(child_15->keys[0] == 25);
         REQUIRE(child_15->children.size() == 1);
     }
 
-    SECTION("Insert three-element path") {
+    SECTION("Insert three-element path")
+    {
         std::vector<id_t> path = {1, 2, 3};
         root.insert_path(path);
 
         REQUIRE(root.keys.size() == 1);
         REQUIRE(root.keys[0] == 1);
 
-        TrieNode* child1 = root.children[0].get();
+        TrieNode *child1 = root.children[0].get();
         REQUIRE(child1->keys.size() == 1);
         REQUIRE(child1->keys[0] == 2);
 
-        TrieNode* child2 = child1->children[0].get();
+        TrieNode *child2 = child1->children[0].get();
         REQUIRE(child2->keys.size() == 1);
         REQUIRE(child2->keys[0] == 3);
         REQUIRE(child2->children.size() == 1);
     }
 
-    SECTION("Insert empty path does nothing") {
+    SECTION("Insert empty path does nothing")
+    {
         std::vector<id_t> empty_path;
         root.insert_path(empty_path);
 
@@ -127,13 +139,15 @@ TEST_CASE("TrieNode insert_path multiple elements", "[trie_node]") {
     }
 }
 
-TEST_CASE("TrieIndex navigation", "[trie_index]") {
+TEST_CASE("TrieIndex navigation", "[trie_index]")
+{
     TrieNode root;
     root.insert_path({10, 20});
     root.insert_path({10, 30});
     root.insert_path({15, 25});
 
-    SECTION("Basic select operation") {
+    SECTION("Basic select operation")
+    {
         TrieIndex index(root);
 
         // REQUIRE_THROWS( index.select(5) );
@@ -141,7 +155,8 @@ TEST_CASE("TrieIndex navigation", "[trie_index]") {
         // REQUIRE_THROWS( index.select(15) );
     }
 
-    SECTION("Project after select") {
+    SECTION("Project after select")
+    {
         TrieIndex index(root);
 
         // Initially at root
@@ -159,7 +174,8 @@ TEST_CASE("TrieIndex navigation", "[trie_index]") {
         REQUIRE(keys.contains(30));
     }
 
-    SECTION("Select and backtrack") {
+    SECTION("Select and backtrack")
+    {
         TrieIndex index(root);
 
         // Navigate down
@@ -175,7 +191,8 @@ TEST_CASE("TrieIndex navigation", "[trie_index]") {
         REQUIRE(root_keys.contains(15));
     }
 
-    SECTION("Multiple select operations") {
+    SECTION("Multiple select operations")
+    {
         TrieIndex index(root);
 
         index.select(10);
@@ -194,8 +211,10 @@ TEST_CASE("TrieIndex navigation", "[trie_index]") {
     }
 }
 
-TEST_CASE("TrieIndex edge cases", "[trie_index]") {
-    SECTION("Empty node trie") {
+TEST_CASE("TrieIndex edge cases", "[trie_index]")
+{
+    SECTION("Empty node trie")
+    {
         TrieNode root;
         TrieIndex index(root);
 
@@ -203,7 +222,8 @@ TEST_CASE("TrieIndex edge cases", "[trie_index]") {
         REQUIRE(keys.empty());
     }
 
-    SECTION("Trie with only root keys") {
+    SECTION("Trie with only root keys")
+    {
         TrieNode root;
         root.insert_path({10});
         root.insert_path({20});
@@ -221,10 +241,12 @@ TEST_CASE("TrieIndex edge cases", "[trie_index]") {
     }
 }
 
-TEST_CASE("TrieNode find_key_index edge cases", "[trie_node]") {
+TEST_CASE("TrieNode find_key_index edge cases", "[trie_node]")
+{
     TrieNode node;
 
-    SECTION("Find in sorted keys") {
+    SECTION("Find in sorted keys")
+    {
         node.keys = {1, 3, 5, 7, 9};
 
         REQUIRE(node.find_key_index(1) == 0);
@@ -242,7 +264,8 @@ TEST_CASE("TrieNode find_key_index edge cases", "[trie_node]") {
         REQUIRE(node.find_key_index(10) == -1);
     }
 
-    SECTION("Find in single-element keys") {
+    SECTION("Find in single-element keys")
+    {
         node.keys = {42};
 
         REQUIRE(node.find_key_index(42) == 0);

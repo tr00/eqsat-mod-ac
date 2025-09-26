@@ -1,10 +1,11 @@
-#include <catch2/catch_test_macros.hpp>
 #include "egraph.h"
-#include "theory.h"
-#include "symbol_table.h"
 #include "pattern_compiler.h"
+#include "symbol_table.h"
+#include "theory.h"
+#include <catch2/catch_test_macros.hpp>
 
-TEST_CASE("EGraph can handle rewrite rules with pattern compilation", "[egraph][rewrite]") {
+TEST_CASE("EGraph can handle rewrite rules with pattern compilation", "[egraph][rewrite]")
+{
     // Create symbol table and theory
     SymbolTable symbols;
     Theory theory;
@@ -21,7 +22,8 @@ TEST_CASE("EGraph can handle rewrite rules with pattern compilation", "[egraph][
     theory.add_operator(add_sym, 2);
     theory.add_operator(mul_sym, 2);
 
-    SECTION("Add rewrite rules and compile patterns") {
+    SECTION("Add rewrite rules and compile patterns")
+    {
         // Create pattern variables
         symbol_t x_sym = symbols.intern("x");
         symbol_t y_sym = symbols.intern("y");
@@ -84,7 +86,8 @@ TEST_CASE("EGraph can handle rewrite rules with pattern compilation", "[egraph][
         REQUIRE(mul_id > 0);
     }
 
-    SECTION("Compile multiple patterns in batch") {
+    SECTION("Compile multiple patterns in batch")
+    {
         // Create pattern variables
         symbol_t x_sym = symbols.intern("x");
         symbol_t y_sym = symbols.intern("y");
@@ -95,7 +98,7 @@ TEST_CASE("EGraph can handle rewrite rules with pattern compilation", "[egraph][
         auto one_expr = Expression::make_operator(one_sym);
         auto zero_expr = Expression::make_operator(zero_sym);
 
-        auto pattern1 = Expression::make_operator(mul_sym, {one_expr, x_var}); // 1 * x
+        auto pattern1 = Expression::make_operator(mul_sym, {one_expr, x_var});  // 1 * x
         auto pattern2 = Expression::make_operator(add_sym, {zero_expr, x_var}); // 0 + x
         auto pattern3 = Expression::make_operator(mul_sym, {x_var, y_var});     // x * y
 
@@ -108,7 +111,8 @@ TEST_CASE("EGraph can handle rewrite rules with pattern compilation", "[egraph][
         REQUIRE(queries.size() == 3);
 
         // Each query should have at least one constraint
-        for (const auto& query : queries) {
+        for (const auto &query : queries)
+        {
             REQUIRE(query.constraints.size() >= 1);
             REQUIRE(query.head.size() > 0);
         }

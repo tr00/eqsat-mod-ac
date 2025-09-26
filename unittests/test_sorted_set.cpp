@@ -3,16 +3,19 @@
 
 #include "sets/sorted_set.h"
 
-TEST_CASE("SortedSet insertion", "[sorted_set]") {
+TEST_CASE("SortedSet insertion", "[sorted_set]")
+{
     SortedVecSet set;
 
-    SECTION("Insert single element") {
+    SECTION("Insert single element")
+    {
         REQUIRE(set.insert(42));
         REQUIRE(set.size() == 1);
         REQUIRE(set.contains(42));
     }
 
-    SECTION("Insert multiple elements") {
+    SECTION("Insert multiple elements")
+    {
         REQUIRE(set.insert(30));
         REQUIRE(set.insert(10));
         REQUIRE(set.insert(20));
@@ -23,7 +26,8 @@ TEST_CASE("SortedSet insertion", "[sorted_set]") {
         REQUIRE(set.contains(30));
     }
 
-    SECTION("Insert duplicate elements") {
+    SECTION("Insert duplicate elements")
+    {
         REQUIRE(set.insert(15));
         REQUIRE_FALSE(set.insert(15));
 
@@ -31,25 +35,29 @@ TEST_CASE("SortedSet insertion", "[sorted_set]") {
         REQUIRE(set.contains(15));
     }
 
-    SECTION("Elements are stored in sorted order") {
+    SECTION("Elements are stored in sorted order")
+    {
         set.insert(50);
         set.insert(10);
         set.insert(30);
         set.insert(20);
 
-        REQUIRE( std::is_sorted(set.begin(), set.end()) );
+        REQUIRE(std::is_sorted(set.begin(), set.end()));
     }
 }
 
-TEST_CASE("SortedSet membership", "[sorted_set]") {
+TEST_CASE("SortedSet membership", "[sorted_set]")
+{
     SortedVecSet set;
 
-    SECTION("Empty set contains nothing") {
+    SECTION("Empty set contains nothing")
+    {
         REQUIRE_FALSE(set.contains(0));
         REQUIRE_FALSE(set.contains(100));
     }
 
-    SECTION("Contains inserted elements") {
+    SECTION("Contains inserted elements")
+    {
         set.insert(5);
         set.insert(15);
         set.insert(25);
@@ -59,7 +67,8 @@ TEST_CASE("SortedSet membership", "[sorted_set]") {
         REQUIRE(set.contains(25));
     }
 
-    SECTION("Does not contain non-inserted elements") {
+    SECTION("Does not contain non-inserted elements")
+    {
         set.insert(10);
         set.insert(20);
 
@@ -69,15 +78,18 @@ TEST_CASE("SortedSet membership", "[sorted_set]") {
     }
 }
 
-TEST_CASE("SortedSet utilities", "[sorted_set]") {
+TEST_CASE("SortedSet utilities", "[sorted_set]")
+{
     SortedVecSet set;
 
-    SECTION("Empty set properties") {
+    SECTION("Empty set properties")
+    {
         REQUIRE(set.empty());
         REQUIRE(set.size() == 0);
     }
 
-    SECTION("Non-empty set properties") {
+    SECTION("Non-empty set properties")
+    {
         set.insert(1);
         set.insert(2);
 
@@ -85,7 +97,8 @@ TEST_CASE("SortedSet utilities", "[sorted_set]") {
         REQUIRE(set.size() == 2);
     }
 
-    SECTION("Clear functionality") {
+    SECTION("Clear functionality")
+    {
         set.insert(1);
         set.insert(2);
         set.clear();
@@ -96,13 +109,15 @@ TEST_CASE("SortedSet utilities", "[sorted_set]") {
         REQUIRE_FALSE(set.contains(2));
     }
 
-    SECTION("Iterator functionality") {
+    SECTION("Iterator functionality")
+    {
         set.insert(30);
         set.insert(10);
         set.insert(20);
 
         std::vector<id_t> values;
-        for (auto id : set) {
+        for (auto id : set)
+        {
             values.push_back(id);
         }
 
