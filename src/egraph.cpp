@@ -1,5 +1,5 @@
 #include "egraph.h"
-#include "pattern_compiler.h"
+#include "compiler.h"
 #include <cassert>
 #include <cstddef>
 #include <stdexcept>
@@ -14,13 +14,13 @@ EGraph::EGraph(const Theory& theory) : theory(theory)
     // compile rewrite rule patterns to queries
     if (!theory.rewrite_rules.empty())
     {
-        PatternCompiler compiler;
+        Compiler compiler;
 
-        std::vector<std::shared_ptr<Expr>> patterns;
+        std::vector<Query> queries;
         for (const auto& rule : theory.rewrite_rules)
-            patterns.push_back(rule.left_side);
-
-        std::vector<Query> queries = compiler.compile_patterns(patterns);
+        {
+            queries.push_back(compiler.compile(rule));
+        }
 
         // queries now contains the compiled patterns
         // (future work: store these for use in saturation)

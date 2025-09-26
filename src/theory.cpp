@@ -27,7 +27,7 @@ std::shared_ptr<Expr> Expr::make_operator(symbol_t op, const std::vector<std::sh
 }
 
 RewriteRule::RewriteRule(symbol_t name, std::shared_ptr<Expr> lhs, std::shared_ptr<Expr> rhs)
-    : name(name), left_side(lhs), right_side(rhs)
+    : name(name), lhs(lhs), rhs(rhs)
 {
 }
 
@@ -52,7 +52,7 @@ int Theory::get_arity(symbol_t symbol) const
     return -1;
 }
 
-void Theory::add_rewrite_rule(symbol_t name, std::shared_ptr<Expr> lhs, std::shared_ptr<Expr> rhs)
+void Theory::add_rewrite_rule(const std::string& name, std::shared_ptr<Expr> lhs, std::shared_ptr<Expr> rhs)
 {
-    rewrite_rules.emplace_back(name, lhs, rhs);
+    rewrite_rules.emplace_back(intern(name), lhs, rhs);
 }

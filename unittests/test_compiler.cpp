@@ -1,4 +1,4 @@
-#include "../src/pattern_compiler.h"
+#include "../src/compiler.h"
 #include "../src/symbol_table.h"
 #include "../src/theory.h"
 #include <catch2/catch_test_macros.hpp>
@@ -7,13 +7,15 @@
 TEST_CASE("Simple expression compilation", "[pattern_compiler]")
 {
     // Create a simple expression: f()
-    SymbolTable symbols;
-    symbol_t f = symbols.intern("f");
+    Theory theory;
+    symbol_t f = theory.intern("f");
 
     auto expr = Expr::make_operator(f);
 
-    PatternCompiler compiler;
-    Query query = compiler.compile_pattern(expr);
+    Compiler compiler;
+    symbol_t rule_name = theory.intern("test_rule");
+    RewriteRule rule(rule_name, expr, expr);
+    Query query = compiler.compile(rule);
 
     // Should have one constraint: f(0)
     REQUIRE(query.constraints.size() == 1);
@@ -29,17 +31,19 @@ TEST_CASE("Simple expression compilation", "[pattern_compiler]")
 TEST_CASE("Nested expression compilation", "[pattern_compiler]")
 {
     // Create expression: g(f(), h())
-    SymbolTable symbols;
-    symbol_t f = symbols.intern("f");
-    symbol_t g = symbols.intern("g");
-    symbol_t h = symbols.intern("h");
+    Theory theory;
+    symbol_t f = theory.intern("f");
+    symbol_t g = theory.intern("g");
+    symbol_t h = theory.intern("h");
 
     auto f_expr = Expr::make_operator(f);
     auto h_expr = Expr::make_operator(h);
     auto g_expr = Expr::make_operator(g, std::vector<std::shared_ptr<Expr>>{f_expr, h_expr});
 
-    PatternCompiler compiler;
-    Query query = compiler.compile_pattern(g_expr);
+    Compiler compiler;
+    symbol_t rule_name = theory.intern("test_rule");
+    RewriteRule rule(rule_name, g_expr, g_expr);
+    Query query = compiler.compile(rule);
 
     // Should have three constraints: f(1), h(2), g(0, 1, 2)
     REQUIRE(query.constraints.size() == 3);
@@ -69,12 +73,12 @@ TEST_CASE("Nested expression compilation", "[pattern_compiler]")
 TEST_CASE("Deeply nested expression compilation", "[pattern_compiler]")
 {
     // Create expression: add(mul(x, y), z) where x, y, z are variables
-    SymbolTable symbols;
-    symbol_t add = symbols.intern("add");
-    symbol_t mul = symbols.intern("mul");
-    symbol_t x = symbols.intern("x");
-    symbol_t y = symbols.intern("y");
-    symbol_t z = symbols.intern("z");
+    Theory theory;
+    symbol_t add = theory.intern("add");
+    symbol_t mul = theory.intern("mul");
+    symbol_t x = theory.intern("x");
+    symbol_t y = theory.intern("y");
+    symbol_t z = theory.intern("z");
 
     auto x_expr = Expr::make_variable(x);
     auto y_expr = Expr::make_variable(y);
@@ -82,8 +86,10 @@ TEST_CASE("Deeply nested expression compilation", "[pattern_compiler]")
     auto mul_expr = Expr::make_operator(mul, std::vector<std::shared_ptr<Expr>>{x_expr, y_expr});
     auto add_expr = Expr::make_operator(add, std::vector<std::shared_ptr<Expr>>{mul_expr, z_expr});
 
-    PatternCompiler compiler;
-    Query query = compiler.compile_pattern(add_expr);
+    Compiler compiler;
+    symbol_t rule_name = theory.intern("test_rule");
+    RewriteRule rule(rule_name, add_expr, add_expr);
+    Query query = compiler.compile(rule);
 
     // mul(1, 2, 3), add(0, 1, 4)
     REQUIRE(query.constraints.size() == 2);
@@ -111,17 +117,20 @@ TEST_CASE("Deeply nested expression compilation", "[pattern_compiler]")
 
 TEST_CASE("Multiple patterns compilation", "[pattern_compiler]")
 {
-    SymbolTable symbols;
-    symbol_t f = symbols.intern("f");
-    symbol_t g = symbols.intern("g");
+    Theory theory;
+    symbol_t f = theory.intern("f");
+    symbol_t g = theory.intern("g");
 
     auto f_expr = Expr::make_operator(f);
     auto g_expr = Expr::make_operator(g);
 
-    std::vector<std::shared_ptr<Expr>> patterns = {f_expr, g_expr};
+    symbol_t rule1_name = theory.intern("rule1");
+    symbol_t rule2_name = theory.intern("rule2");
+    std::vector<RewriteRule> patterns = {RewriteRule(rule1_name, f_expr, f_expr),
+                                         RewriteRule(rule2_name, g_expr, g_expr)};
 
-    PatternCompiler compiler;
-    std::vector<Query> queries = compiler.compile_patterns(patterns);
+    Compiler compiler;
+    std::vector<Query> queries = compiler.compile_many(patterns);
 
     REQUIRE(queries.size() == 2);
 

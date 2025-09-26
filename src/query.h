@@ -48,6 +48,9 @@ class Constraint
 class Query
 {
   public:
+    /** @brief Name identifier for this query */
+    symbol_t name;
+
     /** @brief List of constraints that must all be satisfied */
     std::vector<Constraint> constraints;
 
@@ -55,17 +58,20 @@ class Query
     std::vector<var_t> head;
 
     /**
-     * @brief Construct an empty query
+     * @brief Construct an empty query with a name
+     *
+     * @param name Name identifier for this query
      */
-    Query();
+    Query(symbol_t name);
 
     /**
-     * @brief Construct a query with constraints and head variables
+     * @brief Construct a query with name, constraints and head variables
      *
+     * @param name Name identifier for this query
      * @param constraints List of constraints for this query
      * @param head List of head variables to project in results
      */
-    Query(const std::vector<Constraint>& constraints, const std::vector<var_t>& head);
+    Query(symbol_t name, const std::vector<Constraint>& constraints, const std::vector<var_t>& head);
 
     /**
      * @brief Add a constraint to this query
@@ -88,6 +94,11 @@ class Query
      * @param var Variable to add to the head
      */
     void add_head_var(var_t var);
+};
+
+class Subst
+{
+    symbol_t name;
 };
 
 /**

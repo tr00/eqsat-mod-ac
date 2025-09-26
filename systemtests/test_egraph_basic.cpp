@@ -31,15 +31,14 @@ TEST_CASE("EGraph can do simple pattern matching", "[egraph]")
 
 TEST_CASE("EGraph can insert simple terms", "[egraph][basic]")
 {
-    // Create symbol table and theory
-    SymbolTable symbols;
+    // Create theory
     Theory theory;
 
     // Create some operators
-    symbol_t zero_sym = symbols.intern("0");
-    symbol_t one_sym = symbols.intern("1");
-    symbol_t add_sym = symbols.intern("+");
-    symbol_t mul_sym = symbols.intern("*");
+    symbol_t zero_sym = theory.intern("0");
+    symbol_t one_sym = theory.intern("1");
+    symbol_t add_sym = theory.intern("+");
+    symbol_t mul_sym = theory.intern("*");
 
     // Add operators to theory
     theory.add_operator(zero_sym, 0);
@@ -113,7 +112,7 @@ TEST_CASE("EGraph can insert simple terms", "[egraph][basic]")
     SECTION("Cannot insert pattern variables")
     {
         // Create a pattern variable
-        symbol_t x_sym = symbols.intern("x");
+        symbol_t x_sym = theory.intern("x");
         auto var_expr = Expr::make_variable(x_sym);
 
         // Should throw when trying to insert a variable

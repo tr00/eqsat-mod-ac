@@ -106,22 +106,18 @@ class RewriteRule
 {
   public:
     symbol_t name;
-    std::shared_ptr<Expr> left_side;
-    std::shared_ptr<Expr> right_side;
+    std::shared_ptr<Expr> lhs;
+    std::shared_ptr<Expr> rhs;
 
     RewriteRule(symbol_t name, std::shared_ptr<Expr> lhs, std::shared_ptr<Expr> rhs);
-};
-
-class RewriteRuleInternal
-{
-  private:
-    symbol_t name;
 };
 
 class Theory
 {
   public:
     SymbolTable symbols;
+
+    // symbol --> arity
     std::unordered_map<symbol_t, int> operators;
     std::vector<RewriteRule> rewrite_rules;
 
@@ -143,10 +139,5 @@ class Theory
     bool has_operator(symbol_t symbol) const;
     int get_arity(symbol_t symbol) const;
 
-    void add_rewrite_rule(const std::string& name, std::shared_ptr<Expr> lhs, std::shared_ptr<Expr> rhs)
-    {
-        add_rewrite_rule(intern(name), lhs, rhs);
-    }
-
-    void add_rewrite_rule(symbol_t name, std::shared_ptr<Expr> lhs, std::shared_ptr<Expr> rhs);
+    void add_rewrite_rule(const std::string& name, std::shared_ptr<Expr> lhs, std::shared_ptr<Expr> rhs);
 };

@@ -20,7 +20,7 @@ set(LIB_SOURCES
     src/symbol_table.cpp
     src/union_find.cpp
     src/query.cpp
-    src/pattern_compiler.cpp
+    src/compiler.cpp
     src/egraph.cpp
     src/permutation.cpp
     src/engine.cpp
@@ -54,7 +54,7 @@ endif()
 add_executable(unittests
     unittests/test_sorted_set.cpp
     unittests/test_abstract_set.cpp
-    unittests/test_pattern_compiler.cpp
+    unittests/test_compiler.cpp
     unittests/test_union_find.cpp
     unittests/test_trie_index.cpp
     unittests/test_permutation.cpp

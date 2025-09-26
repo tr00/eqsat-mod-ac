@@ -5,13 +5,12 @@ Constraint::Constraint(symbol_t op, const std::vector<var_t>& vars) : operator_s
 {
 }
 
-// Query implementation
-Query::Query()
+Query::Query(symbol_t name) : name(name)
 {
 }
 
-Query::Query(const std::vector<Constraint>& constraints, const std::vector<var_t>& head)
-    : constraints(constraints), head(head)
+Query::Query(symbol_t name, const std::vector<Constraint>& constraints, const std::vector<var_t>& head)
+    : name(name), constraints(constraints), head(head)
 {
 }
 

@@ -5,7 +5,7 @@ C++17 library implementing e-graphs (equality saturation) with custom database f
 ## Build System
 
 - **Build**: `just build` (creates `libeqsat.a`)
-- **Test**: `just {test/unittests/systemtes}`
+- **Test**: `just {test/unittests/systemtests}`
 - **Format**: `just format`
 - **Full**: `just all`
 
@@ -52,14 +52,13 @@ C++17 library implementing e-graphs (equality saturation) with custom database f
 ### Query System
 
 - `Query` (`src/query.h`): Conjunctive queries with constraints
-- `PatternCompiler` (`src/pattern_compiler.h`): Expression → query conversion
-- `QueryCompiler` (`src/query_compiler.h`): Query compilation
+- `Compiler` (`src/compiler.h`): Expression → query conversion
 - `Engine` (`src/engine.h`): Query execution engine
 
 ## File Structure
 
 ```
-src/: Core components (16 headers, 15 implementations)
+src/: Core components (15 headers, 14 implementations)
 ├── relations/abstract_relation.h
 ├── indices/abstract_index.h
 ├── sets/abstract_set.h
@@ -74,11 +73,8 @@ systemtests/: 3 test files
 ```cpp
 Theory theory;
 
-symbol_t one = theory.intern("1");
-symbol_t mul = theory.intern("*");
-
-theory.add_operator(one, 0);
-theory.add_operator(mul, 2);
+theory.add_operator("1", 0);
+theory.add_operator("*", 2);
 
 EGraph egraph(theory);
 ```
@@ -86,13 +82,14 @@ EGraph egraph(theory);
 ### Term Insertion
 
 ```cpp
-EGraph egraph;
-auto expr = Expression::make_operator(mul, {x_expr, y_expr});
+// ...
+auto expr = Expr::make_operator(mul, {x_expr, y_expr});
 id_t expr_id = egraph.add_expr(expr);
 ```
 
-## #Pattern Compilation
+### Pattern Compilation
 
-```cpp PatternCompiler compiler;
+```cpp
+Compiler compiler;
 Query compiled = compiler.compile_pattern(pattern_expr);
 ```

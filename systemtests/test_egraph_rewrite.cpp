@@ -1,20 +1,19 @@
+#include "compiler.h"
 #include "egraph.h"
-#include "pattern_compiler.h"
 #include "symbol_table.h"
 #include "theory.h"
 #include <catch2/catch_test_macros.hpp>
 
 TEST_CASE("EGraph can handle rewrite rules with pattern compilation", "[egraph][rewrite]")
 {
-    // Create symbol table and theory
-    SymbolTable symbols;
+    // Create theory
     Theory theory;
 
     // Create operators
-    symbol_t zero_sym = symbols.intern("0");
-    symbol_t one_sym = symbols.intern("1");
-    symbol_t add_sym = symbols.intern("+");
-    symbol_t mul_sym = symbols.intern("*");
+    symbol_t zero_sym = theory.intern("0");
+    symbol_t one_sym = theory.intern("1");
+    symbol_t add_sym = theory.intern("+");
+    symbol_t mul_sym = theory.intern("*");
 
     // Add operators to theory
     theory.add_operator(zero_sym, 0);
@@ -25,9 +24,9 @@ TEST_CASE("EGraph can handle rewrite rules with pattern compilation", "[egraph][
     SECTION("Add rewrite rules and compile patterns")
     {
         // Create pattern variables
-        symbol_t x_sym = symbols.intern("x");
-        symbol_t y_sym = symbols.intern("y");
-        symbol_t z_sym = symbols.intern("z");
+        symbol_t x_sym = theory.intern("x");
+        symbol_t y_sym = theory.intern("y");
+        symbol_t z_sym = theory.intern("z");
 
         auto x_var = Expr::make_variable(x_sym);
         auto y_var = Expr::make_variable(y_sym);
@@ -50,15 +49,19 @@ TEST_CASE("EGraph can handle rewrite rules with pattern compilation", "[egraph][
         REQUIRE(theory.rewrite_rules.size() == 2);
 
         // Test pattern compilation
-        PatternCompiler compiler;
+        Compiler compiler;
 
         // Compile the left-hand side of the first rule
-        Query identity_query = compiler.compile_pattern(mul_one_x);
+        symbol_t rule_name = theory.intern("identity_test");
+        RewriteRule identity_rule(rule_name, mul_one_x, x_var);
+        Query identity_query = compiler.compile(identity_rule);
         REQUIRE(identity_query.constraints.size() == 2); // one constraint for "1", one for "*"
         REQUIRE(identity_query.head.size() > 0);
 
         // Compile the left-hand side of the distributivity rule
-        Query distributivity_query = compiler.compile_pattern(x_mul_sum);
+        symbol_t dist_rule_name = theory.intern("dist_test");
+        RewriteRule dist_rule(dist_rule_name, x_mul_sum, distributed);
+        Query distributivity_query = compiler.compile(dist_rule);
         REQUIRE(distributivity_query.constraints.size() == 2); // one for "+", one for "*"
         REQUIRE(distributivity_query.head.size() > 0);
 
@@ -89,8 +92,8 @@ TEST_CASE("EGraph can handle rewrite rules with pattern compilation", "[egraph][
     SECTION("Compile multiple patterns in batch")
     {
         // Create pattern variables
-        symbol_t x_sym = symbols.intern("x");
-        symbol_t y_sym = symbols.intern("y");
+        symbol_t x_sym = theory.intern("x");
+        symbol_t y_sym = theory.intern("y");
         auto x_var = Expr::make_variable(x_sym);
         auto y_var = Expr::make_variable(y_sym);
 
@@ -102,11 +105,15 @@ TEST_CASE("EGraph can handle rewrite rules with pattern compilation", "[egraph][
         auto pattern2 = Expr::make_operator(add_sym, {zero_expr, x_var}); // 0 + x
         auto pattern3 = Expr::make_operator(mul_sym, {x_var, y_var});     // x * y
 
-        std::vector<std::shared_ptr<Expr>> patterns = {pattern1, pattern2, pattern3};
+        symbol_t name1 = theory.intern("pattern1");
+        symbol_t name2 = theory.intern("pattern2");
+        symbol_t name3 = theory.intern("pattern3");
+        std::vector<RewriteRule> patterns = {RewriteRule(name1, pattern1, x_var), RewriteRule(name2, pattern2, x_var),
+                                             RewriteRule(name3, pattern3, pattern3)};
 
         // Compile all patterns
-        PatternCompiler compiler;
-        std::vector<Query> queries = compiler.compile_patterns(patterns);
+        Compiler compiler;
+        std::vector<Query> queries = compiler.compile_many(patterns);
 
         REQUIRE(queries.size() == 3);
 
