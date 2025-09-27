@@ -5,7 +5,7 @@
 
 #include "../id.h"
 #include "sorted_iter_set.h"
-#include "sorted_set.h"
+#include "sorted_vec_set.h"
 
 enum SetKind
 {

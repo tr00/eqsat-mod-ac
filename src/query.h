@@ -1,6 +1,10 @@
 #pragma once
 
+#include "egraph.h"
 #include "symbol_table.h"
+#include "theory.h"
+#include <memory>
+#include <unordered_map>
 #include <vector>
 
 /**
@@ -98,7 +102,20 @@ class Query
 
 class Subst
 {
+  private:
     symbol_t name;
+    std::shared_ptr<Expr> root;
+    std::unordered_map<symbol_t, int> env;
+
+    id_t instantiate_rec(EGraph& egraph, const std::vector<id_t>& match, std::shared_ptr<Expr> expr);
+
+  public:
+    Subst(symbol_t name, std::shared_ptr<Expr> root, std::unordered_map<symbol_t, int> env)
+        : name(name), root(root), env(env)
+    {
+    }
+
+    id_t instantiate(EGraph& egraph, const std::vector<id_t>& match);
 };
 
 /**

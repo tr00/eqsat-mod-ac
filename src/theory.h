@@ -85,6 +85,11 @@ class Expr
         return kind == NodeKind::OPERATOR;
     }
 
+    size_t nchildren() const
+    {
+        return children.size();
+    }
+
   private:
     /**
      * @brief Private constructor for creating expressions.

@@ -7,17 +7,14 @@ TEST_CASE("EGraph can do simple pattern matching", "[egraph]")
 {
     Theory theory;
 
-    symbol_t var = theory.intern("v");
-    symbol_t one = theory.intern("1");
-    symbol_t mul = theory.intern("*");
-
-    theory.add_operator(var, 0);
-    theory.add_operator(one, 0);
-    theory.add_operator(mul, 2);
+    auto one = theory.add_operator("one", 0);
+    auto var = theory.add_operator("var", 1);
+    auto mul = theory.add_operator("mul", 2);
 
     EGraph egraph(theory);
 
-    auto var_expr = Expr::make_operator(var);
+    // (mul (one) (var 0))
+    auto var_expr = Expr::make_operator(var, {0});
     auto one_expr = Expr::make_operator(one);
     auto mul_expr = Expr::make_operator(mul, {one_expr, var_expr});
 

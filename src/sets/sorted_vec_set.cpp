@@ -1,4 +1,4 @@
-#include "sorted_set.h"
+#include "sorted_vec_set.h"
 
 bool SortedVecSet::insert(id_t id)
 {

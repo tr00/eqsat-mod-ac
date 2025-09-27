@@ -11,28 +11,17 @@
 
 class ENode
 {
-  private:
-    symbol_t op;
-    std::vector<id_t> children;
-
   public:
-    ENode(symbol_t op, std::vector<id_t> children) : op(op), children(std::move(children))
+    symbol_t op;
+    const std::vector<id_t> children;
+
+    ENode(symbol_t op, std::vector<id_t> children) : op(op), children(children)
     {
     }
 
     bool operator==(const ENode& other) const
     {
         return op == other.op && children == other.children;
-    }
-
-    symbol_t get_operator() const
-    {
-        return op;
-    }
-
-    const std::vector<id_t>& get_children() const
-    {
-        return children;
     }
 };
 
@@ -42,10 +31,10 @@ template <> struct hash<ENode>
 {
     size_t operator()(const ENode& node) const
     {
-        size_t h1 = std::hash<symbol_t>{}(node.get_operator());
+        size_t h1 = std::hash<symbol_t>{}(node.op);
         size_t h2 = 0;
 
-        auto children = node.get_children();
+        auto children = node.children;
         for (const auto& child : children)
         {
             h2 ^= std::hash<id_t>{}(child) + 0x9e3779b9 + (h2 << 6) + (h2 >> 2);
@@ -75,6 +64,9 @@ class EGraph
     EGraph& operator=(EGraph&&) = default;
 
     id_t add_expr(std::shared_ptr<Expr> expression);
+    id_t add_enode(ENode enode);
+    id_t add_enode(symbol_t symbol, std::vector<id_t> children);
+
     id_t unify(id_t a, id_t b);
 
     bool is_equiv(id_t a, id_t b)

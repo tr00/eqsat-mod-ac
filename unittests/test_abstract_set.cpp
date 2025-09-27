@@ -3,7 +3,6 @@
 #include <catch2/catch_test_macros.hpp>
 
 #include "sets/abstract_set.h"
-#include "sets/sorted_set.h"
 
 TEST_CASE("AbstractSet basic operations")
 {

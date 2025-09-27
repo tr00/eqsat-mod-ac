@@ -1,5 +1,20 @@
 #include "compiler.h"
 #include "theory.h"
+#include <unordered_map>
+#include <vector>
+
+std::unordered_map<int, int> create_consecutive_index_map(const std::vector<int>& unique_indices)
+{
+    std::unordered_map<int, int> index_map;
+    int consecutive_index = 0;
+
+    for (int old_index : unique_indices)
+    {
+        index_map[old_index] = consecutive_index++;
+    }
+
+    return index_map;
+}
 
 Compiler::Compiler() : next_id(0)
 {
@@ -50,13 +65,13 @@ Query Compiler::compile(RewriteRule rule)
     next_id = 0;
 
     // Symbol to variable mapping (for future extensions like variable reuse)
-    std::unordered_map<symbol_t, var_t> symbol_to_var;
+    std::unordered_map<symbol_t, var_t> env;
 
     // Create empty query with name
     Query query(rule.name);
 
     // Compile the pattern recursively
-    var_t root = compile_rec(rule.lhs, symbol_to_var, query);
+    var_t root = compile_rec(rule.lhs, env, query);
 
     // Add the root variable to the head
     query.add_head_var(root);

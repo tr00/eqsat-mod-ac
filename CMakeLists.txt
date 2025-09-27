@@ -27,15 +27,22 @@ set(LIB_SOURCES
     src/database.cpp
     src/relations/row_store.cpp
     src/indices/trie_index.cpp
-    src/sets/sorted_set.cpp
+    src/sets/sorted_vec_set.cpp
     src/sets/abstract_set.cpp
 )
 
 # Create static library
 add_library(eqsat STATIC ${LIB_SOURCES})
 
+# Add small_vector subdirectory
+add_subdirectory(external/small_vector)
+
 # Include directories
 target_include_directories(eqsat PUBLIC src)
+target_include_directories(eqsat PUBLIC external/small_vector/source/include)
+
+# Link small_vector to main library
+target_link_libraries(eqsat PUBLIC gch::small_vector)
 
 # Find or fetch Catch2
 find_package(Catch2 3 QUIET)

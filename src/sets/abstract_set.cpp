@@ -1,7 +1,6 @@
 #include <algorithm>
 
 #include "abstract_set.h"
-#include "sorted_set.h"
 
 // TODO: partially sorting.
 

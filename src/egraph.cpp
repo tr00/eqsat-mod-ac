@@ -3,6 +3,7 @@
 #include <cassert>
 #include <cstddef>
 #include <stdexcept>
+#include <vector>
 
 EGraph::EGraph(const Theory& theory) : theory(theory)
 {
@@ -16,55 +17,53 @@ EGraph::EGraph(const Theory& theory) : theory(theory)
     {
         Compiler compiler;
 
-        std::vector<Query> queries;
-        for (const auto& rule : theory.rewrite_rules)
-        {
-            queries.push_back(compiler.compile(rule));
-        }
+        std::vector<Query> queries = compiler.compile_many(theory.rewrite_rules);
 
         // queries now contains the compiled patterns
         // (future work: store these for use in saturation)
     }
 }
 
-id_t EGraph::add_expr(std::shared_ptr<Expr> expression)
+id_t EGraph::add_expr(std::shared_ptr<Expr> expr)
 {
-    if (expression->is_variable())
-    {
-        // Variables are not supported in e-graphs, only concrete terms
+    if (expr->is_variable())
         throw std::runtime_error("Cannot insert pattern variables into e-graph");
-    }
 
     // Recursively insert children and collect their ids
     std::vector<id_t> child_ids;
-    child_ids.reserve(expression->children.size());
+    child_ids.reserve(expr->children.size());
 
-    for (const auto& child : expression->children)
+    for (const auto& child : expr->children)
     {
         id_t child_id = add_expr(child);
         child_ids.push_back(child_id);
     }
 
-    ENode node(expression->symbol, child_ids);
+    return add_enode(expr->symbol, std::move(child_ids));
+}
 
-    // check if this e-node already exists in the memo table
-    auto it = memo.find(node);
+id_t EGraph::add_enode(symbol_t symbol, std::vector<id_t> children)
+{
+    ENode enode(symbol, std::move(children));
+    return add_enode(std::move(enode));
+}
+
+id_t EGraph::add_enode(ENode enode)
+{
+    auto it = memo.find(enode);
     if (it != memo.end())
         return it->second;
 
-    // Create a new id for this e-node
-    id_t new_id = uf.make_set();
-    memo[node] = new_id;
+    id_t id = uf.make_set();
 
-    // Add the e-node to the database as a tuple
-    // The tuple consists of child_ids followed by the new_id
-    std::vector<id_t> tuple = child_ids;
-    tuple.push_back(new_id);
+    std::vector<id_t> tuple = enode.children; // copy
+    tuple.push_back(id);
 
-    assert(db.has_relation(expression->symbol));
-    db.add_tuple(expression->symbol, tuple);
+    assert(db.has_relation(enode.op));
+    db.add_tuple(enode.op, tuple);
 
-    return new_id;
+    memo[std::move(enode)] = id;
+    return id;
 }
 
 id_t EGraph::unify(id_t a, id_t b)

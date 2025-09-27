@@ -1,7 +1,7 @@
 #include <algorithm>
 #include <catch2/catch_test_macros.hpp>
 
-#include "sets/sorted_set.h"
+#include "sets/sorted_vec_set.h"
 
 TEST_CASE("SortedSet insertion", "[sorted_set]")
 {

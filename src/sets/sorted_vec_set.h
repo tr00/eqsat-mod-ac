@@ -1,13 +1,13 @@
 #pragma once
 
-#include <vector>
+#include <gch/small_vector.hpp>
 
 #include "../id.h"
 
 class SortedVecSet
 {
   private:
-    std::vector<id_t> data;
+    gch::small_vector<id_t, 8> data;
 
   public:
     SortedVecSet() {};
@@ -35,12 +35,12 @@ class SortedVecSet
         data.clear();
     }
 
-    std::vector<id_t>::const_iterator begin() const
+    gch::small_vector<id_t>::const_iterator begin() const
     {
         return data.begin();
     }
 
-    std::vector<id_t>::const_iterator end() const
+    gch::small_vector<id_t>::const_iterator end() const
     {
         return data.end();
     }

@@ -10,8 +10,7 @@ class Compiler
   private:
     var_t next_id;
 
-    var_t compile_rec(const std::shared_ptr<Expr>& expr, std::unordered_map<symbol_t, var_t>& symbol_to_var,
-                      Query& query);
+    var_t compile_rec(const std::shared_ptr<Expr>& expr, std::unordered_map<symbol_t, var_t>& env, Query& query);
 
   public:
     Compiler();
