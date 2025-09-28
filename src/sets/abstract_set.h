@@ -117,7 +117,8 @@ class AbstractSet
         return size() == 0;
     }
 
-    template <typename Func> void for_each(Func f) const
+    template <typename Func>
+    void for_each(Func f) const
     {
         switch (kind)
         {

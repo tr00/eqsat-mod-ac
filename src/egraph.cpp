@@ -42,7 +42,7 @@ id_t EGraph::add_expr(std::shared_ptr<Expr> expr)
     return add_enode(expr->symbol, std::move(child_ids));
 }
 
-id_t EGraph::add_enode(symbol_t symbol, std::vector<id_t> children)
+id_t EGraph::add_enode(Symbol symbol, std::vector<id_t> children)
 {
     ENode enode(symbol, std::move(children));
     return add_enode(std::move(enode));

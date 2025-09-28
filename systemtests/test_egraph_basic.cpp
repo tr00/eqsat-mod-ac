@@ -8,13 +8,13 @@ TEST_CASE("EGraph can do simple pattern matching", "[egraph]")
     Theory theory;
 
     auto one = theory.add_operator("one", 0);
-    auto var = theory.add_operator("var", 1);
+    auto var = theory.add_operator("var", 0);
     auto mul = theory.add_operator("mul", 2);
 
     EGraph egraph(theory);
 
-    // (mul (one) (var 0))
-    auto var_expr = Expr::make_operator(var, {0});
+    // 1 * v
+    auto var_expr = Expr::make_operator(var);
     auto one_expr = Expr::make_operator(one);
     auto mul_expr = Expr::make_operator(mul, {one_expr, var_expr});
 
@@ -32,10 +32,10 @@ TEST_CASE("EGraph can insert simple terms", "[egraph][basic]")
     Theory theory;
 
     // Create some operators
-    symbol_t zero_sym = theory.intern("0");
-    symbol_t one_sym = theory.intern("1");
-    symbol_t add_sym = theory.intern("+");
-    symbol_t mul_sym = theory.intern("*");
+    Symbol zero_sym = theory.intern("0");
+    Symbol one_sym = theory.intern("1");
+    Symbol add_sym = theory.intern("+");
+    Symbol mul_sym = theory.intern("*");
 
     // Add operators to theory
     theory.add_operator(zero_sym, 0);
@@ -109,7 +109,7 @@ TEST_CASE("EGraph can insert simple terms", "[egraph][basic]")
     SECTION("Cannot insert pattern variables")
     {
         // Create a pattern variable
-        symbol_t x_sym = theory.intern("x");
+        Symbol x_sym = theory.intern("x");
         auto var_expr = Expr::make_variable(x_sym);
 
         // Should throw when trying to insert a variable

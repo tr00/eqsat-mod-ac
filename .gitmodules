@@ -1,3 +1,6 @@
 [submodule "external/small_vector"]
 	path = external/small_vector
 	url = https://github.com/gharveymn/small_vector.git
+[submodule "external/unordered_dense"]
+	path = external/unordered_dense
+	url = https://github.com/martinus/unordered_dense.git

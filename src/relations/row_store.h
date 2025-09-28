@@ -11,10 +11,10 @@ class RowStore
   private:
     std::vector<id_t> data;
     size_t arity;
-    symbol_t operator_symbol;
+    Symbol operator_symbol;
 
   public:
-    RowStore(symbol_t name, size_t arity) : operator_symbol(name), arity(arity)
+    RowStore(Symbol name, size_t arity) : operator_symbol(name), arity(arity)
     {
     }
 
@@ -46,7 +46,7 @@ class RowStore
      *
      * @return The operator symbol for this relation
      */
-    symbol_t get_operator_symbol() const
+    Symbol get_operator_symbol() const
     {
         return operator_symbol;
     }

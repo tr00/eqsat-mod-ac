@@ -70,7 +70,7 @@ class AbstractRelation
         return *this;
     }
 
-    symbol_t get_operator_symbol() const
+    Symbol get_operator_symbol() const
     {
         switch (kind)
         {

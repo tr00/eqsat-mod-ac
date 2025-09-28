@@ -20,7 +20,7 @@ Compiler::Compiler() : next_id(0)
 {
 }
 
-var_t Compiler::compile_rec(const std::shared_ptr<Expr>& expr, std::unordered_map<symbol_t, var_t>& symbol_to_var,
+var_t Compiler::compile_rec(const std::shared_ptr<Expr>& expr, std::unordered_map<Symbol, var_t>& symbol_to_var,
                             Query& query)
 {
     if (expr->is_variable())
@@ -65,7 +65,7 @@ Query Compiler::compile(RewriteRule rule)
     next_id = 0;
 
     // Symbol to variable mapping (for future extensions like variable reuse)
-    std::unordered_map<symbol_t, var_t> env;
+    std::unordered_map<Symbol, var_t> env;
 
     // Create empty query with name
     Query query(rule.name);

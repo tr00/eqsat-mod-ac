@@ -36,7 +36,7 @@ class Expr
 {
   public:
     NodeKind kind;
-    symbol_t symbol;
+    Symbol symbol;
     std::vector<std::shared_ptr<Expr>> children;
 
     /**
@@ -46,7 +46,7 @@ class Expr
      *
      * Example: auto x = Expression::make_variable(symbols.intern("x"));
      */
-    static std::shared_ptr<Expr> make_variable(symbol_t var);
+    static std::shared_ptr<Expr> make_variable(Symbol var);
 
     /**
      * @brief Creates a nullary operator expression (no children).
@@ -55,7 +55,7 @@ class Expr
      *
      * Example: auto zero = Expression::make_operator(symbols.intern("0"));
      */
-    static std::shared_ptr<Expr> make_operator(symbol_t op);
+    static std::shared_ptr<Expr> make_operator(Symbol op);
 
     /**
      * @brief Creates an operator expression with child expressions.
@@ -65,7 +65,7 @@ class Expr
      *
      * Example: auto sum = Expression::make_operator(op_sym, {x_expr, y_expr});
      */
-    static std::shared_ptr<Expr> make_operator(symbol_t op, const std::vector<std::shared_ptr<Expr>>& children);
+    static std::shared_ptr<Expr> make_operator(Symbol op, const std::vector<std::shared_ptr<Expr>>& children);
 
     /**
      * @brief Checks if this expression is a pattern variable.
@@ -96,7 +96,7 @@ class Expr
      * @param kind Type of expression (OPERATOR or VARIABLE)
      * @param sym Symbol identifier
      */
-    Expr(NodeKind kind, symbol_t sym);
+    Expr(NodeKind kind, Symbol sym);
 
     /**
      * @brief Private constructor for creating operator expressions with children.
@@ -104,17 +104,17 @@ class Expr
      * @param op Symbol identifier for operator
      * @param children Vector of child expressions
      */
-    Expr(NodeKind kind, symbol_t op, const std::vector<std::shared_ptr<Expr>>& children);
+    Expr(NodeKind kind, Symbol op, const std::vector<std::shared_ptr<Expr>>& children);
 };
 
 class RewriteRule
 {
   public:
-    symbol_t name;
+    Symbol name;
     std::shared_ptr<Expr> lhs;
     std::shared_ptr<Expr> rhs;
 
-    RewriteRule(symbol_t name, std::shared_ptr<Expr> lhs, std::shared_ptr<Expr> rhs);
+    RewriteRule(Symbol name, std::shared_ptr<Expr> lhs, std::shared_ptr<Expr> rhs);
 };
 
 class Theory
@@ -123,26 +123,26 @@ class Theory
     SymbolTable symbols;
 
     // symbol --> arity
-    std::unordered_map<symbol_t, int> operators;
+    std::unordered_map<Symbol, int> operators;
     std::vector<RewriteRule> rewrite_rules;
 
     Theory()
     {
     }
 
-    inline symbol_t intern(const std::string& str)
+    inline Symbol intern(const std::string& str)
     {
         return symbols.intern(str);
     }
 
-    symbol_t add_operator(const std::string& op, int arity)
+    Symbol add_operator(const std::string& op, int arity)
     {
         return add_operator(intern(op), arity);
     }
 
-    symbol_t add_operator(symbol_t symbol, int arity);
-    bool has_operator(symbol_t symbol) const;
-    int get_arity(symbol_t symbol) const;
+    Symbol add_operator(Symbol symbol, int arity);
+    bool has_operator(Symbol symbol) const;
+    int get_arity(Symbol symbol) const;
 
     void add_rewrite_rule(const std::string& name, std::shared_ptr<Expr> lhs, std::shared_ptr<Expr> rhs);
 };

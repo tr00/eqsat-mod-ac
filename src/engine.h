@@ -8,7 +8,8 @@
 class State
 {
 
-    template <typename T> using Vec = std::vector<T>;
+    template <typename T>
+    using Vec = std::vector<T>;
     using IndexPtr = std::shared_ptr<AbstractIndex>;
     using Iterator = gch::small_vector<id_t>::const_iterator;
 

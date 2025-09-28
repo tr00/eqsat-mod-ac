@@ -10,10 +10,10 @@ TEST_CASE("EGraph can handle rewrite rules with pattern compilation", "[egraph][
     Theory theory;
 
     // Create operators
-    symbol_t zero_sym = theory.intern("0");
-    symbol_t one_sym = theory.intern("1");
-    symbol_t add_sym = theory.intern("+");
-    symbol_t mul_sym = theory.intern("*");
+    Symbol zero_sym = theory.intern("0");
+    Symbol one_sym = theory.intern("1");
+    Symbol add_sym = theory.intern("+");
+    Symbol mul_sym = theory.intern("*");
 
     // Add operators to theory
     theory.add_operator(zero_sym, 0);
@@ -24,9 +24,9 @@ TEST_CASE("EGraph can handle rewrite rules with pattern compilation", "[egraph][
     SECTION("Add rewrite rules and compile patterns")
     {
         // Create pattern variables
-        symbol_t x_sym = theory.intern("x");
-        symbol_t y_sym = theory.intern("y");
-        symbol_t z_sym = theory.intern("z");
+        Symbol x_sym = theory.intern("x");
+        Symbol y_sym = theory.intern("y");
+        Symbol z_sym = theory.intern("z");
 
         auto x_var = Expr::make_variable(x_sym);
         auto y_var = Expr::make_variable(y_sym);
@@ -52,14 +52,14 @@ TEST_CASE("EGraph can handle rewrite rules with pattern compilation", "[egraph][
         Compiler compiler;
 
         // Compile the left-hand side of the first rule
-        symbol_t rule_name = theory.intern("identity_test");
+        Symbol rule_name = theory.intern("identity_test");
         RewriteRule identity_rule(rule_name, mul_one_x, x_var);
         Query identity_query = compiler.compile(identity_rule);
         REQUIRE(identity_query.constraints.size() == 2); // one constraint for "1", one for "*"
         REQUIRE(identity_query.head.size() > 0);
 
         // Compile the left-hand side of the distributivity rule
-        symbol_t dist_rule_name = theory.intern("dist_test");
+        Symbol dist_rule_name = theory.intern("dist_test");
         RewriteRule dist_rule(dist_rule_name, x_mul_sum, distributed);
         Query distributivity_query = compiler.compile(dist_rule);
         REQUIRE(distributivity_query.constraints.size() == 2); // one for "+", one for "*"
@@ -92,8 +92,8 @@ TEST_CASE("EGraph can handle rewrite rules with pattern compilation", "[egraph][
     SECTION("Compile multiple patterns in batch")
     {
         // Create pattern variables
-        symbol_t x_sym = theory.intern("x");
-        symbol_t y_sym = theory.intern("y");
+        Symbol x_sym = theory.intern("x");
+        Symbol y_sym = theory.intern("y");
         auto x_var = Expr::make_variable(x_sym);
         auto y_var = Expr::make_variable(y_sym);
 
@@ -105,9 +105,9 @@ TEST_CASE("EGraph can handle rewrite rules with pattern compilation", "[egraph][
         auto pattern2 = Expr::make_operator(add_sym, {zero_expr, x_var}); // 0 + x
         auto pattern3 = Expr::make_operator(mul_sym, {x_var, y_var});     // x * y
 
-        symbol_t name1 = theory.intern("pattern1");
-        symbol_t name2 = theory.intern("pattern2");
-        symbol_t name3 = theory.intern("pattern3");
+        Symbol name1 = theory.intern("pattern1");
+        Symbol name2 = theory.intern("pattern2");
+        Symbol name3 = theory.intern("pattern3");
         std::vector<RewriteRule> patterns = {RewriteRule(name1, pattern1, x_var), RewriteRule(name2, pattern2, x_var),
                                              RewriteRule(name3, pattern3, pattern3)};
 

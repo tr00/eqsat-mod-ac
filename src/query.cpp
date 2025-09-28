@@ -3,15 +3,15 @@
 #include <vector>
 
 // Constraint implementation
-Constraint::Constraint(symbol_t op, const std::vector<var_t>& vars) : operator_symbol(op), variables(vars)
+Constraint::Constraint(Symbol op, const std::vector<var_t>& vars) : operator_symbol(op), variables(vars)
 {
 }
 
-Query::Query(symbol_t name) : name(name)
+Query::Query(Symbol name) : name(name)
 {
 }
 
-Query::Query(symbol_t name, const std::vector<Constraint>& constraints, const std::vector<var_t>& head)
+Query::Query(Symbol name, const std::vector<Constraint>& constraints, const std::vector<var_t>& head)
     : name(name), constraints(constraints), head(head)
 {
 }
@@ -21,7 +21,7 @@ void Query::add_constraint(const Constraint& constraint)
     constraints.push_back(constraint);
 }
 
-void Query::add_constraint(symbol_t op, const std::vector<var_t>& vars)
+void Query::add_constraint(Symbol op, const std::vector<var_t>& vars)
 {
     constraints.emplace_back(op, vars);
 }

@@ -26,7 +26,8 @@ class SortedIterSet
         return end - begin;
     }
 
-    template <typename Func> void for_each(Func f) const
+    template <typename Func>
+    void for_each(Func f) const
     {
         for (auto it = begin; it != end; ++it)
             f(*it);

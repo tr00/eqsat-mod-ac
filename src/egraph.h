@@ -6,16 +6,15 @@
 #include "theory.h"
 #include "union_find.h"
 #include <memory>
-#include <unordered_map>
 #include <vector>
 
 class ENode
 {
   public:
-    symbol_t op;
+    Symbol op;
     const std::vector<id_t> children;
 
-    ENode(symbol_t op, std::vector<id_t> children) : op(op), children(children)
+    ENode(Symbol op, std::vector<id_t> children) : op(op), children(children)
     {
     }
 
@@ -27,11 +26,12 @@ class ENode
 
 namespace std
 {
-template <> struct hash<ENode>
+template <>
+struct hash<ENode>
 {
     size_t operator()(const ENode& node) const
     {
-        size_t h1 = std::hash<symbol_t>{}(node.op);
+        size_t h1 = std::hash<Symbol>{}(node.op);
         size_t h2 = 0;
 
         auto children = node.children;
@@ -50,8 +50,9 @@ class EGraph
     Theory theory;
     Database db;
     UnionFind uf;
-    std::unordered_map<ENode, id_t> memo;
-    std::vector<id_t> worklist;
+    HashMap<ENode, id_t> memo;
+
+    std::vector<id_t> worklist; // really needed?
 
   public:
     EGraph(const Theory& theory);
@@ -65,7 +66,7 @@ class EGraph
 
     id_t add_expr(std::shared_ptr<Expr> expression);
     id_t add_enode(ENode enode);
-    id_t add_enode(symbol_t symbol, std::vector<id_t> children);
+    id_t add_enode(Symbol symbol, std::vector<id_t> children);
 
     id_t unify(id_t a, id_t b);
 

@@ -8,12 +8,12 @@ TEST_CASE("Simple expression compilation", "[pattern_compiler]")
 {
     // Create a simple expression: f()
     Theory theory;
-    symbol_t f = theory.intern("f");
+    Symbol f = theory.intern("f");
 
     auto expr = Expr::make_operator(f);
 
     Compiler compiler;
-    symbol_t rule_name = theory.intern("test_rule");
+    Symbol rule_name = theory.intern("test_rule");
     RewriteRule rule(rule_name, expr, expr);
     Query query = compiler.compile(rule);
 
@@ -32,16 +32,16 @@ TEST_CASE("Nested expression compilation", "[pattern_compiler]")
 {
     // Create expression: g(f(), h())
     Theory theory;
-    symbol_t f = theory.intern("f");
-    symbol_t g = theory.intern("g");
-    symbol_t h = theory.intern("h");
+    Symbol f = theory.intern("f");
+    Symbol g = theory.intern("g");
+    Symbol h = theory.intern("h");
 
     auto f_expr = Expr::make_operator(f);
     auto h_expr = Expr::make_operator(h);
     auto g_expr = Expr::make_operator(g, std::vector<std::shared_ptr<Expr>>{f_expr, h_expr});
 
     Compiler compiler;
-    symbol_t rule_name = theory.intern("test_rule");
+    Symbol rule_name = theory.intern("test_rule");
     RewriteRule rule(rule_name, g_expr, g_expr);
     Query query = compiler.compile(rule);
 
@@ -74,11 +74,11 @@ TEST_CASE("Deeply nested expression compilation", "[pattern_compiler]")
 {
     // Create expression: add(mul(x, y), z) where x, y, z are variables
     Theory theory;
-    symbol_t add = theory.intern("add");
-    symbol_t mul = theory.intern("mul");
-    symbol_t x = theory.intern("x");
-    symbol_t y = theory.intern("y");
-    symbol_t z = theory.intern("z");
+    Symbol add = theory.intern("add");
+    Symbol mul = theory.intern("mul");
+    Symbol x = theory.intern("x");
+    Symbol y = theory.intern("y");
+    Symbol z = theory.intern("z");
 
     auto x_expr = Expr::make_variable(x);
     auto y_expr = Expr::make_variable(y);
@@ -87,7 +87,7 @@ TEST_CASE("Deeply nested expression compilation", "[pattern_compiler]")
     auto add_expr = Expr::make_operator(add, std::vector<std::shared_ptr<Expr>>{mul_expr, z_expr});
 
     Compiler compiler;
-    symbol_t rule_name = theory.intern("test_rule");
+    Symbol rule_name = theory.intern("test_rule");
     RewriteRule rule(rule_name, add_expr, add_expr);
     Query query = compiler.compile(rule);
 
@@ -118,14 +118,14 @@ TEST_CASE("Deeply nested expression compilation", "[pattern_compiler]")
 TEST_CASE("Multiple patterns compilation", "[pattern_compiler]")
 {
     Theory theory;
-    symbol_t f = theory.intern("f");
-    symbol_t g = theory.intern("g");
+    Symbol f = theory.intern("f");
+    Symbol g = theory.intern("g");
 
     auto f_expr = Expr::make_operator(f);
     auto g_expr = Expr::make_operator(g);
 
-    symbol_t rule1_name = theory.intern("rule1");
-    symbol_t rule2_name = theory.intern("rule2");
+    Symbol rule1_name = theory.intern("rule1");
+    Symbol rule2_name = theory.intern("rule2");
     std::vector<RewriteRule> patterns = {RewriteRule(rule1_name, f_expr, f_expr),
                                          RewriteRule(rule2_name, g_expr, g_expr)};
 

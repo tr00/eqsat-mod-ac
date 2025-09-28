@@ -9,8 +9,8 @@ TEST_CASE("Database basic operations", "[database]")
     Database db;
 
     // Create operator symbols
-    symbol_t add_sym = symbol_table.intern("add");
-    symbol_t mul_sym = symbol_table.intern("mul");
+    Symbol add_sym = symbol_table.intern("add");
+    Symbol mul_sym = symbol_table.intern("mul");
 
     SECTION("Create relations and insert tuples")
     {
@@ -54,8 +54,8 @@ TEST_CASE("Database index operations", "[database]")
     Database db;
 
     // Create operator symbols
-    symbol_t add_sym = symbol_table.intern("add");
-    symbol_t mul_sym = symbol_table.intern("mul");
+    Symbol add_sym = symbol_table.intern("add");
+    Symbol mul_sym = symbol_table.intern("mul");
 
     SECTION("Index creation and querying")
     {
