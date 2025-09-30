@@ -1,5 +1,4 @@
 #include "query.h"
-#include "egraph.h"
 #include <vector>
 
 // Constraint implementation
@@ -31,24 +30,24 @@ void Query::add_head_var(var_t var)
     head.push_back(var);
 }
 
-id_t Subst::instantiate(EGraph& egraph, const std::vector<id_t>& match)
+id_t Subst::instantiate(callback_t f, const std::vector<id_t>& match)
 {
-    return instantiate_rec(egraph, match, root);
+    return instantiate_rec(f, match, root);
 }
 
-id_t Subst::instantiate_rec(EGraph& egraph, const std::vector<id_t>& match, std::shared_ptr<Expr> expr)
+id_t Subst::instantiate_rec(callback_t f, const std::vector<id_t>& match, std::shared_ptr<Expr> expr)
 {
     if (expr->is_variable())
         return match[env[expr->symbol]];
 
-    std::vector<id_t> children;
+    Vec<id_t> children;
     children.reserve(expr->nchildren());
 
     for (auto child : expr->children)
     {
-        id_t child_id = instantiate_rec(egraph, match, child);
+        id_t child_id = instantiate_rec(f, match, child);
         children.push_back(child_id);
     }
 
-    return egraph.add_enode(expr->symbol, std::move(children));
+    return f(expr->symbol, std::move(children));
 }

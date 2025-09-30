@@ -1,6 +1,9 @@
 #include "engine.h"
+#include "id.h"
+#include "query.h"
 #include "sets/abstract_set.h"
-#include <vector>
+#include <functional>
+#include <memory>
 
 //                            ▲
 // descend into   │           │ ascend out / backtrack
@@ -33,7 +36,7 @@ id_t State::next()
 
 size_t State::intersect()
 {
-    std::vector<AbstractSet> buffer;
+    Vec<AbstractSet> buffer;
 
     for (auto index : indices)
         buffer.push_back(index->project());
@@ -42,9 +45,50 @@ size_t State::intersect()
     return candidates.size();
 }
 
-void Engine::run()
+void Engine::prepare(const Query& query)
 {
-    std::vector<id_t> results;
+    using ConstraintRef = std::reference_wrapper<const Constraint>;
+
+    HashMap<Constraint, std::shared_ptr<AbstractIndex>> indices;
+    HashMap<var_t, Vec<ConstraintRef>> constraints;
+
+    // load indices
+    for (const auto& constraint : query.constraints)
+    {
+        uint32_t permutation = 0; // constraint.permutation
+        auto index = db.get_index(constraint.operator_symbol, permutation);
+
+        indices[constraint] = index;
+
+        for (var_t var : constraint.variables)
+        {
+            auto it = constraints.find(var);
+            if (it != constraints.end())
+                it->second.push_back(std::cref(constraint));
+            else
+                constraints[var] = Vec<ConstraintRef>{std::cref(constraint)};
+        }
+    }
+
+    // initialize states
+    states.clear();
+    for (const auto& [var, var_constraints] : constraints)
+    {
+        State state;
+        for (const auto& constraint_ref : var_constraints)
+        {
+            const Constraint& constraint = constraint_ref.get();
+            auto index_it = indices.find(constraint);
+            assert(index_it != indices.end());
+            state.indices.push_back(index_it->second);
+        }
+        states.push_back(std::move(state));
+    }
+}
+
+void Engine::execute()
+{
+    Vec<id_t> results;
     auto state = states.begin();
 
     id_t cand;
@@ -73,7 +117,7 @@ BACKTRACK:
     --state;
 
     for (auto index : state->indices)
-        index->backtrack();
+        index->unselect();
 
     if (state->empty())
         goto BACKTRACK;

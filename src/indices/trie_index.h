@@ -29,6 +29,6 @@ class TrieIndex
     TrieIndex(TrieNode& trie);
 
     void select(id_t key);
-    void backtrack();
+    void unselect();
     AbstractSet project() const;
 };

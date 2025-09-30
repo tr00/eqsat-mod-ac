@@ -58,7 +58,7 @@ void TrieIndex::select(id_t key)
     current_node = current_node->children[index].get();
 }
 
-void TrieIndex::backtrack()
+void TrieIndex::unselect()
 {
     assert(!parent_stack.empty());
 

@@ -34,10 +34,7 @@ set(LIB_SOURCES
 # Create static library
 add_library(eqsat STATIC ${LIB_SOURCES})
 
-# Add small_vector subdirectory
 add_subdirectory(external/small_vector)
-
-# Add unordered_dense subdirectory
 add_subdirectory(external/unordered_dense)
 
 # Include directories
@@ -45,10 +42,7 @@ target_include_directories(eqsat PUBLIC src)
 target_include_directories(eqsat PUBLIC external/small_vector/source/include)
 target_include_directories(eqsat PUBLIC external/unordered_dense/include)
 
-# Link small_vector to main library
 target_link_libraries(eqsat PUBLIC gch::small_vector)
-
-# Link unordered_dense to main library
 target_link_libraries(eqsat PUBLIC unordered_dense::unordered_dense)
 
 # Find or fetch Catch2

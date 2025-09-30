@@ -14,6 +14,8 @@ C++17 library implementing e-graphs (equality saturation) with custom database f
 ### Basic Types (`src/id.h`)
 
 - `id_t`, `symbol_t`, `var_t`: 32-bit identifiers
+- `Vec<T>`: Alias for `gch::small_vector<T>` (optimized vector)
+- `HashMap<K, V>`: Alias for `ankerl::unordered_dense::map<K, V>` (fast hash map)
 
 ### Symbol Management (`src/symbol_table.h`)
 

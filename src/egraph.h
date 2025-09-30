@@ -2,6 +2,7 @@
 
 #include "database.h"
 #include "id.h"
+#include "query.h"
 #include "symbol_table.h"
 #include "theory.h"
 #include "union_find.h"
@@ -53,6 +54,9 @@ class EGraph
     HashMap<ENode, id_t> memo;
 
     std::vector<id_t> worklist; // really needed?
+
+    Vec<Query> queries;
+    Vec<Subst> substs;
 
   public:
     EGraph(const Theory& theory);

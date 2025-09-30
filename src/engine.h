@@ -3,11 +3,12 @@
 #include <memory>
 #include <vector>
 
+#include "database.h"
 #include "indices/abstract_index.h"
+#include "query.h"
 
 class State
 {
-
     template <typename T>
     using Vec = std::vector<T>;
     using IndexPtr = std::shared_ptr<AbstractIndex>;
@@ -17,7 +18,7 @@ class State
     SortedVecSet candidates;
     Iterator candidate;
 
-    const Vec<IndexPtr> indices;
+    Vec<IndexPtr> indices;
 
     void prepare();
     bool empty() const;
@@ -27,7 +28,18 @@ class State
 
 class Engine
 {
-    std::vector<State> states;
+  private:
+    Vec<State> states;
+    Database& db;
 
-    void run();
+  public:
+    Engine(Database& db) : db(db)
+    {
+    }
+
+    // loads the required indices
+    // and prepares the states
+    void prepare(const Query& query);
+
+    void execute();
 };

@@ -1,5 +1,6 @@
 #include "egraph.h"
 #include "compiler.h"
+#include "engine.h"
 #include <cassert>
 #include <cstddef>
 #include <stdexcept>
@@ -77,15 +78,17 @@ id_t EGraph::unify(id_t a, id_t b)
 
 void EGraph::saturate(std::size_t max_iters)
 {
+    Engine engine(db);
+
     for (std::size_t iter = 0; iter < max_iters; ++iter)
     {
-        // vector matches;
-
-        db.clear_indices();
-
-        // schedule queries
-
         db.build_indices();
+
+        for (const auto& query : queries)
+        {
+            engine.prepare(query);
+            engine.execute();
+        }
 
         // for query in queries
         // res = engine.execute(query, db)
@@ -95,5 +98,6 @@ void EGraph::saturate(std::size_t max_iters)
         // match.instantiate()
 
         // rebuilding
+        db.clear_indices();
     }
 }

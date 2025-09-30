@@ -79,6 +79,23 @@ class AbstractIndex
         assert(0);
     }
 
-    void select(id_t key);
-    void backtrack();
+    void select(id_t key)
+    {
+        switch (kind)
+        {
+        case TRIE:
+            trie.select(key);
+            break;
+        }
+    }
+
+    void unselect()
+    {
+        switch (kind)
+        {
+        case TRIE:
+            trie.unselect();
+            break;
+        }
+    }
 };

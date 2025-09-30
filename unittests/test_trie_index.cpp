@@ -184,7 +184,7 @@ TEST_CASE("TrieIndex navigation", "[trie_index]")
         REQUIRE(child_keys.size() == 2);
 
         // Backtrack to root
-        index.backtrack();
+        index.unselect();
         AbstractSet root_keys = index.project();
         REQUIRE(root_keys.size() == 2);
         REQUIRE(root_keys.contains(10));
@@ -203,8 +203,8 @@ TEST_CASE("TrieIndex navigation", "[trie_index]")
         REQUIRE(leaf_keys.empty());
 
         // Backtrack twice to get to root
-        index.backtrack();
-        index.backtrack();
+        index.unselect();
+        index.unselect();
 
         AbstractSet root_keys = index.project();
         REQUIRE(root_keys.size() == 2);
