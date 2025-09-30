@@ -1,6 +1,7 @@
 #include "egraph.h"
 #include "compiler.h"
 #include "engine.h"
+#include "id.h"
 #include <cassert>
 #include <cstddef>
 #include <stdexcept>
@@ -18,10 +19,13 @@ EGraph::EGraph(const Theory& theory) : theory(theory)
     {
         Compiler compiler;
 
-        std::vector<Query> queries = compiler.compile_many(theory.rewrite_rules);
+        auto kernels = compiler.compile_many(theory.rewrite_rules);
 
-        // queries now contains the compiled patterns
-        // (future work: store these for use in saturation)
+        for (auto [query, subst] : kernels)
+        {
+            queries.push_back(query);
+            substs.push_back(subst);
+        }
     }
 }
 
@@ -76,9 +80,44 @@ id_t EGraph::unify(id_t a, id_t b)
     return id;
 }
 
+void EGraph::apply_matches(const Vec<id_t>& match_vec, Subst& subst)
+{
+    size_t head_size = subst.head_size;
+    size_t num_matches = match_vec.size() / head_size;
+
+    for (size_t j = 0; j < num_matches; ++j)
+    {
+        // Extract match tuple
+        std::vector<id_t> match(head_size);
+        for (size_t k = 0; k < head_size; ++k)
+        {
+            match[k] = match_vec[j * head_size + k];
+        }
+
+        // Create callback for instantiation
+        auto callback = [this](Symbol sym, Vec<id_t> children) -> id_t {
+            std::vector<id_t> children_vec(children.begin(), children.end());
+            return this->add_enode(sym, std::move(children_vec));
+        };
+
+        // Instantiate RHS
+        id_t rhs_id = subst.instantiate(callback, match);
+
+        // LHS root is first element in match
+        id_t lhs_id = match[0];
+
+        // Unify
+        unify(lhs_id, rhs_id);
+    }
+}
+
 void EGraph::saturate(std::size_t max_iters)
 {
     Engine engine(db);
+    HashMap<Symbol, Vec<id_t>> matches;
+
+    for (auto query : queries)
+        matches[query.name] = Vec<id_t>();
 
     for (std::size_t iter = 0; iter < max_iters; ++iter)
     {
@@ -87,17 +126,22 @@ void EGraph::saturate(std::size_t max_iters)
         for (const auto& query : queries)
         {
             engine.prepare(query);
-            engine.execute();
+            matches[query.name] = std::move(engine.execute());
         }
 
-        // for query in queries
-        // res = engine.execute(query, db)
-        // push(matches, res)
+        for (const auto& [name, match_vec] : matches)
+        {
+            // find substitution with the same name
+            for (size_t i = 0; i < substs.size(); ++i)
+            {
+                if (substs[i].name == name)
+                {
+                    apply_matches(match_vec, substs[i]);
+                    break;
+                }
+            }
+        }
 
-        // for match in matches
-        // match.instantiate()
-
-        // rebuilding
         db.clear_indices();
     }
 }

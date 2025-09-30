@@ -124,7 +124,7 @@ class Theory
 
     // symbol --> arity
     std::unordered_map<Symbol, int> operators;
-    std::vector<RewriteRule> rewrite_rules;
+    Vec<RewriteRule> rewrite_rules;
 
     Theory()
     {

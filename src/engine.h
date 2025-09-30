@@ -41,5 +41,5 @@ class Engine
     // and prepares the states
     void prepare(const Query& query);
 
-    void execute();
+    Vec<id_t> execute();
 };

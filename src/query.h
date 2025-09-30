@@ -2,7 +2,6 @@
 
 #include <functional>
 #include <memory>
-#include <unordered_map>
 #include <vector>
 
 #include "id.h"
@@ -129,16 +128,16 @@ struct hash<Constraint>
 using callback_t = std::function<id_t(Symbol, Vec<id_t>)>;
 class Subst
 {
-  private:
+  public:
     Symbol name;
+    size_t head_size;
     std::shared_ptr<Expr> root;
-    std::unordered_map<Symbol, int> env;
+    HashMap<Symbol, int> env;
 
     id_t instantiate_rec(callback_t f, const std::vector<id_t>& match, std::shared_ptr<Expr> expr);
 
-  public:
-    Subst(Symbol name, std::shared_ptr<Expr> root, std::unordered_map<Symbol, int> env)
-        : name(name), root(root), env(env)
+    Subst(Symbol name, std::shared_ptr<Expr> root, HashMap<Symbol, int> env, size_t head_size)
+        : name(name), root(root), env(env), head_size(head_size)
     {
     }
 

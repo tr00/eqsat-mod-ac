@@ -15,7 +15,7 @@ TEST_CASE("Simple expression compilation", "[pattern_compiler]")
     Compiler compiler;
     Symbol rule_name = theory.intern("test_rule");
     RewriteRule rule(rule_name, expr, expr);
-    Query query = compiler.compile(rule);
+    auto [query, subst] = compiler.compile(rule);
 
     // Should have one constraint: f(0)
     REQUIRE(query.constraints.size() == 1);
@@ -43,7 +43,7 @@ TEST_CASE("Nested expression compilation", "[pattern_compiler]")
     Compiler compiler;
     Symbol rule_name = theory.intern("test_rule");
     RewriteRule rule(rule_name, g_expr, g_expr);
-    Query query = compiler.compile(rule);
+    auto [query, subst] = compiler.compile(rule);
 
     // Should have three constraints: f(1), h(2), g(0, 1, 2)
     REQUIRE(query.constraints.size() == 3);
@@ -89,7 +89,7 @@ TEST_CASE("Deeply nested expression compilation", "[pattern_compiler]")
     Compiler compiler;
     Symbol rule_name = theory.intern("test_rule");
     RewriteRule rule(rule_name, add_expr, add_expr);
-    Query query = compiler.compile(rule);
+    auto [query, subst] = compiler.compile(rule);
 
     // mul(1, 2, 3), add(0, 1, 4)
     REQUIRE(query.constraints.size() == 2);
@@ -126,23 +126,22 @@ TEST_CASE("Multiple patterns compilation", "[pattern_compiler]")
 
     Symbol rule1_name = theory.intern("rule1");
     Symbol rule2_name = theory.intern("rule2");
-    std::vector<RewriteRule> patterns = {RewriteRule(rule1_name, f_expr, f_expr),
-                                         RewriteRule(rule2_name, g_expr, g_expr)};
+    Vec<RewriteRule> patterns = {RewriteRule(rule1_name, f_expr, f_expr), RewriteRule(rule2_name, g_expr, g_expr)};
 
     Compiler compiler;
-    std::vector<Query> queries = compiler.compile_many(patterns);
+    auto kernels = compiler.compile_many(patterns);
 
-    REQUIRE(queries.size() == 2);
+    REQUIRE(kernels.size() == 2);
 
     // First query: f(0)
-    REQUIRE(queries[0].constraints.size() == 1);
-    REQUIRE(queries[0].constraints[0].operator_symbol == f);
-    REQUIRE(queries[0].head.size() == 1);
-    REQUIRE(queries[0].head[0] == 0);
+    REQUIRE(kernels[0].first.constraints.size() == 1);
+    REQUIRE(kernels[0].first.constraints[0].operator_symbol == f);
+    REQUIRE(kernels[0].first.head.size() == 1);
+    REQUIRE(kernels[0].first.head[0] == 0);
 
     // Second query: g(0) - note that variable IDs reset for each pattern
-    REQUIRE(queries[1].constraints.size() == 1);
-    REQUIRE(queries[1].constraints[0].operator_symbol == g);
-    REQUIRE(queries[1].head.size() == 1);
-    REQUIRE(queries[1].head[0] == 0);
+    REQUIRE(kernels[1].first.constraints.size() == 1);
+    REQUIRE(kernels[1].first.constraints[0].operator_symbol == g);
+    REQUIRE(kernels[1].first.head.size() == 1);
+    REQUIRE(kernels[1].first.head[0] == 0);
 }

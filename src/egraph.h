@@ -79,5 +79,7 @@ class EGraph
         return uf.same(a, b);
     }
 
+    void apply_matches(const Vec<id_t>& match_vec, Subst& subst);
+
     void saturate(size_t max_iters);
 };

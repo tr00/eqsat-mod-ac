@@ -86,7 +86,7 @@ void Engine::prepare(const Query& query)
     }
 }
 
-void Engine::execute()
+Vec<id_t> Engine::execute()
 {
     Vec<id_t> results;
     auto state = states.begin();
@@ -114,6 +114,9 @@ DEEPER:
 
 BACKTRACK:
 
+    if (state == states.begin())
+        return results;
+
     --state;
 
     for (auto index : state->indices)
@@ -137,4 +140,6 @@ YIELD:
     {
         results.push_back(*state.candidate);
     }
+
+    goto BACKTRACK;
 }

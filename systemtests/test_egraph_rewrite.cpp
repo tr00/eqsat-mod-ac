@@ -54,14 +54,14 @@ TEST_CASE("EGraph can handle rewrite rules with pattern compilation", "[egraph][
         // Compile the left-hand side of the first rule
         Symbol rule_name = theory.intern("identity_test");
         RewriteRule identity_rule(rule_name, mul_one_x, x_var);
-        Query identity_query = compiler.compile(identity_rule);
+        auto [identity_query, identity_subst] = compiler.compile(identity_rule);
         REQUIRE(identity_query.constraints.size() == 2); // one constraint for "1", one for "*"
         REQUIRE(identity_query.head.size() > 0);
 
         // Compile the left-hand side of the distributivity rule
         Symbol dist_rule_name = theory.intern("dist_test");
         RewriteRule dist_rule(dist_rule_name, x_mul_sum, distributed);
-        Query distributivity_query = compiler.compile(dist_rule);
+        auto [distributivity_query, distributivity_subst] = compiler.compile(dist_rule);
         REQUIRE(distributivity_query.constraints.size() == 2); // one for "+", one for "*"
         REQUIRE(distributivity_query.head.size() > 0);
 
@@ -108,17 +108,17 @@ TEST_CASE("EGraph can handle rewrite rules with pattern compilation", "[egraph][
         Symbol name1 = theory.intern("pattern1");
         Symbol name2 = theory.intern("pattern2");
         Symbol name3 = theory.intern("pattern3");
-        std::vector<RewriteRule> patterns = {RewriteRule(name1, pattern1, x_var), RewriteRule(name2, pattern2, x_var),
-                                             RewriteRule(name3, pattern3, pattern3)};
+        Vec<RewriteRule> patterns = {RewriteRule(name1, pattern1, x_var), RewriteRule(name2, pattern2, x_var),
+                                     RewriteRule(name3, pattern3, pattern3)};
 
         // Compile all patterns
         Compiler compiler;
-        std::vector<Query> queries = compiler.compile_many(patterns);
+        auto kernels = compiler.compile_many(patterns);
 
-        REQUIRE(queries.size() == 3);
+        REQUIRE(kernels.size() == 3);
 
         // Each query should have at least one constraint
-        for (const auto& query : queries)
+        for (const auto& [query, subst] : kernels)
         {
             REQUIRE(query.constraints.size() >= 1);
             REQUIRE(query.head.size() > 0);
