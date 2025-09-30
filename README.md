@@ -24,53 +24,55 @@ egraph.saturate(/* iterations: */ 10);
 
 ---
 
-## TODO: 6-Hour Sprint to Working System
+## Implementation Status
 
-**Goal**: Enable adding rewrite rules, running the engine, and getting back matching tuples.
+**✅ COMPLETE**: The rewrite engine is now fully functional!
 
-### Critical Path (Must Complete)
+### Completed Features
 
-1. **Implement Engine::execute() return value [1.5 hours]** - `src/engine.h`, `src/engine.cpp`
-   - Change signature: `void execute()` → `std::vector<std::vector<id_t>> execute()`
-   - Return all matching tuples (variable bindings)
-   - Query execution VM needs to collect matches during iteration
+- ✅ **Theory & Expression parsing** - Define operators and rewrite rules
+- ✅ **Database engine** - Relations, indices (trie-based), set operations
+- ✅ **Union-Find** - Tracks equivalence classes
+- ✅ **E-graph** - Term insertion, hash-consing, unification
+- ✅ **Query system** - Conjunctive queries with constraints
+- ✅ **Pattern compilation** - Converts rewrite rules to queries + substitutions
+- ✅ **Constraint hashing** - Enables efficient constraint lookups
+- ✅ **Query execution engine** - VM-based execution with backtracking
+- ✅ **Match instantiation** - Builds RHS terms and unifies with LHS
+- ✅ **Saturation loop** - Iteratively applies rewrite rules until fixpoint
 
-2. **Implement match instantiation [1.5 hours]** - `src/egraph.cpp:78-88`
-   - For each match, call `subst.instantiate()` to build RHS term
-   - Insert instantiated term into e-graph via `add_expr()`
-   - Unify LHS root with RHS result: `unify(lhs_root, rhs_root)`
-   - LHS root = first variable in query head
+### Architecture Overview
 
-3. **Integration & testing [1.5 hours]**
-   - Fix any remaining compilation errors
-   - Write simple integration test: insert terms, add rule, saturate, check equivalences
-   - Debug execution flow end-to-end
+```
+Theory (rewrite rules)
+    ↓
+Compiler (patterns → queries + substitutions)
+    ↓
+EGraph.saturate()
+    ↓
+Engine.execute() → matches
+    ↓
+Subst.instantiate() + unify() → new equivalences
+```
 
-### Implementation Notes
+### Key Implementation Details
 
-- **Query head**: Should contain LHS root variable as first element for unification
-- **Callback in instantiate**: Pass lambda that calls `egraph.add_enode(symbol, children)`
-- **Database indices**: Already built in `saturate()` loop - no changes needed
-- **Union-Find**: Already tracks equivalences - just need to call `unify()` with results
+1. **Pattern Compilation**:
+   - LHS pattern → Query (conjunctive constraints)
+   - RHS pattern → Subst (substitution environment)
+   - Head variables track bindings to instantiate
 
-### Current Status
+2. **Query Execution**:
+   - Returns flat `Vec<id_t>` with all matches
+   - Each match is `head_size` elements
+   - Uses trie indices for efficient filtering
 
-- ✅ Theory, Expression, Signature parsing
-- ✅ Database, relations, indices, sets
-- ✅ Union-Find for equivalence classes
-- ✅ E-graph term insertion and hash-consing
-- ✅ Query data structures
-- ✅ Pattern compilation to queries (complete)
-- ✅ **Constraint hashing** - done
-- ✅ **Compiler return type** - returns Query+Subst pairs
-- ✅ **Query/Subst storage** - stored in EGraph
-- ⚠️ **Engine execution** - returns void, needs to return matches
-- ⚠️ **Match instantiation** - skeleton code only
+3. **Match Instantiation**:
+   - Callback mechanism to add enodes during instantiation
+   - LHS root (first match element) unified with instantiated RHS
+   - Helper function `apply_matches()` encapsulates the logic
 
-### Files Requiring Changes
+### All Tests Passing ✅
 
-1. `src/engine.h` - Change execute() signature
-2. `src/engine.cpp` - Collect and return matches
-3. `src/egraph.cpp` - Implement instantiation loop
-
-**Time Budget**: ~3 hours remaining for core implementation + testing
+- Unit tests: Compiler, Union-Find, Trie indices, Sets, Permutations
+- System tests: E-graph operations, Database, Rewrite rules
