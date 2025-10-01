@@ -1,6 +1,5 @@
 #include "compiler.h"
 #include "theory.h"
-#include <iostream>
 #include <utility>
 
 HashMap<var_t, int> create_consecutive_index_map(const Vec<var_t>& unique_indices)

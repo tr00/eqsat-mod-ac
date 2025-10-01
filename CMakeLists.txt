@@ -1,8 +1,16 @@
 cmake_minimum_required(VERSION 3.14)
 
-# clang compiler
-set(CMAKE_C_COMPILER "/usr/bin/clang-19")
-set(CMAKE_CXX_COMPILER "/usr/bin/clang++-19")
+# Prefer clang++-19 if available, otherwise use system default
+find_program(CLANG19_C_COMPILER clang-19)
+find_program(CLANG19_CXX_COMPILER clang++-19)
+
+if(CLANG19_CXX_COMPILER AND CLANG19_C_COMPILER)
+    set(CMAKE_C_COMPILER "${CLANG19_C_COMPILER}")
+    set(CMAKE_CXX_COMPILER "${CLANG19_CXX_COMPILER}")
+    message(STATUS "Using clang-19 compiler")
+else()
+    message(STATUS "clang-19 not found, using system default compiler")
+endif()
 
 project(eqsat-mod-ac)
 
@@ -10,9 +18,15 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-# mold linker
-set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fuse-ld=mold")
-set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -fuse-ld=mold")
+# Prefer mold linker if available, otherwise use system default
+find_program(MOLD_LINKER mold)
+if(MOLD_LINKER)
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fuse-ld=mold")
+    set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -fuse-ld=mold")
+    message(STATUS "Using mold linker")
+else()
+    message(STATUS "mold not found, using system default linker")
+endif()
 
 # Add library source files
 set(LIB_SOURCES
