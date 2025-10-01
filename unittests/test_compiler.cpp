@@ -38,7 +38,7 @@ TEST_CASE("Nested expression compilation", "[pattern_compiler]")
 
     auto f_expr = Expr::make_operator(f);
     auto h_expr = Expr::make_operator(h);
-    auto g_expr = Expr::make_operator(g, std::vector<std::shared_ptr<Expr>>{f_expr, h_expr});
+    auto g_expr = Expr::make_operator(g, Vec<std::shared_ptr<Expr>>{f_expr, h_expr});
 
     Compiler compiler;
     Symbol rule_name = theory.intern("test_rule");
@@ -83,8 +83,8 @@ TEST_CASE("Deeply nested expression compilation", "[pattern_compiler]")
     auto x_expr = Expr::make_variable(x);
     auto y_expr = Expr::make_variable(y);
     auto z_expr = Expr::make_variable(z);
-    auto mul_expr = Expr::make_operator(mul, std::vector<std::shared_ptr<Expr>>{x_expr, y_expr});
-    auto add_expr = Expr::make_operator(add, std::vector<std::shared_ptr<Expr>>{mul_expr, z_expr});
+    auto mul_expr = Expr::make_operator(mul, Vec<std::shared_ptr<Expr>>{x_expr, y_expr});
+    auto add_expr = Expr::make_operator(add, Vec<std::shared_ptr<Expr>>{mul_expr, z_expr});
 
     Compiler compiler;
     Symbol rule_name = theory.intern("test_rule");

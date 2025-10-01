@@ -4,7 +4,6 @@
 #include "row_store.h"
 #include "symbol_table.h"
 #include <cstddef>
-#include <vector>
 
 enum RelationKind
 {
@@ -90,7 +89,7 @@ class AbstractRelation
         assert(0);
     }
 
-    void add_tuple(const std::vector<id_t>& tuple)
+    void add_tuple(const Vec<id_t>& tuple)
     {
         switch (kind)
         {

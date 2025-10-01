@@ -18,7 +18,7 @@ uint32_t factorial(int n)
     return result;
 }
 
-void apply_permutation(uint32_t index, std::vector<uint32_t>& vec)
+void apply_permutation(uint32_t index, Vec<uint32_t>& vec)
 {
     if (vec.empty())
     {
@@ -48,24 +48,24 @@ void apply_permutation(uint32_t index, std::vector<uint32_t>& vec)
     }
 
     // Create indices vector [0, 1, 2, ..., n-1]
-    std::vector<uint32_t> indices(n);
+    Vec<uint32_t> indices(n);
     for (size_t i = 0; i < n; ++i)
     {
         indices[i] = static_cast<uint32_t>(i);
     }
 
     // Get the permutation of indices
-    std::vector<uint32_t> perm_indices = index_to_permutation(index, indices);
+    Vec<uint32_t> perm_indices = index_to_permutation(index, indices);
 
     // Apply the permutation in-place using a temporary copy
-    std::vector<uint32_t> temp = vec;
+    Vec<uint32_t> temp = vec;
     for (size_t i = 0; i < n; ++i)
     {
         vec[i] = temp[perm_indices[i]];
     }
 }
 
-void apply_permutation(const std::vector<uint32_t>& perm_indices, std::vector<uint32_t>& vec)
+void apply_permutation(const Vec<uint32_t>& perm_indices, Vec<uint32_t>& vec)
 {
     if (perm_indices.size() != vec.size())
     {
@@ -89,14 +89,14 @@ void apply_permutation(const std::vector<uint32_t>& perm_indices, std::vector<ui
     }
 
     // Apply the permutation in-place using a temporary copy
-    std::vector<uint32_t> temp = vec;
+    Vec<uint32_t> temp = vec;
     for (size_t i = 0; i < n; ++i)
     {
         vec[i] = temp[perm_indices[i]];
     }
 }
 
-bool is_valid_permutation(const std::vector<uint32_t>& perm)
+bool is_valid_permutation(const Vec<uint32_t>& perm)
 {
     if (perm.empty())
     {
@@ -127,7 +127,7 @@ bool is_valid_permutation(const std::vector<uint32_t>& perm)
     return true;
 }
 
-uint32_t permutation_to_index(const std::vector<uint32_t>& perm)
+uint32_t permutation_to_index(const Vec<uint32_t>& perm)
 {
     if (!is_valid_permutation(perm))
     {
@@ -146,7 +146,7 @@ uint32_t permutation_to_index(const std::vector<uint32_t>& perm)
     }
 
     // Create sorted copy of elements to use as reference
-    std::vector<uint32_t> available = perm;
+    Vec<uint32_t> available = perm;
     std::sort(available.begin(), available.end());
 
     uint32_t index = 0;
@@ -174,7 +174,7 @@ uint32_t permutation_to_index(const std::vector<uint32_t>& perm)
     return index;
 }
 
-std::vector<uint32_t> index_to_permutation(uint32_t index, const std::vector<uint32_t>& elements)
+Vec<uint32_t> index_to_permutation(uint32_t index, const Vec<uint32_t>& elements)
 {
     if (elements.empty())
     {
@@ -202,10 +202,10 @@ std::vector<uint32_t> index_to_permutation(uint32_t index, const std::vector<uin
     }
 
     // Create sorted copy of elements to work with
-    std::vector<uint32_t> available = elements;
+    Vec<uint32_t> available = elements;
     std::sort(available.begin(), available.end());
 
-    std::vector<uint32_t> result;
+    Vec<uint32_t> result;
     result.reserve(n);
 
     uint32_t fact = factorial(n - 1);

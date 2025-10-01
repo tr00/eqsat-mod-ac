@@ -1,7 +1,6 @@
 #pragma once
 
 #include <cassert>
-#include <vector>
 
 #include "../id.h"
 #include "sorted_iter_set.h"
@@ -131,4 +130,4 @@ class AbstractSet
     }
 };
 
-void intersect_many(SortedVecSet& output, const std::vector<AbstractSet>& sets);
+void intersect_many(SortedVecSet& output, const Vec<AbstractSet>& sets);

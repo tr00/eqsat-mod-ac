@@ -1,12 +1,11 @@
 #pragma once
 
 #include "id.h"
-#include <vector>
 
 class UnionFind
 {
   private:
-    std::vector<id_t> vec;
+    Vec<id_t> vec;
 
     id_t _find_root_ph(id_t x);
 

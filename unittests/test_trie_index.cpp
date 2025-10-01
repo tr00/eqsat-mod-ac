@@ -26,7 +26,7 @@ TEST_CASE("TrieNode insert_path single element", "[trie_node]")
 
     SECTION("Insert single element path")
     {
-        std::vector<id_t> path = {42};
+        Vec<id_t> path = {42};
         root.insert_path(path);
 
         REQUIRE(root.keys.size() == 1);
@@ -72,7 +72,7 @@ TEST_CASE("TrieNode insert_path multiple elements", "[trie_node]")
 
     SECTION("Insert two-element path")
     {
-        std::vector<id_t> path = {10, 20};
+        Vec<id_t> path = {10, 20};
         root.insert_path(path);
 
         REQUIRE(root.keys.size() == 1);
@@ -113,7 +113,7 @@ TEST_CASE("TrieNode insert_path multiple elements", "[trie_node]")
 
     SECTION("Insert three-element path")
     {
-        std::vector<id_t> path = {1, 2, 3};
+        Vec<id_t> path = {1, 2, 3};
         root.insert_path(path);
 
         REQUIRE(root.keys.size() == 1);
@@ -131,7 +131,7 @@ TEST_CASE("TrieNode insert_path multiple elements", "[trie_node]")
 
     SECTION("Insert empty path does nothing")
     {
-        std::vector<id_t> empty_path;
+        Vec<id_t> empty_path;
         root.insert_path(empty_path);
 
         REQUIRE(root.keys.empty());

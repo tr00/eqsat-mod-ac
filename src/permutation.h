@@ -1,7 +1,7 @@
 #pragma once
 
+#include "id.h"
 #include <cstdint>
-#include <vector>
 
 /**
  * @brief Permutation utilities for converting between permutation vectors and indices
@@ -32,11 +32,11 @@
  *
  * Example:
  * ```cpp
- * std::vector<uint32_t> perm = {2, 0, 1};
+ * Vec<uint32_t> perm = {2, 0, 1};
  * uint32_t index = permutation_to_index(perm); // Returns 4
  * ```
  */
-uint32_t permutation_to_index(const std::vector<uint32_t>& perm);
+uint32_t permutation_to_index(const Vec<uint32_t>& perm);
 
 /**
  * @brief Convert a lexicographic index to its corresponding permutation vector
@@ -52,11 +52,11 @@ uint32_t permutation_to_index(const std::vector<uint32_t>& perm);
  *
  * Example:
  * ```cpp
- * std::vector<uint32_t> elements = {0, 1, 2};
- * std::vector<uint32_t> perm = index_to_permutation(4, elements); // Returns {2, 0, 1}
+ * Vec<uint32_t> elements = {0, 1, 2};
+ * Vec<uint32_t> perm = index_to_permutation(4, elements); // Returns {2, 0, 1}
  * ```
  */
-std::vector<uint32_t> index_to_permutation(uint32_t index, const std::vector<uint32_t>& elements);
+Vec<uint32_t> index_to_permutation(uint32_t index, const Vec<uint32_t>& elements);
 
 /**
  * @brief Calculate the factorial of n
@@ -82,13 +82,13 @@ uint32_t factorial(int n);
  *
  * Example:
  * ```cpp
- * std::vector<uint32_t> valid = {2, 0, 1};
- * std::vector<uint32_t> invalid = {0, 0, 1};
+ * Vec<uint32_t> valid = {2, 0, 1};
+ * Vec<uint32_t> invalid = {0, 0, 1};
  * bool is_valid1 = is_valid_permutation(valid);   // Returns true
  * bool is_valid2 = is_valid_permutation(invalid); // Returns false
  * ```
  */
-bool is_valid_permutation(const std::vector<uint32_t>& perm);
+bool is_valid_permutation(const Vec<uint32_t>& perm);
 
 /**
  * @brief Apply a permutation to a vector in-place using its lexicographic index
@@ -104,12 +104,12 @@ bool is_valid_permutation(const std::vector<uint32_t>& perm);
  *
  * Example:
  * ```cpp
- * std::vector<uint32_t> vec = {10, 20, 30};
+ * Vec<uint32_t> vec = {10, 20, 30};
  * apply_permutation(4, vec); // vec becomes {30, 10, 20}
  * // Index 4 corresponds to permutation [2,0,1], so vec[2], vec[0], vec[1]
  * ```
  */
-void apply_permutation(uint32_t index, std::vector<uint32_t>& vec);
+void apply_permutation(uint32_t index, Vec<uint32_t>& vec);
 
 /**
  * @brief Apply a permutation to a vector in-place using precomputed indices
@@ -126,9 +126,9 @@ void apply_permutation(uint32_t index, std::vector<uint32_t>& vec);
  *
  * Example:
  * ```cpp
- * std::vector<uint32_t> perm_indices = {2, 0, 1};  // Precomputed once
- * std::vector<uint32_t> vec = {10, 20, 30};
+ * Vec<uint32_t> perm_indices = {2, 0, 1};  // Precomputed once
+ * Vec<uint32_t> vec = {10, 20, 30};
  * apply_permutation(perm_indices, vec); // vec becomes {30, 10, 20}
  * ```
  */
-void apply_permutation(const std::vector<uint32_t>& perm_indices, std::vector<uint32_t>& vec);
+void apply_permutation(const Vec<uint32_t>& perm_indices, Vec<uint32_t>& vec);

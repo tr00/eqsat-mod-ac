@@ -2,7 +2,6 @@
 
 #include <functional>
 #include <memory>
-#include <vector>
 
 #include "id.h"
 #include "symbol_table.h"
@@ -28,8 +27,10 @@ class Constraint
     /** @brief The operator symbol for this constraint */
     Symbol operator_symbol;
 
+    uint32_t permutation;
+
     /** @brief List of variables participating in this constraint */
-    std::vector<var_t> variables;
+    Vec<var_t> variables;
 
     /**
      * @brief Construct a new constraint
@@ -37,7 +38,7 @@ class Constraint
      * @param op The operator symbol
      * @param vars Vector of variables for this constraint
      */
-    Constraint(Symbol op, const std::vector<var_t>& vars);
+    Constraint(Symbol op, const Vec<var_t>& vars);
 
     bool operator==(const Constraint& other) const
     {
@@ -62,10 +63,10 @@ class Query
     Symbol name;
 
     /** @brief List of constraints that must all be satisfied */
-    std::vector<Constraint> constraints;
+    Vec<Constraint> constraints;
 
     /** @brief Variables to return in query results (projection) */
-    std::vector<var_t> head;
+    Vec<var_t> head;
 
     /**
      * @brief Construct an empty query with a name
@@ -81,7 +82,7 @@ class Query
      * @param constraints List of constraints for this query
      * @param head List of head variables to project in results
      */
-    Query(Symbol name, const std::vector<Constraint>& constraints, const std::vector<var_t>& head);
+    Query(Symbol name, const Vec<Constraint>& constraints, const Vec<var_t>& head);
 
     /**
      * @brief Add a constraint to this query
@@ -96,7 +97,7 @@ class Query
      * @param op Operator symbol for the constraint
      * @param vars Variables for the constraint
      */
-    void add_constraint(Symbol op, const std::vector<var_t>& vars);
+    void add_constraint(Symbol op, const Vec<var_t>& vars);
 
     /**
      * @brief Add a variable to the query head (result projection)
@@ -134,12 +135,12 @@ class Subst
     std::shared_ptr<Expr> root;
     HashMap<Symbol, int> env;
 
-    id_t instantiate_rec(callback_t f, const std::vector<id_t>& match, std::shared_ptr<Expr> expr);
+    id_t instantiate_rec(callback_t f, const Vec<id_t>& match, std::shared_ptr<Expr> expr);
 
     Subst(Symbol name, std::shared_ptr<Expr> root, HashMap<Symbol, int> env, size_t head_size)
         : name(name), root(root), env(env), head_size(head_size)
     {
     }
 
-    id_t instantiate(callback_t f, const std::vector<id_t>& match);
+    id_t instantiate(callback_t f, const Vec<id_t>& match);
 };

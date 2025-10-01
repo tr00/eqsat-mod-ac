@@ -7,15 +7,14 @@
 #include "theory.h"
 #include "union_find.h"
 #include <memory>
-#include <vector>
 
 class ENode
 {
   public:
     Symbol op;
-    const std::vector<id_t> children;
+    const Vec<id_t> children;
 
-    ENode(Symbol op, std::vector<id_t> children) : op(op), children(children)
+    ENode(Symbol op, Vec<id_t> children) : op(op), children(children)
     {
     }
 
@@ -53,7 +52,7 @@ class EGraph
     UnionFind uf;
     HashMap<ENode, id_t> memo;
 
-    std::vector<id_t> worklist; // really needed?
+    Vec<id_t> worklist; // really needed?
 
     Vec<Query> queries;
     Vec<Subst> substs;
@@ -70,7 +69,7 @@ class EGraph
 
     id_t add_expr(std::shared_ptr<Expr> expression);
     id_t add_enode(ENode enode);
-    id_t add_enode(Symbol symbol, std::vector<id_t> children);
+    id_t add_enode(Symbol symbol, Vec<id_t> children);
 
     id_t unify(id_t a, id_t b);
 

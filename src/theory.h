@@ -3,7 +3,6 @@
 #include <memory>
 #include <string>
 #include <unordered_map>
-#include <vector>
 
 #include "symbol_table.h"
 
@@ -37,7 +36,7 @@ class Expr
   public:
     NodeKind kind;
     Symbol symbol;
-    std::vector<std::shared_ptr<Expr>> children;
+    Vec<std::shared_ptr<Expr>> children;
 
     /**
      * @brief Creates a pattern variable expression.
@@ -65,7 +64,7 @@ class Expr
      *
      * Example: auto sum = Expression::make_operator(op_sym, {x_expr, y_expr});
      */
-    static std::shared_ptr<Expr> make_operator(Symbol op, const std::vector<std::shared_ptr<Expr>>& children);
+    static std::shared_ptr<Expr> make_operator(Symbol op, const Vec<std::shared_ptr<Expr>>& children);
 
     /**
      * @brief Checks if this expression is a pattern variable.
@@ -104,7 +103,7 @@ class Expr
      * @param op Symbol identifier for operator
      * @param children Vector of child expressions
      */
-    Expr(NodeKind kind, Symbol op, const std::vector<std::shared_ptr<Expr>>& children);
+    Expr(NodeKind kind, Symbol op, const Vec<std::shared_ptr<Expr>>& children);
 };
 
 class RewriteRule

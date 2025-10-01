@@ -2,7 +2,6 @@
 
 #include <memory>
 #include <stdexcept>
-#include <vector>
 
 #include "id.h"
 #include "indices/abstract_index.h"
@@ -80,7 +79,7 @@ class Database
      * @throws std::runtime_error if relation doesn't exist
      * @throws std::invalid_argument if tuple size doesn't match relation arity
      */
-    void add_tuple(Symbol relation_name, const std::vector<id_t>& tuple)
+    void add_tuple(Symbol relation_name, const Vec<id_t>& tuple)
     {
         auto it = relations.find(relation_name);
         if (it == relations.end())

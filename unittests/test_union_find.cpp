@@ -142,7 +142,7 @@ TEST_CASE("UnionFind path compression", "[union_find]")
     SECTION("path compression maintains correctness")
     {
         const int n = 100;
-        std::vector<id_t> ids;
+        Vec<id_t> ids;
 
         for (int i = 0; i < n; ++i)
         {

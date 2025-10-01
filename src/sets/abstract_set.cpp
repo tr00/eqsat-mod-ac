@@ -4,7 +4,7 @@
 
 // TODO: partially sorting.
 
-void intersect_many(SortedVecSet& output, const std::vector<AbstractSet>& sets)
+void intersect_many(SortedVecSet& output, const Vec<AbstractSet>& sets)
 {
     output.clear();
 

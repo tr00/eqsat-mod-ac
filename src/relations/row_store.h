@@ -4,12 +4,11 @@
 #include "indices/abstract_index.h"
 #include "symbol_table.h"
 #include <cassert>
-#include <vector>
 
 class RowStore
 {
   private:
-    std::vector<id_t> data;
+    Vec<id_t> data;
     size_t arity;
     Symbol operator_symbol;
 
@@ -34,7 +33,7 @@ class RowStore
      * @param tuple The tuple to add, must have exactly 'arity' elements
      * @throws std::invalid_argument if tuple size doesn't match relation arity
      */
-    void add_tuple(const std::vector<id_t>& tuple)
+    void add_tuple(const Vec<id_t>& tuple)
     {
         assert(tuple.size() == static_cast<size_t>(arity));
 

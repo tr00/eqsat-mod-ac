@@ -5,7 +5,6 @@
 #include <cassert>
 #include <cstddef>
 #include <stdexcept>
-#include <vector>
 
 EGraph::EGraph(const Theory& theory) : theory(theory)
 {
@@ -35,7 +34,7 @@ id_t EGraph::add_expr(std::shared_ptr<Expr> expr)
         throw std::runtime_error("Cannot insert pattern variables into e-graph");
 
     // Recursively insert children and collect their ids
-    std::vector<id_t> child_ids;
+    Vec<id_t> child_ids;
     child_ids.reserve(expr->children.size());
 
     for (const auto& child : expr->children)
@@ -47,7 +46,7 @@ id_t EGraph::add_expr(std::shared_ptr<Expr> expr)
     return add_enode(expr->symbol, std::move(child_ids));
 }
 
-id_t EGraph::add_enode(Symbol symbol, std::vector<id_t> children)
+id_t EGraph::add_enode(Symbol symbol, Vec<id_t> children)
 {
     ENode enode(symbol, std::move(children));
     return add_enode(std::move(enode));
@@ -61,7 +60,7 @@ id_t EGraph::add_enode(ENode enode)
 
     id_t id = uf.make_set();
 
-    std::vector<id_t> tuple = enode.children; // copy
+    Vec<id_t> tuple = enode.children; // copy
     tuple.push_back(id);
 
     assert(db.has_relation(enode.op));
@@ -88,7 +87,7 @@ void EGraph::apply_matches(const Vec<id_t>& match_vec, Subst& subst)
     for (size_t j = 0; j < num_matches; ++j)
     {
         // Extract match tuple
-        std::vector<id_t> match(head_size);
+        Vec<id_t> match(head_size);
         for (size_t k = 0; k < head_size; ++k)
         {
             match[k] = match_vec[j * head_size + k];
@@ -96,8 +95,7 @@ void EGraph::apply_matches(const Vec<id_t>& match_vec, Subst& subst)
 
         // Create callback for instantiation
         auto callback = [this](Symbol sym, Vec<id_t> children) -> id_t {
-            std::vector<id_t> children_vec(children.begin(), children.end());
-            return this->add_enode(sym, std::move(children_vec));
+            return this->add_enode(sym, std::move(children));
         };
 
         // Instantiate RHS

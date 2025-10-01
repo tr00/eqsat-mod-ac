@@ -115,7 +115,7 @@ TEST_CASE("SortedSet utilities", "[sorted_set]")
         set.insert(10);
         set.insert(20);
 
-        std::vector<id_t> values;
+        Vec<id_t> values;
         for (auto id : set)
         {
             values.push_back(id);

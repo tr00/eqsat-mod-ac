@@ -1,5 +1,3 @@
-#include <vector>
-
 #include <catch2/catch_test_macros.hpp>
 
 #include "sets/abstract_set.h"
@@ -42,7 +40,7 @@ TEST_CASE("AbstractSet basic operations")
 
     SECTION("for_each works correctly")
     {
-        std::vector<id_t> collected;
+        Vec<id_t> collected;
         abstract_set.for_each([&collected](id_t id) { collected.push_back(id); });
 
         REQUIRE(collected.size() == 3);
@@ -93,7 +91,7 @@ TEST_CASE("Intersection of multiple sets")
 
     SECTION("Intersection of all three sets")
     {
-        std::vector<AbstractSet> sets;
+        Vec<AbstractSet> sets;
         sets.emplace_back(AbstractSet(set1));
         sets.emplace_back(AbstractSet(set2));
         sets.emplace_back(AbstractSet(set3));
@@ -113,7 +111,7 @@ TEST_CASE("Intersection of multiple sets")
 
     SECTION("Intersection of two sets")
     {
-        std::vector<AbstractSet> sets;
+        Vec<AbstractSet> sets;
         sets.emplace_back(AbstractSet(set1));
         sets.emplace_back(AbstractSet(set2));
 
@@ -130,7 +128,7 @@ TEST_CASE("Intersection of multiple sets")
 
     SECTION("Intersection of empty vector")
     {
-        std::vector<AbstractSet> empty_sets;
+        Vec<AbstractSet> empty_sets;
         SortedVecSet result_set;
         intersect_many(result_set, empty_sets);
         AbstractSet result(result_set);
@@ -140,7 +138,7 @@ TEST_CASE("Intersection of multiple sets")
 
     SECTION("Intersection of single set")
     {
-        std::vector<AbstractSet> sets;
+        Vec<AbstractSet> sets;
         sets.emplace_back(AbstractSet(set1));
 
         SortedVecSet result_set;

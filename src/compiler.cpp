@@ -1,9 +1,8 @@
 #include "compiler.h"
 #include "theory.h"
 #include <utility>
-#include <vector>
 
-HashMap<var_t, int> create_consecutive_index_map(const std::vector<var_t>& unique_indices)
+HashMap<var_t, int> create_consecutive_index_map(const Vec<var_t>& unique_indices)
 {
     HashMap<var_t, int> index_map;
     int consecutive_index = 0;
@@ -41,7 +40,7 @@ var_t Compiler::compile_rec(const std::shared_ptr<Expr>& expr, HashMap<Symbol, v
         var_t id = next_id++;
 
         // Create constraint variables list: first is the expression's own variable
-        std::vector<var_t> constraint_vars;
+        Vec<var_t> constraint_vars;
         constraint_vars.push_back(id);
 
         // Recursively compile children and add their variable IDs to constraint

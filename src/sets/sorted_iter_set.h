@@ -2,16 +2,15 @@
 
 #include "../id.h"
 #include <algorithm>
-#include <vector>
 
 class SortedIterSet
 {
   private:
-    std::vector<id_t>::const_iterator begin;
-    std::vector<id_t>::const_iterator end;
+    Vec<id_t>::const_iterator begin;
+    Vec<id_t>::const_iterator end;
 
   public:
-    SortedIterSet(const std::vector<id_t>& data) : begin(data.begin()), end(data.end())
+    SortedIterSet(const Vec<id_t>& data) : begin(data.begin()), end(data.end())
     {
     }
 

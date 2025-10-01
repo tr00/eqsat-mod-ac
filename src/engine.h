@@ -1,7 +1,6 @@
 #pragma once
 
 #include <memory>
-#include <vector>
 
 #include "database.h"
 #include "indices/abstract_index.h"
@@ -9,8 +8,6 @@
 
 class State
 {
-    template <typename T>
-    using Vec = std::vector<T>;
     using IndexPtr = std::shared_ptr<AbstractIndex>;
     using Iterator = gch::small_vector<id_t>::const_iterator;
 

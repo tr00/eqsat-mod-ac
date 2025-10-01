@@ -1,13 +1,11 @@
 #include "theory.h"
 #include <memory>
-#include <vector>
 
 Expr::Expr(NodeKind k, Symbol sym) : kind(k), symbol(sym)
 {
 }
 
-Expr::Expr(NodeKind k, Symbol op, const std::vector<std::shared_ptr<Expr>>& children)
-    : kind(k), symbol(op), children(children)
+Expr::Expr(NodeKind k, Symbol op, const Vec<std::shared_ptr<Expr>>& children) : kind(k), symbol(op), children(children)
 {
 }
 
@@ -21,7 +19,7 @@ std::shared_ptr<Expr> Expr::make_operator(Symbol op)
     return std::shared_ptr<Expr>(new Expr(NodeKind::OPERATOR, op));
 }
 
-std::shared_ptr<Expr> Expr::make_operator(Symbol op, const std::vector<std::shared_ptr<Expr>>& children)
+std::shared_ptr<Expr> Expr::make_operator(Symbol op, const Vec<std::shared_ptr<Expr>>& children)
 {
     return std::shared_ptr<Expr>(new Expr(NodeKind::OPERATOR, op, children));
 }
