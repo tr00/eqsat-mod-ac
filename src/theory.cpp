@@ -50,7 +50,27 @@ int Theory::get_arity(Symbol symbol) const
     return -1;
 }
 
-void Theory::add_rewrite_rule(const std::string& name, std::shared_ptr<Expr> lhs, std::shared_ptr<Expr> rhs)
+RewriteRule Theory::add_rewrite_rule(const std::string& name, std::shared_ptr<Expr> lhs, std::shared_ptr<Expr> rhs)
 {
-    rewrite_rules.emplace_back(intern(name), lhs, rhs);
+    RewriteRule rule(intern(name), lhs, rhs);
+    rewrite_rules.push_back(rule);
+    return rule;
+}
+
+std::string Expr::to_sexpr(const SymbolTable& symbols) const
+{
+    if (is_variable())
+    {
+        return symbols.get_string(symbol);
+    }
+    else
+    {
+        std::string result = "(" + symbols.get_string(symbol);
+        for (const auto& child : children)
+        {
+            result += " " + child->to_sexpr(symbols);
+        }
+        result += ")";
+        return result;
+    }
 }

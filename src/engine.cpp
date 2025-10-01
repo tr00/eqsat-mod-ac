@@ -55,7 +55,7 @@ void Engine::prepare(const Query& query)
     // load indices
     for (const auto& constraint : query.constraints)
     {
-        uint32_t permutation = 0; // constraint.permutation
+        uint32_t permutation = constraint.permutation;
         auto index = db.get_index(constraint.operator_symbol, permutation);
 
         indices[constraint] = index;

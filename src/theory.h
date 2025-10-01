@@ -89,6 +89,13 @@ class Expr
         return children.size();
     }
 
+    /**
+     * @brief Convert expression to S-expression string
+     * @param symbols Symbol table for name resolution
+     * @return S-expression representation
+     */
+    std::string to_sexpr(const SymbolTable& symbols) const;
+
   private:
     /**
      * @brief Private constructor for creating expressions.
@@ -143,5 +150,5 @@ class Theory
     bool has_operator(Symbol symbol) const;
     int get_arity(Symbol symbol) const;
 
-    void add_rewrite_rule(const std::string& name, std::shared_ptr<Expr> lhs, std::shared_ptr<Expr> rhs);
+    RewriteRule add_rewrite_rule(const std::string& name, std::shared_ptr<Expr> lhs, std::shared_ptr<Expr> rhs);
 };

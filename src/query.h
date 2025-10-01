@@ -105,6 +105,13 @@ class Query
      * @param var Variable to add to the head
      */
     void add_head_var(var_t var);
+
+    /**
+     * @brief Convert query to string for debugging
+     * @param symbols Symbol table for name resolution
+     * @return String representation of the query
+     */
+    std::string to_string(const SymbolTable& symbols) const;
 };
 
 namespace std

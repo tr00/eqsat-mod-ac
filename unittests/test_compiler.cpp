@@ -13,8 +13,7 @@ TEST_CASE("Simple expression compilation", "[pattern_compiler]")
     auto expr = Expr::make_operator(f);
 
     Compiler compiler;
-    Symbol rule_name = theory.intern("test_rule");
-    RewriteRule rule(rule_name, expr, expr);
+    RewriteRule rule = theory.add_rewrite_rule("test_rule", expr, expr);
     auto [query, subst] = compiler.compile(rule);
 
     // Should have one constraint: f(0)
@@ -41,8 +40,7 @@ TEST_CASE("Nested expression compilation", "[pattern_compiler]")
     auto g_expr = Expr::make_operator(g, Vec<std::shared_ptr<Expr>>{f_expr, h_expr});
 
     Compiler compiler;
-    Symbol rule_name = theory.intern("test_rule");
-    RewriteRule rule(rule_name, g_expr, g_expr);
+    RewriteRule rule = theory.add_rewrite_rule("test_rule", g_expr, g_expr);
     auto [query, subst] = compiler.compile(rule);
 
     // Should have three constraints: f(1), h(2), g(0, 1, 2)
@@ -87,8 +85,7 @@ TEST_CASE("Deeply nested expression compilation", "[pattern_compiler]")
     auto add_expr = Expr::make_operator(add, Vec<std::shared_ptr<Expr>>{mul_expr, z_expr});
 
     Compiler compiler;
-    Symbol rule_name = theory.intern("test_rule");
-    RewriteRule rule(rule_name, add_expr, add_expr);
+    RewriteRule rule = theory.add_rewrite_rule("test_rule", add_expr, add_expr);
     auto [query, subst] = compiler.compile(rule);
 
     // mul(1, 2, 3), add(0, 1, 4)
@@ -124,9 +121,9 @@ TEST_CASE("Multiple patterns compilation", "[pattern_compiler]")
     auto f_expr = Expr::make_operator(f);
     auto g_expr = Expr::make_operator(g);
 
-    Symbol rule1_name = theory.intern("rule1");
-    Symbol rule2_name = theory.intern("rule2");
-    Vec<RewriteRule> patterns = {RewriteRule(rule1_name, f_expr, f_expr), RewriteRule(rule2_name, g_expr, g_expr)};
+    RewriteRule rule1 = theory.add_rewrite_rule("rule1", f_expr, f_expr);
+    RewriteRule rule2 = theory.add_rewrite_rule("rule2", g_expr, g_expr);
+    Vec<RewriteRule> patterns = {rule1, rule2};
 
     Compiler compiler;
     auto kernels = compiler.compile_many(patterns);
