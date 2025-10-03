@@ -48,6 +48,8 @@ void Query::add_constraint(const Constraint& constraint)
 void Query::add_constraint(Symbol op, const Vec<var_t>& vars)
 {
     constraints.emplace_back(op, vars);
+    var_t maxvar = *std::max_element(vars.begin(), vars.end());
+    nvars = std::max(nvars, maxvar);
 }
 
 void Query::add_head_var(var_t var)

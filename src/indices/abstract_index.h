@@ -98,4 +98,14 @@ class AbstractIndex
             break;
         }
     }
+
+    void reset()
+    {
+        switch (kind)
+        {
+        case TRIE:
+            trie.reset();
+            break;
+        }
+    }
 };

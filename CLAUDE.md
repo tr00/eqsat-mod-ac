@@ -36,6 +36,8 @@ C++17 library implementing e-graphs (equality saturation) with custom database f
 - `AbstractIndex`: Type-erased index wrapper
   - `TrieIndex`: Trie-based indexing for relations
 
+**Important**: Relations store tuples as `op(arg1, arg2, ..., argN; eclass_id)` where the last column is the e-class identifier, NOT the result of the operation. For example, `add(1, 2; 10)` means that `add(1,2)` belongs to e-class 10.
+
 ### Set Operations (`src/sets/`)
 
 - `AbstractSet`: Set wrapper with tagged-union polymorphism

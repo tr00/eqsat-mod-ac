@@ -26,7 +26,7 @@ void State::prepare()
 
 bool State::empty() const
 {
-    return candidate != candidates.end();
+    return candidate == candidates.end();
 }
 
 id_t State::next()
@@ -72,8 +72,12 @@ void Engine::prepare(const Query& query)
 
     // initialize states
     states.clear();
-    for (const auto& [var, var_constraints] : constraints)
+    for (var_t var = 0; var < query.nvars; ++var)
     {
+        auto it = constraints.find(var);
+        assert(it != constraints.end());
+        const auto& var_constraints = it->second;
+
         State state;
         for (const auto& constraint_ref : var_constraints)
         {
@@ -83,6 +87,12 @@ void Engine::prepare(const Query& query)
             state.indices.push_back(index_it->second);
         }
         states.push_back(std::move(state));
+    }
+
+    // Reset all indices to root before execution
+    for (auto& [constraint, index] : indices)
+    {
+        index->reset();
     }
 }
 

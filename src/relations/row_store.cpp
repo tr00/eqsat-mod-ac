@@ -1,8 +1,9 @@
-#include "relations/row_store.h"
+#include <algorithm>
+
 #include "indices/abstract_index.h"
 #include "indices/trie_index.h"
 #include "permutation.h"
-#include <algorithm>
+#include "relations/row_store.h"
 
 AbstractIndex RowStore::build_index(uint32_t vo)
 {
@@ -25,5 +26,5 @@ AbstractIndex RowStore::build_index(uint32_t vo)
         trie.insert_path(buffer);
     }
 
-    return AbstractIndex(TrieIndex(trie));
+    return AbstractIndex(TrieIndex(std::move(trie)));
 }

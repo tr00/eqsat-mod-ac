@@ -80,6 +80,7 @@ add_executable(unittests
     unittests/test_union_find.cpp
     unittests/test_trie_index.cpp
     unittests/test_permutation.cpp
+    unittests/test_engine.cpp
 )
 
 target_include_directories(unittests PRIVATE src)

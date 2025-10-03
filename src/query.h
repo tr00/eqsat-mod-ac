@@ -68,6 +68,8 @@ class Query
     /** @brief Variables to return in query results (projection) */
     Vec<var_t> head;
 
+    var_t nvars;
+
     /**
      * @brief Construct an empty query with a name
      *

@@ -23,10 +23,14 @@ class TrieIndex
   private:
     TrieNode *current_node;
     Vec<TrieNode *> parent_stack;
+    TrieNode root;
 
   public:
-    TrieIndex(TrieNode& trie);
+    TrieIndex(TrieNode root) : root(root)
+    {
+    }
 
+    void reset();
     void select(id_t key);
     void unselect();
     AbstractSet project() const;
