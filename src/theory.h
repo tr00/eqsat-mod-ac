@@ -151,4 +151,5 @@ class Theory
     int get_arity(Symbol symbol) const;
 
     RewriteRule add_rewrite_rule(const std::string& name, std::shared_ptr<Expr> lhs, std::shared_ptr<Expr> rhs);
+    RewriteRule add_rewrite_rule(const std::string& name, const std::string& lhs_str, const std::string& rhs_str);
 };

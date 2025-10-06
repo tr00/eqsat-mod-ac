@@ -39,6 +39,7 @@ set(LIB_SOURCES
     src/permutation.cpp
     src/engine.cpp
     src/database.cpp
+    src/parser.cpp
     src/relations/row_store.cpp
     src/indices/trie_index.cpp
     src/sets/sorted_vec_set.cpp
@@ -81,6 +82,7 @@ add_executable(unittests
     unittests/test_trie_index.cpp
     unittests/test_permutation.cpp
     unittests/test_engine.cpp
+    unittests/test_parser.cpp
 )
 
 target_include_directories(unittests PRIVATE src)

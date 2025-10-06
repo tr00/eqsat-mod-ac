@@ -1,5 +1,6 @@
-#include "database.h"
 #include <cassert>
+
+#include "database.h"
 
 void Database::build_indices()
 {

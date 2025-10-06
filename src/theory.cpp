@@ -1,4 +1,5 @@
 #include "theory.h"
+#include "parser.h"
 #include <memory>
 
 Expr::Expr(NodeKind k, Symbol sym) : kind(k), symbol(sym)
@@ -57,20 +58,24 @@ RewriteRule Theory::add_rewrite_rule(const std::string& name, std::shared_ptr<Ex
     return rule;
 }
 
+RewriteRule Theory::add_rewrite_rule(const std::string& name, const std::string& lhs_str, const std::string& rhs_str)
+{
+    Parser parser(symbols);
+    auto lhs = parser.parse_sexpr(lhs_str);
+    auto rhs = parser.parse_sexpr(rhs_str);
+    return add_rewrite_rule(name, lhs, rhs);
+}
+
 std::string Expr::to_sexpr(const SymbolTable& symbols) const
 {
     if (is_variable())
-    {
-        return symbols.get_string(symbol);
-    }
-    else
-    {
-        std::string result = "(" + symbols.get_string(symbol);
-        for (const auto& child : children)
-        {
-            result += " " + child->to_sexpr(symbols);
-        }
-        result += ")";
-        return result;
-    }
+        return "?" + symbols.get_string(symbol);
+
+    std::string result = "(" + symbols.get_string(symbol);
+
+    for (const auto& child : children)
+        result += " " + child->to_sexpr(symbols);
+
+    result += ")";
+    return result;
 }

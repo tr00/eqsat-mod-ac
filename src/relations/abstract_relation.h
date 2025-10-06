@@ -1,9 +1,10 @@
 #pragma once
 
+#include <cstddef>
+
 #include "indices/abstract_index.h"
 #include "row_store.h"
 #include "symbol_table.h"
-#include <cstddef>
 
 enum RelationKind
 {

@@ -3,6 +3,7 @@
 #include <cassert>
 
 #include "../id.h"
+#include "sets/multiset_support.h"
 #include "sorted_iter_set.h"
 #include "sorted_vec_set.h"
 
@@ -10,6 +11,7 @@ enum SetKind
 {
     SORTED_VEC,
     SORTED_ITER,
+    MSET_SUPPORT,
 };
 
 class AbstractSet
@@ -19,6 +21,7 @@ class AbstractSet
     union {
         SortedVecSet sorted_vec;
         SortedIterSet sorted_iter;
+        MultisetSupport mset_support;
     };
 
   public:
@@ -26,6 +29,9 @@ class AbstractSet
     {
     }
     explicit AbstractSet(SortedIterSet s) : kind(SORTED_ITER), sorted_iter(std::move(s))
+    {
+    }
+    explicit AbstractSet(MultisetSupport s) : kind(MSET_SUPPORT), mset_support(std::move(s))
     {
     }
 
@@ -38,6 +44,9 @@ class AbstractSet
             break;
         case SORTED_ITER:
             sorted_iter.~SortedIterSet();
+            break;
+        case MSET_SUPPORT:
+            mset_support.~MultisetSupport();
             break;
         }
     }
@@ -55,6 +64,9 @@ class AbstractSet
         case SORTED_ITER:
             new (&sorted_iter) SortedIterSet(std::move(other.sorted_iter));
             break;
+        case MSET_SUPPORT:
+            new (&mset_support) MultisetSupport(std::move(other.mset_support));
+            break;
         }
     }
 
@@ -71,6 +83,9 @@ class AbstractSet
             case SORTED_ITER:
                 sorted_iter.~SortedIterSet();
                 break;
+            case MSET_SUPPORT:
+                mset_support.~MultisetSupport();
+                break;
             }
             // Move construct new object
             kind = other.kind;
@@ -81,6 +96,9 @@ class AbstractSet
                 break;
             case SORTED_ITER:
                 new (&sorted_iter) SortedIterSet(std::move(other.sorted_iter));
+                break;
+            case MSET_SUPPORT:
+                new (&mset_support) MultisetSupport(std::move(other.mset_support));
                 break;
             }
         }
@@ -95,6 +113,8 @@ class AbstractSet
             return sorted_vec.contains(id);
         case SORTED_ITER:
             return sorted_iter.contains(id);
+        case MSET_SUPPORT:
+            return mset_support.contains(id);
         }
         assert(0);
     }
@@ -107,6 +127,8 @@ class AbstractSet
             return sorted_vec.size();
         case SORTED_ITER:
             return sorted_iter.size();
+        case MSET_SUPPORT:
+            return mset_support.size();
         }
         assert(0);
     }
@@ -125,6 +147,8 @@ class AbstractSet
             return sorted_vec.for_each(f);
         case SORTED_ITER:
             return sorted_iter.for_each(f);
+        case MSET_SUPPORT:
+            return mset_support.for_each(f);
         }
         assert(0);
     }

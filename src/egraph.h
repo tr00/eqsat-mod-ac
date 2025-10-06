@@ -1,12 +1,13 @@
 #pragma once
 
+#include <memory>
+
 #include "database.h"
 #include "id.h"
 #include "query.h"
 #include "symbol_table.h"
 #include "theory.h"
 #include "union_find.h"
-#include <memory>
 
 class ENode
 {

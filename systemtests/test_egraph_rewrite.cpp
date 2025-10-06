@@ -23,27 +23,11 @@ TEST_CASE("EGraph can handle rewrite rules with pattern compilation", "[egraph][
 
     SECTION("Add rewrite rules and compile patterns")
     {
-        // Create pattern variables
-        Symbol x_sym = theory.intern("x");
-        Symbol y_sym = theory.intern("y");
-        Symbol z_sym = theory.intern("z");
-
-        auto x_var = Expr::make_variable(x_sym);
-        auto y_var = Expr::make_variable(y_sym);
-        auto z_var = Expr::make_variable(z_sym);
-
         // Rule 1: 1 * x -> x (multiplicative identity)
-        auto one_expr = Expr::make_operator(one_sym);
-        auto mul_one_x = Expr::make_operator(mul_sym, {one_expr, x_var});
-        theory.add_rewrite_rule("mul-one", mul_one_x, x_var);
+        theory.add_rewrite_rule("mul-one", "(* (1) ?x)", "?x");
 
         // Rule 2: x * (y + z) -> (x * y) + (x * z) (distributivity)
-        auto y_plus_z = Expr::make_operator(add_sym, {y_var, z_var});
-        auto x_mul_sum = Expr::make_operator(mul_sym, {x_var, y_plus_z});
-        auto x_mul_y = Expr::make_operator(mul_sym, {x_var, y_var});
-        auto x_mul_z = Expr::make_operator(mul_sym, {x_var, z_var});
-        auto distributed = Expr::make_operator(add_sym, {x_mul_y, x_mul_z});
-        theory.add_rewrite_rule("distr", x_mul_sum, distributed);
+        theory.add_rewrite_rule("distr", "(* ?x (+ ?y ?z))", "(+ (* ?x ?y) (* ?x ?z))");
 
         // Verify that the rules were added
         REQUIRE(theory.rewrite_rules.size() == 2);
@@ -52,16 +36,12 @@ TEST_CASE("EGraph can handle rewrite rules with pattern compilation", "[egraph][
         Compiler compiler;
 
         // Compile the left-hand side of the first rule
-        Symbol rule_name = theory.intern("identity_test");
-        RewriteRule identity_rule(rule_name, mul_one_x, x_var);
-        auto [identity_query, identity_subst] = compiler.compile(identity_rule);
+        auto [identity_query, identity_subst] = compiler.compile(theory.rewrite_rules[0]);
         REQUIRE(identity_query.constraints.size() == 2); // one constraint for "1", one for "*"
         REQUIRE(identity_query.head.size() > 0);
 
         // Compile the left-hand side of the distributivity rule
-        Symbol dist_rule_name = theory.intern("dist_test");
-        RewriteRule dist_rule(dist_rule_name, x_mul_sum, distributed);
-        auto [distributivity_query, distributivity_subst] = compiler.compile(dist_rule);
+        auto [distributivity_query, distributivity_subst] = compiler.compile(theory.rewrite_rules[1]);
         REQUIRE(distributivity_query.constraints.size() == 2); // one for "+", one for "*"
         REQUIRE(distributivity_query.head.size() > 0);
 
@@ -91,25 +71,14 @@ TEST_CASE("EGraph can handle rewrite rules with pattern compilation", "[egraph][
 
     SECTION("Compile multiple patterns in batch")
     {
-        // Create pattern variables
-        Symbol x_sym = theory.intern("x");
-        Symbol y_sym = theory.intern("y");
-        auto x_var = Expr::make_variable(x_sym);
-        auto y_var = Expr::make_variable(y_sym);
+        // Create multiple patterns using string-based interface
+        theory.add_rewrite_rule("pattern1", "(* (1) ?x)", "?x");       // 1 * x -> x
+        theory.add_rewrite_rule("pattern2", "(+ (0) ?x)", "?x");       // 0 + x -> x
+        theory.add_rewrite_rule("pattern3", "(* ?x ?y)", "(* ?x ?y)"); // x * y -> x * y
 
-        // Create multiple patterns
-        auto one_expr = Expr::make_operator(one_sym);
-        auto zero_expr = Expr::make_operator(zero_sym);
-
-        auto pattern1 = Expr::make_operator(mul_sym, {one_expr, x_var});  // 1 * x
-        auto pattern2 = Expr::make_operator(add_sym, {zero_expr, x_var}); // 0 + x
-        auto pattern3 = Expr::make_operator(mul_sym, {x_var, y_var});     // x * y
-
-        Symbol name1 = theory.intern("pattern1");
-        Symbol name2 = theory.intern("pattern2");
-        Symbol name3 = theory.intern("pattern3");
-        Vec<RewriteRule> patterns = {RewriteRule(name1, pattern1, x_var), RewriteRule(name2, pattern2, x_var),
-                                     RewriteRule(name3, pattern3, pattern3)};
+        Vec<RewriteRule> patterns = {theory.rewrite_rules[theory.rewrite_rules.size() - 3],
+                                     theory.rewrite_rules[theory.rewrite_rules.size() - 2],
+                                     theory.rewrite_rules[theory.rewrite_rules.size() - 1]};
 
         // Compile all patterns
         Compiler compiler;

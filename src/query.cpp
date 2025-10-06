@@ -1,6 +1,7 @@
-#include "query.h"
-#include "permutation.h"
 #include <algorithm>
+
+#include "permutation.h"
+#include "query.h"
 
 // Constraint implementation
 Constraint::Constraint(Symbol op, const Vec<var_t>& vars) : operator_symbol(op), variables(vars)

@@ -1,9 +1,10 @@
+#include <functional>
+#include <memory>
+
 #include "engine.h"
 #include "id.h"
 #include "query.h"
 #include "sets/abstract_set.h"
-#include <functional>
-#include <memory>
 
 //                            ▲
 // descend into   │           │ ascend out / backtrack

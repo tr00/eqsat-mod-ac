@@ -10,10 +10,8 @@ TEST_CASE("Simple expression compilation", "[pattern_compiler]")
     Theory theory;
     Symbol f = theory.intern("f");
 
-    auto expr = Expr::make_operator(f);
-
     Compiler compiler;
-    RewriteRule rule = theory.add_rewrite_rule("test_rule", expr, expr);
+    RewriteRule rule = theory.add_rewrite_rule("test_rule", "(f)", "(f)");
     auto [query, subst] = compiler.compile(rule);
 
     // Should have one constraint: f(0)
@@ -35,12 +33,8 @@ TEST_CASE("Nested expression compilation", "[pattern_compiler]")
     Symbol g = theory.intern("g");
     Symbol h = theory.intern("h");
 
-    auto f_expr = Expr::make_operator(f);
-    auto h_expr = Expr::make_operator(h);
-    auto g_expr = Expr::make_operator(g, Vec<std::shared_ptr<Expr>>{f_expr, h_expr});
-
     Compiler compiler;
-    RewriteRule rule = theory.add_rewrite_rule("test_rule", g_expr, g_expr);
+    RewriteRule rule = theory.add_rewrite_rule("test_rule", "(g (f) (h))", "(g (f) (h))");
     auto [query, subst] = compiler.compile(rule);
 
     // Should have three constraints: f(1), h(2), g(0, 1, 2)
@@ -78,14 +72,8 @@ TEST_CASE("Deeply nested expression compilation", "[pattern_compiler]")
     Symbol y = theory.intern("y");
     Symbol z = theory.intern("z");
 
-    auto x_expr = Expr::make_variable(x);
-    auto y_expr = Expr::make_variable(y);
-    auto z_expr = Expr::make_variable(z);
-    auto mul_expr = Expr::make_operator(mul, Vec<std::shared_ptr<Expr>>{x_expr, y_expr});
-    auto add_expr = Expr::make_operator(add, Vec<std::shared_ptr<Expr>>{mul_expr, z_expr});
-
     Compiler compiler;
-    RewriteRule rule = theory.add_rewrite_rule("test_rule", add_expr, add_expr);
+    RewriteRule rule = theory.add_rewrite_rule("test_rule", "(add (mul ?x ?y) ?z)", "(add (mul ?x ?y) ?z)");
     auto [query, subst] = compiler.compile(rule);
 
     // mul(1, 2, 3), add(0, 1, 4)
@@ -118,11 +106,8 @@ TEST_CASE("Multiple patterns compilation", "[pattern_compiler]")
     Symbol f = theory.intern("f");
     Symbol g = theory.intern("g");
 
-    auto f_expr = Expr::make_operator(f);
-    auto g_expr = Expr::make_operator(g);
-
-    RewriteRule rule1 = theory.add_rewrite_rule("rule1", f_expr, f_expr);
-    RewriteRule rule2 = theory.add_rewrite_rule("rule2", g_expr, g_expr);
+    RewriteRule rule1 = theory.add_rewrite_rule("rule1", "(f)", "(f)");
+    RewriteRule rule2 = theory.add_rewrite_rule("rule2", "(g)", "(g)");
     Vec<RewriteRule> patterns = {rule1, rule2};
 
     Compiler compiler;

@@ -1,10 +1,11 @@
-#include "egraph.h"
-#include "compiler.h"
-#include "engine.h"
-#include "id.h"
 #include <cassert>
 #include <cstddef>
 #include <stdexcept>
+
+#include "compiler.h"
+#include "egraph.h"
+#include "engine.h"
+#include "id.h"
 
 EGraph::EGraph(const Theory& theory) : theory(theory)
 {
