@@ -42,6 +42,7 @@ set(LIB_SOURCES
     src/parser.cpp
     src/relations/row_store.cpp
     src/indices/trie_index.cpp
+    src/indices/multiset_index.cpp
     src/sets/sorted_vec_set.cpp
     src/sets/abstract_set.cpp
 )
@@ -83,6 +84,8 @@ add_executable(unittests
     unittests/test_permutation.cpp
     unittests/test_engine.cpp
     unittests/test_parser.cpp
+    unittests/test_multiset.cpp
+    unittests/test_multiset_index.cpp
 )
 
 target_include_directories(unittests PRIVATE src)

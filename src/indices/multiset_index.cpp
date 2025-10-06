@@ -36,3 +36,15 @@ void MultisetIndex::unselect()
         mset->insert(key);
     }
 }
+
+void MultisetIndex::reset()
+{
+    // Restore all removed elements
+    while (!history.empty())
+    {
+        auto key = history.back();
+        history.pop_back();
+        mset->insert(key);
+    }
+    mset = nullptr;
+}

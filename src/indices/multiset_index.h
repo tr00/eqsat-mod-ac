@@ -8,7 +8,7 @@ class MultisetIndex
 {
   private:
     HashMap<id_t, Multiset> rel;
-    Multiset *mset;
+    Multiset *mset = nullptr;
     Vec<id_t> history;
 
   public:
