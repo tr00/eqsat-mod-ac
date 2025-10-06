@@ -71,6 +71,9 @@ void Engine::prepare(const Query& query)
         }
     }
 
+    // store head variables
+    head = query.head;
+
     // initialize states
     states.clear();
     for (var_t var = 0; var < query.nvars; ++var)
@@ -92,9 +95,7 @@ void Engine::prepare(const Query& query)
 
     // Reset all indices to root before execution
     for (auto& [constraint, index] : indices)
-    {
         index->reset();
-    }
 }
 
 Vec<id_t> Engine::execute()
@@ -147,10 +148,8 @@ BACKTRACK:
 
 YIELD:
 
-    for (auto state : states)
-    {
-        results.push_back(*state.candidate);
-    }
+    for (var_t var : head)
+        results.push_back(*(states[var].candidate - 1));
 
     goto BACKTRACK;
 }

@@ -28,6 +28,7 @@ class TrieIndex
   public:
     TrieIndex(TrieNode root) : root(root)
     {
+        reset();
     }
 
     void reset();

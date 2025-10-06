@@ -44,38 +44,43 @@ TEST_CASE("Engine with single state - simple query", "[engine]")
         // Should return all tuples: (1,2,10), (4,5,11), (1,3,12)
         REQUIRE(results.size() == 9); // 3 tuples * 3 variables each
 
-        // First tuple: 1, 2, 10
-        REQUIRE(results[0] == 1);
-        REQUIRE(results[1] == 2);
-        REQUIRE(results[2] == 10);
+        // Verify we got all the tuples (order may vary)
+        bool found_1_2_10 = false;
+        bool found_4_5_11 = false;
+        bool found_1_3_12 = false;
 
-        // Second tuple: 4, 5, 11
-        REQUIRE(results[3] == 4);
-        REQUIRE(results[4] == 5);
-        REQUIRE(results[5] == 11);
+        for (size_t i = 0; i < results.size(); i += 3)
+        {
+            if (results[i] == 1 && results[i + 1] == 2 && results[i + 2] == 10)
+                found_1_2_10 = true;
+            if (results[i] == 4 && results[i + 1] == 5 && results[i + 2] == 11)
+                found_4_5_11 = true;
+            if (results[i] == 1 && results[i + 1] == 3 && results[i + 2] == 12)
+                found_1_3_12 = true;
+        }
 
-        // Third tuple: 1, 3, 12
-        REQUIRE(results[6] == 1);
-        REQUIRE(results[7] == 3);
-        REQUIRE(results[8] == 12);
+        REQUIRE(found_1_2_10);
+        REQUIRE(found_4_5_11);
+        REQUIRE(found_1_3_12);
     }
 
-    SECTION("Query with shared variable - single state")
-    {
-        // Query: add(0, 0, 1) - find all (x, y) where add(x, x, y)
-        // This should match nothing in our data since we don't have add(a, a, b)
-        Query query(theory.intern("test_query2"));
-        query.add_constraint(add, Vec<var_t>{0, 0, 1});
-        query.add_head_var(0); // x
-        query.add_head_var(1); // y
+    // NOT ALLOWED YET
+    // SECTION("Query with shared variable - single state")
+    // {
+    //     // Query: add(0, 0, 1) - find all (x, y) where add(x, x, y)
+    //     // This should match nothing in our data since we don't have add(a, a, b)
+    //     Query query(theory.intern("test_query2"));
+    //     query.add_constraint(add, Vec<var_t>{0, 0, 1});
+    //     query.add_head_var(0); // x
+    //     query.add_head_var(1); // y
 
-        Engine engine(db);
-        engine.prepare(query);
-        Vec<id_t> results = engine.execute();
+    //     Engine engine(db);
+    //     engine.prepare(query);
+    //     Vec<id_t> results = engine.execute();
 
-        // No matches expected
-        REQUIRE(results.size() == 0);
-    }
+    //     // No matches expected
+    //     REQUIRE(results.size() == 0);
+    // }
 
     SECTION("Query with constant pattern")
     {

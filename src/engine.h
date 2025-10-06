@@ -27,6 +27,7 @@ class Engine
 {
   private:
     Vec<State> states;
+    Vec<var_t> head;
     Database& db;
 
   public:
