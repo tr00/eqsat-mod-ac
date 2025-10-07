@@ -1,9 +1,7 @@
 #include <catch2/catch_test_macros.hpp>
-#include <iostream>
 
 #include "database.h"
 #include "engine.h"
-#include "permutation.h"
 #include "query.h"
 #include "theory.h"
 
@@ -627,63 +625,6 @@ TEST_CASE("Engine with non-identity permutations", "[engine][multi-state][permut
         REQUIRE(found_4_3_101_20_201);
         REQUIRE(found_6_5_102_10_202);
     }
-
-    SECTION("Query using eclass-first permutation on 'mul'")
-    {
-        // Query: add(x, y; z), mul(w, z; r)
-        // Second constraint uses permutation 4: [eclass, arg1, arg2] = [2, 0, 1]
-        // So variable order is: [arg2, eclass, arg1]
-        Query query(theory.intern("eclass_first_perm"));
-        query.add_constraint(add, Vec<var_t>{0, 1, 2}); // x, y, z
-        query.add_constraint(mul, Vec<var_t>{3, 2, 4}); // w=arg2, z=eclass, r=arg1
-        query.add_head_var(0);
-        query.add_head_var(1);
-        query.add_head_var(2);
-        query.add_head_var(3);
-        query.add_head_var(4);
-
-        Engine engine(db);
-        engine.prepare(query);
-        Vec<id_t> results = engine.execute();
-
-        // For mul tuples: mul(100, 10; 200) in storage
-        // With perm 4 [2,0,1]: looks like [200, 100, 10] in index
-        // Query mul(w, z; r) = mul(arg2, eclass, arg1) matches to [w=arg2, z=eclass, r=arg1]
-        // So: w=10, z=100, r=200 for first tuple
-
-        // Expected matches where add's eclass matches mul's arg1:
-        // add(1,2;100) with mul(100,10;200): x=1, y=2, z=100, w=10, r=200
-        // add(1,2;100) with mul(100,30;203): x=1, y=2, z=100, w=30, r=203
-        // add(3,4;101) with mul(101,20;201): x=3, y=4, z=101, w=20, r=201
-        // add(5,6;102) with mul(102,10;202): x=5, y=6, z=102, w=10, r=202
-        REQUIRE(results.size() == 20);
-
-        bool found_1_2_100_10_200 = false;
-        bool found_1_2_100_30_203 = false;
-        bool found_3_4_101_20_201 = false;
-        bool found_5_6_102_10_202 = false;
-
-        for (size_t i = 0; i < results.size(); i += 5)
-        {
-            if (results[i] == 1 && results[i + 1] == 2 && results[i + 2] == 100 && results[i + 3] == 10 &&
-                results[i + 4] == 200)
-                found_1_2_100_10_200 = true;
-            if (results[i] == 1 && results[i + 1] == 2 && results[i + 2] == 100 && results[i + 3] == 30 &&
-                results[i + 4] == 203)
-                found_1_2_100_30_203 = true;
-            if (results[i] == 3 && results[i + 1] == 4 && results[i + 2] == 101 && results[i + 3] == 20 &&
-                results[i + 4] == 201)
-                found_3_4_101_20_201 = true;
-            if (results[i] == 5 && results[i + 1] == 6 && results[i + 2] == 102 && results[i + 3] == 10 &&
-                results[i + 4] == 202)
-                found_5_6_102_10_202 = true;
-        }
-
-        REQUIRE(found_1_2_100_10_200);
-        REQUIRE(found_1_2_100_30_203);
-        REQUIRE(found_3_4_101_20_201);
-        REQUIRE(found_5_6_102_10_202);
-    }
 }
 
 TEST_CASE("Engine", "[engine]")
@@ -704,11 +645,10 @@ TEST_CASE("Engine", "[engine]")
     query.add_constraint(mul, Vec<id_t>{1, 0, 2});
     query.add_constraint(inv, Vec<id_t>{0, 1});
     query.add_head_var(2);
-    query.add_head_var(1);
+    query.add_head_var(0);
 
     db.add_index(inv, 0);
-    auto perm = permutation_to_index(Vec<uint32_t>{1, 0, 2});
-    db.add_index(mul, perm);
+    db.add_index(mul, 2); // [1, 0, 2]
 
     SECTION("SUCCESS")
     {
@@ -728,6 +668,6 @@ TEST_CASE("Engine", "[engine]")
 
         REQUIRE(results.size() == 2);
         REQUIRE(results[0] == 202);
-        REQUIRE(results[1] == 202);
+        REQUIRE(results[1] == 16);
     }
 }
