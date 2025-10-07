@@ -90,20 +90,14 @@ TEST_CASE("Database index operations", "[database]")
         REQUIRE_FALSE(db.has_index(add_sym, 5));
         REQUIRE_FALSE(db.has_index(mul_sym, 3));
 
-        // Get index objects (should not be null)
+        // Get index objects (should succeed)
         auto add_idx_0 = db.get_index(add_sym, 0);
         auto add_idx_2 = db.get_index(add_sym, 2);
         auto mul_idx_0 = db.get_index(mul_sym, 0);
         auto mul_idx_1 = db.get_index(mul_sym, 1);
 
-        REQUIRE(add_idx_0 != nullptr);
-        REQUIRE(add_idx_2 != nullptr);
-        REQUIRE(mul_idx_0 != nullptr);
-        REQUIRE(mul_idx_1 != nullptr);
-
-        // Non-existent indices should return null
-        auto non_existent = db.get_index(add_sym, 5);
-        REQUIRE(non_existent == nullptr);
+        // Indices are returned by value, so just verify they were retrieved
+        // (if they didn't exist, the assertion in get_index would have failed)
     }
 
     SECTION("Index building with permutations")
@@ -129,14 +123,10 @@ TEST_CASE("Database index operations", "[database]")
         REQUIRE(db.has_index(add_sym, 4));
         REQUIRE(db.has_index(add_sym, 5));
 
-        // Get built indices
+        // Get built indices (should succeed)
         auto idx_0 = db.get_index(add_sym, 0);
         auto idx_4 = db.get_index(add_sym, 4);
         auto idx_5 = db.get_index(add_sym, 5);
-
-        REQUIRE(idx_0 != nullptr);
-        REQUIRE(idx_4 != nullptr);
-        REQUIRE(idx_5 != nullptr);
 
         // Note: We can't easily test the internal structure of the trie indices
         // without access to their internal methods, but we can verify they were created
@@ -164,16 +154,11 @@ TEST_CASE("Database index operations", "[database]")
         // Build all indices
         db.build_indices();
 
-        // Verify all indices exist and are accessible
+        // Verify all indices exist
         REQUIRE(db.has_index(add_sym, 0));
         REQUIRE(db.has_index(add_sym, 1));
         REQUIRE(db.has_index(mul_sym, 0));
         REQUIRE(db.has_index(mul_sym, 2));
-
-        REQUIRE(db.get_index(add_sym, 0) != nullptr);
-        REQUIRE(db.get_index(add_sym, 1) != nullptr);
-        REQUIRE(db.get_index(mul_sym, 0) != nullptr);
-        REQUIRE(db.get_index(mul_sym, 2) != nullptr);
     }
 
     SECTION("Index clearing functionality")
@@ -209,11 +194,11 @@ TEST_CASE("Database index operations", "[database]")
         REQUIRE_FALSE(db.has_index(mul_sym, 0));
         REQUIRE_FALSE(db.has_index(mul_sym, 1));
 
-        // Verify get_index returns null for cleared indices
-        REQUIRE(db.get_index(add_sym, 0) == nullptr);
-        REQUIRE(db.get_index(add_sym, 1) == nullptr);
-        REQUIRE(db.get_index(mul_sym, 0) == nullptr);
-        REQUIRE(db.get_index(mul_sym, 1) == nullptr);
+        // Verify indices no longer exist after clearing
+        REQUIRE_FALSE(db.has_index(add_sym, 0));
+        REQUIRE_FALSE(db.has_index(add_sym, 1));
+        REQUIRE_FALSE(db.has_index(mul_sym, 0));
+        REQUIRE_FALSE(db.has_index(mul_sym, 1));
 
         // Relations should still exist and be intact
         REQUIRE(db.has_relation(add_sym));
@@ -236,7 +221,6 @@ TEST_CASE("Database index operations", "[database]")
         db.build_indices(); // Should not crash
 
         REQUIRE(db.has_index(add_sym, 0));
-        REQUIRE(db.get_index(add_sym, 0) != nullptr);
 
         // Clear empty indices
         db.clear_indices();
@@ -255,19 +239,12 @@ TEST_CASE("Database index operations", "[database]")
         db.add_index(add_sym, 0);
         REQUIRE(db.has_index(add_sym, 0));
 
-        auto first_index = db.get_index(add_sym, 0);
-        REQUIRE(first_index != nullptr);
-
         // Replace with same key
         db.add_index(add_sym, 0);
         REQUIRE(db.has_index(add_sym, 0));
 
-        auto second_index = db.get_index(add_sym, 0);
-        REQUIRE(second_index != nullptr);
-
         // Should still work after building
         db.build_indices();
         REQUIRE(db.has_index(add_sym, 0));
-        REQUIRE(db.get_index(add_sym, 0) != nullptr);
     }
 }

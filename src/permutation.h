@@ -1,7 +1,8 @@
 #pragma once
 
-#include "id.h"
 #include <cstdint>
+
+#include "id.h"
 
 /**
  * @brief Permutation utilities for converting between permutation vectors and indices

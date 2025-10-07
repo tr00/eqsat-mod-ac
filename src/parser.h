@@ -1,10 +1,11 @@
 #pragma once
 
-#include "symbol_table.h"
-#include "theory.h"
 #include <memory>
 #include <string>
 #include <vector>
+
+#include "symbol_table.h"
+#include "theory.h"
 
 enum class TokenType
 {

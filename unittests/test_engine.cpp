@@ -1,4 +1,5 @@
 #include <catch2/catch_test_macros.hpp>
+#include <iostream>
 
 #include "database.h"
 #include "engine.h"
@@ -356,44 +357,58 @@ TEST_CASE("Engine multi-state join - three constraints", "[engine][multi-state]"
     }
 }
 
-TEST_CASE("Engine multi-state - variable appears in multiple constraints", "[engine][multi-state]")
+TEST_CASE("Engine multi-state - variable appears in multiple constraints", "[engine][multi-state][triangle]")
 {
     Theory theory;
     Symbol p = theory.add_operator("p", 2);
 
     Database db;
-    db.add_relation(p, 3);
+    db.add_relation(p, 2);
 
-    // p(1, 2; 10), p(2, 3; 11), p(1, 3; 12), p(3, 4; 13)
-    db.add_tuple(p, Vec<id_t>{1, 2, 10});
-    db.add_tuple(p, Vec<id_t>{2, 3, 11});
-    db.add_tuple(p, Vec<id_t>{1, 3, 12});
-    db.add_tuple(p, Vec<id_t>{3, 4, 13});
+    db.add_tuple(p, Vec<id_t>{1, 2});
+    db.add_tuple(p, Vec<id_t>{2, 3});
+    db.add_tuple(p, Vec<id_t>{3, 4});
+    db.add_tuple(p, Vec<id_t>{3, 1});
 
     db.add_index(p, 0);
+    db.add_index(p, 1);
     db.build_indices();
 
-    SECTION("Triangle query: p(x, y; z1), p(y, z; z2), p(x, z; z3)")
+    // TRIANGLE QUERY: (x, y) (y, z) (z, x)
+
+    Query query(theory.intern("triangle"));
+    query.add_constraint(p, Vec<var_t>{0, 1});
+    query.add_constraint(p, Vec<var_t>{1, 2});
+    query.add_constraint(p, Vec<var_t>{2, 0});
+    query.add_head_var(0);
+    query.add_head_var(1);
+    query.add_head_var(2);
+
+    Engine engine(db);
+    engine.prepare(query);
+    Vec<id_t> results = engine.execute();
+
+    REQUIRE(results.size() == 9);
+
+    bool found_1_2_3 = false;
+    bool found_2_3_1 = false;
+    bool found_3_1_2 = false;
+
+    for (size_t i = 0; i < results.size(); i += 3)
     {
-        // Find triangles where x->y, y->z, x->z all exist
-        Query query(theory.intern("triangle"));
-        query.add_constraint(p, Vec<var_t>{0, 1, 2}); // x=0, y=1, z1=2
-        query.add_constraint(p, Vec<var_t>{1, 3, 4}); // y=1, z=3, z2=4
-        query.add_constraint(p, Vec<var_t>{0, 3, 5}); // x=0, z=3, z3=5
-        query.add_head_var(0);
-        query.add_head_var(1);
-        query.add_head_var(3);
+        if (results[i] == 1 && results[i + 1] == 2 && results[i + 2] == 3)
+            found_1_2_3 = true;
 
-        Engine engine(db);
-        engine.prepare(query);
-        Vec<id_t> results = engine.execute();
+        if (results[i] == 2 && results[i + 1] == 3 && results[i + 2] == 1)
+            found_2_3_1 = true;
 
-        // Expected: (1, 2, 3) - p(1,2;10), p(2,3;11), p(1,3;12)
-        REQUIRE(results.size() == 3);
-        REQUIRE(results[0] == 1);
-        REQUIRE(results[1] == 2);
-        REQUIRE(results[2] == 3);
+        if (results[i] == 3 && results[i + 1] == 1 && results[i + 2] == 2)
+            found_3_1_2 = true;
     }
+
+    REQUIRE(found_1_2_3);
+    REQUIRE(found_2_3_1);
+    REQUIRE(found_3_1_2);
 }
 
 TEST_CASE("Engine multi-state - empty intersection with backtracking", "[engine][multi-state]")
@@ -448,6 +463,7 @@ TEST_CASE("Engine multi-state - shared variable at different positions", "[engin
     db.add_tuple(op, Vec<id_t>{3, 2, 12});
 
     db.add_index(op, 0);
+    db.add_index(op, 2);
     db.build_indices();
 
     SECTION("Variable x appears as first arg in first constraint, second arg in second")
@@ -508,10 +524,12 @@ TEST_CASE("Engine with non-identity permutations", "[engine][multi-state][permut
     db.add_tuple(mul, Vec<id_t>{100, 30, 203});
 
     // Create multiple indices with different permutations
-    db.add_index(add, 0); // identity: [arg1, arg2, eclass] -> [0, 1, 2]
-    db.add_index(add, 2); // permutation 2: [arg2, arg1, eclass] -> [1, 0, 2]
-    db.add_index(mul, 0); // identity: [arg1, arg2, eclass] -> [0, 1, 2]
-    db.add_index(mul, 4); // permutation 4: [eclass, arg1, arg2] -> [2, 0, 1]
+    db.add_index(add, 0); // [0, 1, 2]
+    db.add_index(add, 2); // [1, 0, 2]
+
+    db.add_index(mul, 0); // [0, 1, 2]
+    db.add_index(mul, 2); // [1, 0, 2]
+    db.add_index(mul, 4); // [2, 0, 1]
 
     db.build_indices();
 

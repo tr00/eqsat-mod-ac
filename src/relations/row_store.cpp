@@ -7,7 +7,7 @@
 
 AbstractIndex RowStore::build_index(uint32_t vo)
 {
-    TrieNode trie;
+    auto trie = std::make_shared<TrieNode>();
 
     // precompute permutation indices
     Vec<uint32_t> iota(arity);
@@ -23,8 +23,8 @@ AbstractIndex RowStore::build_index(uint32_t vo)
         const id_t *tuple = base + i * arity;
         std::copy(tuple, tuple + arity, buffer.begin());
         apply_permutation(permuted_indices, buffer);
-        trie.insert_path(buffer);
+        trie->insert_path(buffer);
     }
 
-    return AbstractIndex(TrieIndex(std::move(trie)));
+    return AbstractIndex(TrieIndex(trie));
 }

@@ -1,6 +1,7 @@
-#include "theory.h"
-#include "parser.h"
 #include <memory>
+
+#include "parser.h"
+#include "theory.h"
 
 Expr::Expr(NodeKind k, Symbol sym) : kind(k), symbol(sym)
 {

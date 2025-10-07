@@ -1,8 +1,9 @@
 #pragma once
 
-#include "id.h"
 #include <cstdint>
 #include <string>
+
+#include "id.h"
 
 using Symbol = uint32_t;
 

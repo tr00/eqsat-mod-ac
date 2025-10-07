@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cassert>
 #include <memory>
 #include <stdexcept>
 
@@ -46,7 +47,7 @@ class Database
 {
   private:
     HashMap<Symbol, AbstractRelation> relations;
-    HashMap<IndexKey, std::shared_ptr<AbstractIndex>> indices;
+    HashMap<IndexKey, AbstractIndex> indices;
 
     AbstractRelation *get_relation(Symbol rel_name)
     {
@@ -116,28 +117,29 @@ class Database
         IndexKey key{operator_symbol, permutation_id};
 
         auto trie_node = std::make_shared<TrieNode>();
-        TrieIndex trie_index(*trie_node);
+        TrieIndex trie_index(trie_node);
 
-        indices[key] = std::make_shared<AbstractIndex>(trie_index);
+        indices[key] = AbstractIndex(trie_index);
     }
 
     /**
-     * @brief Retrieve a trie index for querying
+     * @brief Retrieve a copy of a trie index for querying
      *
      * @param operator_symbol The operator symbol for the relation
      * @param permutation_id The permutation index for the desired field ordering
-     * @return Shared pointer to TrieIndex wrapper, or nullptr if index doesn't exist
+     * @return A COPY of the AbstractIndex
      *
-     * @note Creates a new TrieIndex wrapper around the stored TrieNode
+     * @note Returns a copy of the index to allow independent simultaneous traversals.
+     *       The underlying TrieNode data is shared via shared_ptr, so only the traversal
+     *       state is duplicated, not the actual trie data.
+     *       Asserts if the index doesn't exist.
      */
-    std::shared_ptr<AbstractIndex> get_index(Symbol operator_symbol, uint32_t permutation) const
+    AbstractIndex get_index(Symbol operator_symbol, uint32_t permutation) const
     {
         IndexKey key(operator_symbol, permutation);
         auto it = indices.find(key);
-        if (it != indices.end())
-            return it->second;
-
-        return nullptr;
+        assert(it != indices.end() && "Index not found");
+        return it->second; // Returns a copy
     }
 
     /**

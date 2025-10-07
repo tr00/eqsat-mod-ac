@@ -1,5 +1,4 @@
 #include <functional>
-#include <memory>
 
 #include "engine.h"
 #include "id.h"
@@ -39,7 +38,7 @@ size_t State::intersect()
 {
     Vec<AbstractSet> buffer;
 
-    for (auto index : indices)
+    for (auto& index : indices)
         buffer.push_back(index->project());
 
     intersect_many(candidates, buffer);
@@ -59,7 +58,7 @@ void Engine::prepare(const Query& query)
         uint32_t permutation = constraint.permutation;
         auto index = db.get_index(constraint.operator_symbol, permutation);
 
-        indices[constraint] = index;
+        indices[constraint] = std::make_shared<AbstractIndex>(index);
 
         for (var_t var : constraint.variables)
         {
@@ -88,7 +87,7 @@ void Engine::prepare(const Query& query)
             const Constraint& constraint = constraint_ref.get();
             auto index_it = indices.find(constraint);
             assert(index_it != indices.end());
-            state.indices.push_back(index_it->second);
+            state.indices.push_back(index_it->second); // Shares the index via shared_ptr
         }
         states.push_back(std::move(state));
     }

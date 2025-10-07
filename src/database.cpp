@@ -11,7 +11,7 @@ void Database::build_indices()
         auto relation = get_relation(rel_name);
         assert(relation != nullptr);
 
-        *index = relation->build_index(perm);
+        index = relation->build_index(perm);
     }
 }
 

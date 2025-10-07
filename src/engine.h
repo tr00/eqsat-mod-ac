@@ -8,14 +8,13 @@
 
 class State
 {
-    using IndexPtr = std::shared_ptr<AbstractIndex>;
     using Iterator = gch::small_vector<id_t>::const_iterator;
 
   public:
     SortedVecSet candidates;
     Iterator candidate;
 
-    Vec<IndexPtr> indices;
+    Vec<std::shared_ptr<AbstractIndex>> indices;
 
     void prepare();
     bool empty() const;

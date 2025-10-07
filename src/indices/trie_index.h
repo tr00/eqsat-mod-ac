@@ -23,12 +23,26 @@ class TrieIndex
   private:
     TrieNode *current_node;
     Vec<TrieNode *> parent_stack;
-    TrieNode root;
+    std::shared_ptr<TrieNode> root;
 
   public:
-    TrieIndex(TrieNode root) : root(root)
+    TrieIndex(std::shared_ptr<TrieNode> root) : root(root)
     {
         reset();
+    }
+
+    // Make TrieIndex copyable - each copy can traverse independently
+    TrieIndex(const TrieIndex& other)
+        : root(other.root), current_node(other.current_node), parent_stack(other.parent_stack)
+    {
+    }
+
+    TrieIndex& operator=(const TrieIndex& other)
+    {
+        root = other.root;
+        current_node = other.current_node;
+        parent_stack = other.parent_stack;
+        return *this;
     }
 
     void reset();

@@ -47,7 +47,7 @@ void TrieNode::insert_path(const Vec<id_t>& path)
 
 void TrieIndex::reset()
 {
-    current_node = &root;
+    current_node = root.get();
     parent_stack.clear();
 }
 

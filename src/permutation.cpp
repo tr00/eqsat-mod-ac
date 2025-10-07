@@ -1,7 +1,8 @@
-#include "permutation.h"
 #include <algorithm>
 #include <stdexcept>
 #include <unordered_set>
+
+#include "permutation.h"
 
 uint32_t factorial(int n)
 {

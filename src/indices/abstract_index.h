@@ -4,6 +4,7 @@
 
 enum IndexKind
 {
+    NONE,
     TRIE
 };
 
@@ -16,6 +17,11 @@ class AbstractIndex
     };
 
   public:
+    // Default constructor creates a NONE index (no allocation)
+    AbstractIndex() : kind(NONE)
+    {
+    }
+
     explicit AbstractIndex(TrieIndex index) : kind(TRIE), trie(std::move(index))
     {
     }
@@ -24,21 +30,62 @@ class AbstractIndex
     {
         switch (kind)
         {
+        case NONE:
+            break;
         case TRIE:
             trie.~TrieIndex();
             break;
         }
     }
 
-    // Delete copy constructor and assignment operator
-    AbstractIndex(const AbstractIndex&) = delete;
-    AbstractIndex& operator=(const AbstractIndex&) = delete;
+    // Copy constructor - allows independent traversal of the same underlying data
+    AbstractIndex(const AbstractIndex& other) : kind(other.kind)
+    {
+        switch (kind)
+        {
+        case NONE:
+            break;
+        case TRIE:
+            new (&trie) TrieIndex(other.trie);
+            break;
+        }
+    }
+
+    // Copy assignment operator
+    AbstractIndex& operator=(const AbstractIndex& other)
+    {
+        if (this != &other)
+        {
+            // Destroy current object
+            switch (kind)
+            {
+            case NONE:
+                break;
+            case TRIE:
+                trie.~TrieIndex();
+                break;
+            }
+            // Copy construct new object
+            kind = other.kind;
+            switch (kind)
+            {
+            case NONE:
+                break;
+            case TRIE:
+                new (&trie) TrieIndex(other.trie);
+                break;
+            }
+        }
+        return *this;
+    }
 
     // Move constructor
     AbstractIndex(AbstractIndex&& other) : kind(other.kind)
     {
         switch (kind)
         {
+        case NONE:
+            break;
         case TRIE:
             new (&trie) TrieIndex(std::move(other.trie));
             break;
@@ -53,6 +100,8 @@ class AbstractIndex
             // Destroy current object
             switch (kind)
             {
+            case NONE:
+                break;
             case TRIE:
                 trie.~TrieIndex();
                 break;
@@ -61,6 +110,8 @@ class AbstractIndex
             kind = other.kind;
             switch (kind)
             {
+            case NONE:
+                break;
             case TRIE:
                 new (&trie) TrieIndex(std::move(other.trie));
                 break;
@@ -73,6 +124,8 @@ class AbstractIndex
     {
         switch (kind)
         {
+        case NONE:
+            assert(0 && "Cannot project from NONE index");
         case TRIE:
             return trie.project();
         }
@@ -83,6 +136,9 @@ class AbstractIndex
     {
         switch (kind)
         {
+        case NONE:
+            assert(0 && "Cannot select on NONE index");
+            break;
         case TRIE:
             trie.select(key);
             break;
@@ -93,6 +149,9 @@ class AbstractIndex
     {
         switch (kind)
         {
+        case NONE:
+            assert(0 && "Cannot unselect on NONE index");
+            break;
         case TRIE:
             trie.unselect();
             break;
@@ -103,6 +162,9 @@ class AbstractIndex
     {
         switch (kind)
         {
+        case NONE:
+            assert(0 && "Cannot reset NONE index");
+            break;
         case TRIE:
             trie.reset();
             break;

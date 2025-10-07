@@ -1,8 +1,9 @@
 #pragma once
 
+#include <memory>
+
 #include "query.h"
 #include "theory.h"
-#include <memory>
 
 class Compiler
 {

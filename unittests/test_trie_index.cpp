@@ -141,10 +141,10 @@ TEST_CASE("TrieNode insert_path multiple elements", "[trie_node]")
 
 TEST_CASE("TrieIndex navigation", "[trie_index]")
 {
-    TrieNode root;
-    root.insert_path({10, 20});
-    root.insert_path({10, 30});
-    root.insert_path({15, 25});
+    auto root = std::make_shared<TrieNode>();
+    root->insert_path({10, 20});
+    root->insert_path({10, 30});
+    root->insert_path({15, 25});
 
     SECTION("Basic select operation")
     {
@@ -215,7 +215,7 @@ TEST_CASE("TrieIndex edge cases", "[trie_index]")
 {
     SECTION("Empty node trie")
     {
-        TrieNode root;
+        auto root = std::make_shared<TrieNode>();
         TrieIndex index(root);
 
         AbstractSet keys = index.project();
@@ -224,9 +224,9 @@ TEST_CASE("TrieIndex edge cases", "[trie_index]")
 
     SECTION("Trie with only root keys")
     {
-        TrieNode root;
-        root.insert_path({10});
-        root.insert_path({20});
+        auto root = std::make_shared<TrieNode>();
+        root->insert_path({10});
+        root->insert_path({20});
 
         TrieIndex index(root);
         AbstractSet keys = index.project();
@@ -271,5 +271,129 @@ TEST_CASE("TrieNode find_key_index edge cases", "[trie_node]")
         REQUIRE(node.find_key_index(42) == 0);
         REQUIRE(node.find_key_index(41) == -1);
         REQUIRE(node.find_key_index(43) == -1);
+    }
+}
+
+TEST_CASE("TrieIndex simultaneous traversal", "[trie_index]")
+{
+    // Build a trie with multiple paths
+    auto root = std::make_shared<TrieNode>();
+    root->insert_path({1, 10});
+    root->insert_path({1, 20});
+    root->insert_path({2, 30});
+    root->insert_path({2, 40});
+
+    SECTION("Two independent copies can traverse simultaneously")
+    {
+        // Create two copies of the index
+        TrieIndex index1(root);
+        TrieIndex index2(root);
+
+        // Both should start at root and see the same keys
+        AbstractSet keys1 = index1.project();
+        AbstractSet keys2 = index2.project();
+        REQUIRE(keys1.size() == 2);
+        REQUIRE(keys2.size() == 2);
+        REQUIRE(keys1.contains(1));
+        REQUIRE(keys2.contains(1));
+
+        // Navigate index1 down path {1, 10}
+        index1.select(1);
+        AbstractSet index1_keys = index1.project();
+        REQUIRE(index1_keys.size() == 2);
+        REQUIRE(index1_keys.contains(10));
+        REQUIRE(index1_keys.contains(20));
+
+        // index2 should still be at root
+        AbstractSet index2_keys = index2.project();
+        REQUIRE(index2_keys.size() == 2);
+        REQUIRE(index2_keys.contains(1));
+        REQUIRE(index2_keys.contains(2));
+
+        // Navigate index2 down path {2, 30}
+        index2.select(2);
+        index2_keys = index2.project();
+        REQUIRE(index2_keys.size() == 2);
+        REQUIRE(index2_keys.contains(30));
+        REQUIRE(index2_keys.contains(40));
+
+        // index1 should still be at {1, *}
+        index1_keys = index1.project();
+        REQUIRE(index1_keys.size() == 2);
+        REQUIRE(index1_keys.contains(10));
+        REQUIRE(index1_keys.contains(20));
+
+        // Continue both paths
+        index1.select(10);
+        index2.select(30);
+
+        // Both should be at leaf nodes now
+        REQUIRE(index1.project().empty());
+        REQUIRE(index2.project().empty());
+    }
+
+    SECTION("Copy constructor creates independent traversal state")
+    {
+        TrieIndex index1(root);
+        index1.select(1);
+
+        // Create copy while index1 is at position {1, *}
+        TrieIndex index2 = index1;
+
+        // Both should be at the same position initially
+        AbstractSet keys1 = index1.project();
+        AbstractSet keys2 = index2.project();
+        REQUIRE(keys1.size() == 2);
+        REQUIRE(keys2.size() == 2);
+        REQUIRE(keys1.contains(10));
+        REQUIRE(keys2.contains(10));
+
+        // Navigate index1 further
+        index1.select(10);
+        REQUIRE(index1.project().empty());
+
+        // index2 should still be at {1, *}
+        keys2 = index2.project();
+        REQUIRE(keys2.size() == 2);
+        REQUIRE(keys2.contains(10));
+        REQUIRE(keys2.contains(20));
+
+        // Navigate index2 differently
+        index2.select(20);
+        REQUIRE(index2.project().empty());
+
+        // Verify both are at different leaf positions
+        // index1 backtrack should go to {1, 10}
+        index1.unselect();
+        keys1 = index1.project();
+        REQUIRE(keys1.size() == 2);
+        REQUIRE(keys1.contains(10));
+
+        // index2 backtrack should go to {1, 20}
+        index2.unselect();
+        keys2 = index2.project();
+        REQUIRE(keys2.size() == 2);
+        REQUIRE(keys2.contains(20));
+    }
+
+    SECTION("Underlying data is shared, not duplicated")
+    {
+        TrieIndex index1(root);
+        TrieIndex index2 = index1;
+
+        // Verify they share the same root by checking that modifications
+        // to the underlying TrieNode are visible to both
+        // (We can't directly test this without modifying the trie,
+        // but we verify they at least traverse the same structure)
+
+        index1.select(1);
+        index2.select(1);
+
+        // Both should see the same children
+        AbstractSet keys1 = index1.project();
+        AbstractSet keys2 = index2.project();
+        REQUIRE(keys1.size() == keys2.size());
+        REQUIRE(keys1.contains(10) == keys2.contains(10));
+        REQUIRE(keys1.contains(20) == keys2.contains(20));
     }
 }

@@ -2,8 +2,9 @@
 /// It does perform path splitting but not union-by-{rank,size}
 /// when unifying two sets it chooses the one with the smaller id.
 
-#include "union_find.h"
 #include <algorithm>
+
+#include "union_find.h"
 
 UnionFind::UnionFind()
 {
