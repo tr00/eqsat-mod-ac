@@ -7,6 +7,7 @@
 #include "id.h"
 #include "indices/abstract_index.h"
 #include "relations/abstract_relation.h"
+#include "relations/relation_ac.h"
 #include "relations/row_store.h"
 #include "symbol_table.h"
 
@@ -70,6 +71,11 @@ class Database
     void add_relation(Symbol name, int arity)
     {
         relations.emplace(name, AbstractRelation(RowStore(name, arity)));
+    }
+
+    void add_relation_ac(Symbol name)
+    {
+        relations.emplace(name, AbstractRelation(RelationAC(name)));
     }
 
     /**

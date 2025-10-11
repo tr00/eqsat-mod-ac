@@ -1,11 +1,13 @@
 #pragma once
 
+#include "indices/multiset_index.h"
 #include "trie_index.h"
 
 enum IndexKind
 {
     NONE,
-    TRIE
+    TRIE,
+    MSET,
 };
 
 class AbstractIndex
@@ -14,6 +16,7 @@ class AbstractIndex
     IndexKind kind;
     union {
         TrieIndex trie;
+        MultisetIndex mst;
     };
 
   public:
@@ -26,6 +29,10 @@ class AbstractIndex
     {
     }
 
+    explicit AbstractIndex(MultisetIndex index) : kind(MSET), mst(std::move(index))
+    {
+    }
+
     ~AbstractIndex()
     {
         switch (kind)
@@ -34,6 +41,9 @@ class AbstractIndex
             break;
         case TRIE:
             trie.~TrieIndex();
+            break;
+        case MSET:
+            mst.~MultisetIndex();
             break;
         }
     }
@@ -47,6 +57,9 @@ class AbstractIndex
             break;
         case TRIE:
             new (&trie) TrieIndex(other.trie);
+            break;
+        case MSET:
+            new (&mst) MultisetIndex(other.mst);
             break;
         }
     }
@@ -64,6 +77,9 @@ class AbstractIndex
             case TRIE:
                 trie.~TrieIndex();
                 break;
+            case MSET:
+                mst.~MultisetIndex();
+                break;
             }
             // Copy construct new object
             kind = other.kind;
@@ -73,6 +89,9 @@ class AbstractIndex
                 break;
             case TRIE:
                 new (&trie) TrieIndex(other.trie);
+                break;
+            case MSET:
+                new (&mst) MultisetIndex(other.mst);
                 break;
             }
         }
@@ -88,6 +107,9 @@ class AbstractIndex
             break;
         case TRIE:
             new (&trie) TrieIndex(std::move(other.trie));
+            break;
+        case MSET:
+            new (&mst) MultisetIndex(std::move(other.mst));
             break;
         }
     }
@@ -105,6 +127,9 @@ class AbstractIndex
             case TRIE:
                 trie.~TrieIndex();
                 break;
+            case MSET:
+                mst.~MultisetIndex();
+                break;
             }
             // Move construct new object
             kind = other.kind;
@@ -114,6 +139,9 @@ class AbstractIndex
                 break;
             case TRIE:
                 new (&trie) TrieIndex(std::move(other.trie));
+                break;
+            case MSET:
+                new (&mst) MultisetIndex(std::move(other.mst));
                 break;
             }
         }
@@ -128,6 +156,8 @@ class AbstractIndex
             assert(0 && "Cannot project from NONE index");
         case TRIE:
             return trie.project();
+        case MSET:
+            return mst.project();
         }
         assert(0);
     }
@@ -142,6 +172,9 @@ class AbstractIndex
         case TRIE:
             trie.select(key);
             break;
+        case MSET:
+            mst.select(key);
+            break;
         }
     }
 
@@ -155,6 +188,9 @@ class AbstractIndex
         case TRIE:
             trie.unselect();
             break;
+        case MSET:
+            mst.unselect();
+            break;
         }
     }
 
@@ -167,6 +203,9 @@ class AbstractIndex
             break;
         case TRIE:
             trie.reset();
+            break;
+        case MSET:
+            mst.reset();
             break;
         }
     }

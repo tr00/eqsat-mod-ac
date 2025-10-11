@@ -22,5 +22,3 @@ Egraph egraph(theory);
 
 egraph.saturate(/* iterations: */ 10);
 ```
-
----

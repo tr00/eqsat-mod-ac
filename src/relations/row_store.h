@@ -1,9 +1,10 @@
 #pragma once
 
+#include <cassert>
+
 #include "id.h"
 #include "indices/abstract_index.h"
 #include "symbol_table.h"
-#include <cassert>
 
 class RowStore
 {
@@ -51,4 +52,6 @@ class RowStore
     }
 
     AbstractIndex build_index(uint32_t vo);
+
+    void repair();
 };

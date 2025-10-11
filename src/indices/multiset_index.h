@@ -1,5 +1,7 @@
 #pragma once
 
+#include <optional>
+
 #include "../sets/abstract_set.h"
 #include "../utils/multiset.h"
 #include "id.h"
@@ -7,12 +9,12 @@
 class MultisetIndex
 {
   private:
-    HashMap<id_t, Multiset> rel;
-    Multiset *mset = nullptr;
+    std::shared_ptr<const HashMap<id_t, Multiset>> data;
+    std::optional<Multiset> mset;
     Vec<id_t> history;
 
   public:
-    MultisetIndex(const HashMap<id_t, Multiset> rel) : rel(rel)
+    MultisetIndex(std::shared_ptr<const HashMap<id_t, Multiset>> data) : data(std::move(data)), history(), mset()
     {
     }
 

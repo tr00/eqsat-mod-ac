@@ -3,14 +3,14 @@
 
 AbstractSet MultisetIndex::project()
 {
-    return AbstractSet(MultisetSupport(*this->mset));
+    return AbstractSet(MultisetSupport(*mset));
 }
 
 void MultisetIndex::select(id_t key)
 {
-    if (mset == nullptr)
+    if (!mset.has_value())
     {
-        mset = &rel[key];
+        mset = data->at(key);
     }
     else
     {
@@ -27,7 +27,7 @@ void MultisetIndex::unselect()
 {
     if (history.empty())
     {
-        mset = nullptr;
+        mset = std::nullopt;
     }
     else
     {
@@ -46,5 +46,5 @@ void MultisetIndex::reset()
         history.pop_back();
         mset->insert(key);
     }
-    mset = nullptr;
+    mset = std::nullopt;
 }

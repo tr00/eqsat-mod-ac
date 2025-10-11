@@ -28,3 +28,14 @@ AbstractIndex RowStore::build_index(uint32_t vo)
 
     return AbstractIndex(TrieIndex(trie));
 }
+
+void RowStore::repair()
+{
+    // for t in tuples
+    // if lookup(canon(t)) != id
+}
+
+// row-store: (a, b, c, d) --> id
+// -- we can do FD optimization
+// -- option A: canonicalize all tuples
+// -- option B: canonicalize on loopkup

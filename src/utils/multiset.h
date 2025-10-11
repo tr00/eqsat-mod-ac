@@ -29,6 +29,27 @@ class Multiset
     friend class MultisetSupport;
 
   public:
+    Multiset() : data()
+    {
+    }
+
+    Multiset(const Vec<id_t>& vec) : data(vec.size())
+    {
+        std::sort(vec.begin(), vec.end());
+
+        for (id_t id : vec)
+        {
+            if (!data.empty() && id == data.back().first)
+            {
+                data.back().second++;
+            }
+            else
+            {
+                data.emplace_back(id, 1);
+            }
+        }
+    }
+
     void insert(id_t id)
     {
         auto it = find_pos(id);

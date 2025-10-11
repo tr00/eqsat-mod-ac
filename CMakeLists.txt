@@ -78,6 +78,7 @@ endif()
 add_executable(unittests
     unittests/test_sorted_set.cpp
     unittests/test_abstract_set.cpp
+    unittests/test_set_implementations.cpp
     unittests/test_compiler.cpp
     unittests/test_union_find.cpp
     unittests/test_trie_index.cpp
