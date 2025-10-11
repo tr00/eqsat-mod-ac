@@ -3,6 +3,7 @@
 
 #include "id.h"
 #include <algorithm>
+#include <utility>
 
 class MultisetSupport;
 
@@ -35,19 +36,18 @@ class Multiset
 
     Multiset(const Vec<id_t>& vec) : data(vec.size())
     {
-        std::sort(vec.begin(), vec.end());
-
         for (id_t id : vec)
         {
-            if (!data.empty() && id == data.back().first)
-            {
-                data.back().second++;
-            }
-            else
-            {
+            auto lt = [&](std::pair<id_t, uint32_t> el, id_t id) { return el.first < id; };
+            auto it = std::lower_bound(data.begin(), data.end(), id, lt);
+
+            if (it == data.end())
                 data.emplace_back(id, 1);
-            }
+            else
+                ++it->second;
         }
+
+        std::sort(data.begin(), data.end());
     }
 
     void insert(id_t id)

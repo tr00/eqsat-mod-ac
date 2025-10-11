@@ -1,10 +1,11 @@
 #include <catch2/catch_test_macros.hpp>
 
 #include "indices/multiset_index.h"
+#include <memory>
 
 TEST_CASE("MultisetIndex basic operations", "[multiset_index]")
 {
-    HashMap<id_t, Multiset> rel;
+    auto rel = std::make_shared<HashMap<id_t, Multiset>>();
 
     SECTION("Single relation with elements")
     {
@@ -13,7 +14,7 @@ TEST_CASE("MultisetIndex basic operations", "[multiset_index]")
         ms.insert(20);
         ms.insert(30);
 
-        rel[1] = std::move(ms);
+        (*rel)[1] = std::move(ms);
 
         MultisetIndex index(rel);
 
@@ -37,8 +38,8 @@ TEST_CASE("MultisetIndex basic operations", "[multiset_index]")
         ms2.insert(30);
         ms2.insert(40);
 
-        rel[1] = std::move(ms1);
-        rel[2] = std::move(ms2);
+        (*rel)[1] = std::move(ms1);
+        (*rel)[2] = std::move(ms2);
 
         MultisetIndex index(rel);
 
@@ -61,14 +62,14 @@ TEST_CASE("MultisetIndex basic operations", "[multiset_index]")
 
 TEST_CASE("MultisetIndex select and unselect", "[multiset_index]")
 {
-    HashMap<id_t, Multiset> rel;
+    auto rel = std::make_shared<HashMap<id_t, Multiset>>();
     Multiset ms;
     ms.insert(10);
     ms.insert(20);
     ms.insert(30);
     ms.insert(10); // Add duplicate
 
-    rel[1] = std::move(ms);
+    (*rel)[1] = std::move(ms);
     MultisetIndex index(rel);
 
     SECTION("First select sets mset")
@@ -161,13 +162,13 @@ TEST_CASE("MultisetIndex select and unselect", "[multiset_index]")
 
 TEST_CASE("MultisetIndex reset operation", "[multiset_index]")
 {
-    HashMap<id_t, Multiset> rel;
+    auto rel = std::make_shared<HashMap<id_t, Multiset>>();
     Multiset ms;
     ms.insert(10);
     ms.insert(20);
     ms.insert(30);
 
-    rel[1] = std::move(ms);
+    (*rel)[1] = std::move(ms);
     MultisetIndex index(rel);
 
     SECTION("Reset without selections does nothing")
@@ -217,12 +218,12 @@ TEST_CASE("MultisetIndex reset operation", "[multiset_index]")
 
 TEST_CASE("MultisetIndex edge cases", "[multiset_index]")
 {
-    HashMap<id_t, Multiset> rel;
+    auto rel = std::make_shared<HashMap<id_t, Multiset>>();
 
     SECTION("Empty multiset in relation")
     {
         Multiset ms; // Empty
-        rel[1] = std::move(ms);
+        (*rel)[1] = std::move(ms);
 
         MultisetIndex index(rel);
         index.select(1);
@@ -240,7 +241,7 @@ TEST_CASE("MultisetIndex edge cases", "[multiset_index]")
         }
         ms.insert(100);
 
-        rel[1] = std::move(ms);
+        (*rel)[1] = std::move(ms);
         MultisetIndex index(rel);
 
         index.select(1);
@@ -276,7 +277,7 @@ TEST_CASE("MultisetIndex edge cases", "[multiset_index]")
         ms.insert(10);
         ms.insert(10);
 
-        rel[1] = std::move(ms);
+        (*rel)[1] = std::move(ms);
         MultisetIndex index(rel);
 
         index.select(1);
@@ -303,7 +304,7 @@ TEST_CASE("MultisetIndex edge cases", "[multiset_index]")
         ms.insert(3);
         ms.insert(2); // 2 has count 2
 
-        rel[100] = std::move(ms);
+        (*rel)[100] = std::move(ms);
         MultisetIndex index(rel);
 
         index.select(100); // Initial select
@@ -335,14 +336,14 @@ TEST_CASE("MultisetIndex edge cases", "[multiset_index]")
 
 TEST_CASE("MultisetIndex for_each iteration", "[multiset_index]")
 {
-    HashMap<id_t, Multiset> rel;
+    auto rel = std::make_shared<HashMap<id_t, Multiset>>();
     Multiset ms;
     ms.insert(10);
     ms.insert(20);
     ms.insert(30);
     ms.insert(10);
 
-    rel[1] = std::move(ms);
+    (*rel)[1] = std::move(ms);
     MultisetIndex index(rel);
 
     SECTION("Iterate over all elements")
