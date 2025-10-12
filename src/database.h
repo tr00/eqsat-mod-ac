@@ -59,6 +59,15 @@ class Database
         return &it->second;
     }
 
+    const AbstractRelation *get_relation(Symbol rel_name) const
+    {
+        auto it = relations.find(rel_name);
+        if (it == relations.end())
+            return nullptr;
+
+        return &it->second;
+    }
+
   public:
     /**
      * @brief Create a new relation in the database
@@ -143,7 +152,7 @@ class Database
      *       state is duplicated, not the actual trie data.
      *       Asserts if the index doesn't exist.
      */
-    AbstractIndex get_index(Symbol name, uint32_t perm)
+    AbstractIndex get_index(Symbol name, uint32_t perm) const
     {
         if (get_relation(name)->get_kind() == RELATION_AC)
             perm = 0;
@@ -161,9 +170,12 @@ class Database
      * @param permutation_id The permutation index to check
      * @return true if index exists, false otherwise
      */
-    bool has_index(Symbol operator_symbol, uint32_t permutation) const
+    bool has_index(Symbol name, uint32_t perm) const
     {
-        IndexKey key(operator_symbol, permutation);
+        if (get_relation(name)->get_kind() == RELATION_AC)
+            perm = 0;
+
+        IndexKey key(name, perm);
         return indices.find(key) != indices.end();
     }
 

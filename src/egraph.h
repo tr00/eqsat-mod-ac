@@ -58,6 +58,8 @@ class EGraph
     Vec<Query> queries;
     Vec<Subst> substs;
 
+    int enodes = 0;
+
   public:
     EGraph(const Theory& theory);
     ~EGraph() = default;

@@ -102,6 +102,11 @@ add_executable(systemtests
 target_include_directories(systemtests PRIVATE src)
 target_link_libraries(systemtests PRIVATE eqsat Catch2::Catch2WithMain)
 
+# Create demo executable
+add_executable(demo demo.cpp)
+target_include_directories(demo PRIVATE src)
+target_link_libraries(demo PRIVATE eqsat)
+
 # Enable testing
 enable_testing()
 add_test(NAME unit_tests COMMAND unittests)

@@ -1,7 +1,6 @@
 #include "database.h"
 #include "symbol_table.h"
 #include <catch2/catch_test_macros.hpp>
-#include <sstream>
 
 TEST_CASE("Database basic operations", "[database]")
 {
@@ -246,5 +245,150 @@ TEST_CASE("Database index operations", "[database]")
         // Should still work after building
         db.populate_indices();
         REQUIRE(db.has_index(add_sym, 0));
+    }
+}
+
+TEST_CASE("Database AC relation operations", "[database][ac]")
+{
+    SymbolTable symbol_table;
+    Database db;
+
+    // Create AC operator symbol
+    Symbol ac_mul_sym = symbol_table.intern("ac_mul");
+    Symbol ac_add_sym = symbol_table.intern("ac_add");
+
+    SECTION("AC relation creation and tuple insertion")
+    {
+        // Create AC relation
+        db.create_relation_ac(ac_mul_sym);
+        REQUIRE(db.has_relation(ac_mul_sym));
+
+        // Add tuples to AC relation
+        // AC relations store multisets, so order shouldn't matter
+        db.add_tuple(ac_mul_sym, {1, 2, 3}); // ac_mul(1, 2, 3)
+        db.add_tuple(ac_mul_sym, {3, 2, 1}); // Should be same as above (commutative)
+        db.add_tuple(ac_mul_sym, {4, 5, 6}); // Different tuple
+    }
+
+    SECTION("AC relation index normalization - permutation always becomes 0")
+    {
+        db.create_relation_ac(ac_mul_sym);
+        db.add_tuple(ac_mul_sym, {10, 20, 30});
+
+        // Create index with various permutation values
+        // All should normalize to permutation 0 for AC relations
+        db.create_index(ac_mul_sym, 5);   // Should normalize to 0
+        db.create_index(ac_mul_sym, 100); // Should replace previous (same key)
+        db.create_index(ac_mul_sym, 0);   // Explicit 0
+
+        // After normalization, only ONE index should exist (at permutation 0)
+        REQUIRE(db.has_index(ac_mul_sym, 0));   // Direct check
+        REQUIRE(db.has_index(ac_mul_sym, 5));   // Should normalize to 0 and return true
+        REQUIRE(db.has_index(ac_mul_sym, 100)); // Should normalize to 0 and return true
+        REQUIRE(db.has_index(ac_mul_sym, 42));  // Any permutation should find the index
+
+        // Should be able to get index with any permutation value
+        auto idx_0 = db.get_index(ac_mul_sym, 0);
+        auto idx_5 = db.get_index(ac_mul_sym, 5);     // Should return same index
+        auto idx_100 = db.get_index(ac_mul_sym, 100); // Should return same index
+    }
+
+    SECTION("AC relation index building")
+    {
+        db.create_relation_ac(ac_mul_sym);
+
+        // Add some tuples
+        db.add_tuple(ac_mul_sym, {1, 2, 3});
+        db.add_tuple(ac_mul_sym, {4, 5, 6});
+        db.add_tuple(ac_mul_sym, {7, 8, 9});
+
+        // Create index (any permutation should work)
+        db.create_index(ac_mul_sym, 42);
+
+        // Build indices
+        db.populate_indices(); // Should not crash
+
+        // Index should still exist after building
+        REQUIRE(db.has_index(ac_mul_sym, 0));
+        REQUIRE(db.has_index(ac_mul_sym, 42));
+
+        // Should be able to retrieve built index
+        auto idx = db.get_index(ac_mul_sym, 0);
+    }
+
+    SECTION("Mixed AC and regular relations")
+    {
+        Symbol regular_add = symbol_table.intern("regular_add");
+
+        // Create both types of relations
+        db.create_relation_ac(ac_mul_sym);  // AC relation
+        db.create_relation(regular_add, 3); // Regular relation
+
+        // Add tuples to both
+        db.add_tuple(ac_mul_sym, {1, 2, 3});
+        db.add_tuple(regular_add, {10, 20, 30});
+
+        // Create indices
+        db.create_index(ac_mul_sym, 5);  // AC - will normalize to 0
+        db.create_index(regular_add, 0); // Regular - stays 0
+        db.create_index(regular_add, 2); // Regular - stays 2
+
+        // Build all indices
+        db.populate_indices();
+
+        // AC relation: any permutation maps to 0
+        REQUIRE(db.has_index(ac_mul_sym, 0));
+        REQUIRE(db.has_index(ac_mul_sym, 5));
+        REQUIRE(db.has_index(ac_mul_sym, 999));
+
+        // Regular relation: specific permutations exist
+        REQUIRE(db.has_index(regular_add, 0));
+        REQUIRE(db.has_index(regular_add, 2));
+        REQUIRE_FALSE(db.has_index(regular_add, 5));   // This permutation wasn't created
+        REQUIRE_FALSE(db.has_index(regular_add, 999)); // This permutation wasn't created
+    }
+
+    SECTION("Multiple AC relations")
+    {
+        db.create_relation_ac(ac_mul_sym);
+        db.create_relation_ac(ac_add_sym);
+
+        db.add_tuple(ac_mul_sym, {1, 2});
+        db.add_tuple(ac_add_sym, {3, 4});
+
+        // Create indices for both AC relations
+        db.create_index(ac_mul_sym, 10);
+        db.create_index(ac_add_sym, 20);
+
+        db.populate_indices();
+
+        // Both should be accessible with any permutation
+        REQUIRE(db.has_index(ac_mul_sym, 0));
+        REQUIRE(db.has_index(ac_mul_sym, 10));
+        REQUIRE(db.has_index(ac_add_sym, 0));
+        REQUIRE(db.has_index(ac_add_sym, 20));
+    }
+
+    SECTION("AC relation index clearing")
+    {
+        db.create_relation_ac(ac_mul_sym);
+        db.add_tuple(ac_mul_sym, {1, 2, 3});
+
+        db.create_index(ac_mul_sym, 5);
+        db.populate_indices();
+
+        REQUIRE(db.has_index(ac_mul_sym, 0));
+        REQUIRE(db.has_index(ac_mul_sym, 5));
+
+        // Clear indices
+        db.clear_indices();
+
+        // All permutation checks should now return false
+        REQUIRE_FALSE(db.has_index(ac_mul_sym, 0));
+        REQUIRE_FALSE(db.has_index(ac_mul_sym, 5));
+        REQUIRE_FALSE(db.has_index(ac_mul_sym, 100));
+
+        // Relation should still exist
+        REQUIRE(db.has_relation(ac_mul_sym));
     }
 }

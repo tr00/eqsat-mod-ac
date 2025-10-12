@@ -34,20 +34,19 @@ class Multiset
     {
     }
 
-    Multiset(const Vec<id_t>& vec) : data(vec.size())
+    Multiset(const Vec<id_t>& vec) : data()
     {
+        data.reserve(vec.size());
+
         for (id_t id : vec)
         {
-            auto lt = [&](std::pair<id_t, uint32_t> el, id_t id) { return el.first < id; };
-            auto it = std::lower_bound(data.begin(), data.end(), id, lt);
+            auto it = find_pos(id);
 
-            if (it == data.end())
-                data.emplace_back(id, 1);
-            else
+            if (it != data.end() && it->first == id)
                 ++it->second;
+            else
+                data.insert(it, {id, 1});
         }
-
-        std::sort(data.begin(), data.end());
     }
 
     void insert(id_t id)

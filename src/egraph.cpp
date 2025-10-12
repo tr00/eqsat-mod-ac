@@ -1,5 +1,6 @@
 #include <cassert>
 #include <cstddef>
+#include <iostream>
 #include <stdexcept>
 
 #include "compiler.h"
@@ -64,6 +65,7 @@ id_t EGraph::add_enode(ENode enode)
     if (it != memo.end())
         return it->second;
 
+    ++enodes;
     id_t id = uf.make_set();
 
     Vec<id_t> tuple = enode.children; // copy
@@ -147,5 +149,7 @@ void EGraph::saturate(std::size_t max_iters)
         }
 
         db.clear_indices();
+
+        std::cout << "iteration: " << iter << "  eclasses: " << uf.size() << "  enodes: " << enodes << std::endl;
     }
 }
