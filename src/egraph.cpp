@@ -38,8 +38,13 @@ EGraph::EGraph(const Theory& theory) : theory(theory)
         {
             auto required = query.get_required_indices();
             for (const auto& [op_symbol, perm] : required)
+            {
                 if (!db.has_index(op_symbol, perm))
+                {
                     db.create_index(op_symbol, perm);
+                    required_indices.push_back({op_symbol, perm});
+                }
+            }
         }
     }
 }
@@ -99,6 +104,10 @@ id_t EGraph::unify(id_t a, id_t b)
 void EGraph::apply_matches(const Vec<id_t>& match_vec, Subst& subst)
 {
     size_t head_size = subst.head_size;
+
+    // Guard against empty matches or zero head_size
+    assert(match_vec.empty() || head_size == 0);
+
     size_t num_matches = match_vec.size() / head_size;
 
     for (size_t j = 0; j < num_matches; ++j)
@@ -136,6 +145,9 @@ void EGraph::saturate(std::size_t max_iters)
 
     for (std::size_t iter = 0; iter < max_iters; ++iter)
     {
+        for (const auto& [op_symbol, perm] : required_indices)
+            db.create_index(op_symbol, perm);
+
         db.populate_indices();
 
         for (const auto& query : queries)

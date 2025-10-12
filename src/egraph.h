@@ -57,6 +57,7 @@ class EGraph
 
     Vec<Query> queries;
     Vec<Subst> substs;
+    Vec<std::pair<Symbol, uint32_t>> required_indices;
 
     int enodes = 0;
 

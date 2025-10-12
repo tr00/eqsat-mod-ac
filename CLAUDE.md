@@ -97,3 +97,11 @@ id_t expr_id = egraph.add_expr(expr);
 Compiler compiler;
 Query compiled = compiler.compile_pattern(pattern_expr);
 ```
+
+## Recent Fixes
+
+### Bug Fixes (2025-10-12)
+
+1. **Empty matches/heads handling**: Added validation in `EGraph::apply_matches()` to gracefully handle empty match vectors or zero head_size, preventing division by zero and invalid memory access.
+
+2. **Index recreation after clearing**: Fixed the saturation loop to properly recreate indices after `clear_indices()` is called. The EGraph now stores required indices information and recreates them between iterations, ensuring indices are available for all saturation iterations.
