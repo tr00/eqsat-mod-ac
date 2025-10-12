@@ -2,7 +2,7 @@
 
 #include "database.h"
 
-void Database::build_indices()
+void Database::populate_indices()
 {
     for (auto& [index_key, index] : indices)
     {
@@ -11,7 +11,7 @@ void Database::build_indices()
         auto relation = get_relation(rel_name);
         assert(relation != nullptr);
 
-        index = relation->build_index(perm);
+        index = relation->populate_index(perm);
     }
 }
 

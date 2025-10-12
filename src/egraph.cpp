@@ -12,7 +12,12 @@ EGraph::EGraph(const Theory& theory) : theory(theory)
 
     // initialize database with one relation per operator
     for (const auto& [symbol, arity] : theory.operators)
-        db.add_relation(symbol, arity + 1);
+    {
+        if (arity == AC)
+            db.create_relation_ac(symbol);
+        else
+            db.create_relation(symbol, arity + 1); // +1 for the id
+    }
 
     // compile rewrite rule patterns to queries
     if (!theory.rewrite_rules.empty())
@@ -120,7 +125,7 @@ void EGraph::saturate(std::size_t max_iters)
 
     for (std::size_t iter = 0; iter < max_iters; ++iter)
     {
-        db.build_indices();
+        db.populate_indices();
 
         for (const auto& query : queries)
         {

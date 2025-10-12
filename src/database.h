@@ -68,12 +68,12 @@ class Database
      *
      * @note If a relation with the same name already exists, this is a no-op
      */
-    void add_relation(Symbol name, int arity)
+    void create_relation(Symbol name, int arity)
     {
         relations.emplace(name, AbstractRelation(RowStore(name, arity)));
     }
 
-    void add_relation_ac(Symbol name)
+    void create_relation_ac(Symbol name)
     {
         relations.emplace(name, AbstractRelation(RelationAC(name)));
     }
@@ -113,14 +113,17 @@ class Database
      * Creates a new trie node that will be populated when build_indices() is called.
      * The permutation_id determines how tuple fields are ordered in the index.
      *
-     * @param operator_symbol The operator symbol for the relation to index
-     * @param permutation_id The lexicographic permutation index for field ordering
+     * @param name The operator symbol for the relation to index
+     * @param perm The lexicographic permutation index for field ordering
      *
      * @note If an index with the same key already exists, it will be replaced
      */
-    void add_index(Symbol operator_symbol, uint32_t permutation_id)
+    void create_index(Symbol name, uint32_t perm)
     {
-        IndexKey key{operator_symbol, permutation_id};
+        if (get_relation(name)->get_kind() == RELATION_AC)
+            perm = 0;
+
+        IndexKey key{name, perm};
 
         auto trie_node = std::make_shared<TrieNode>();
         TrieIndex trie_index(trie_node);
@@ -140,9 +143,12 @@ class Database
      *       state is duplicated, not the actual trie data.
      *       Asserts if the index doesn't exist.
      */
-    AbstractIndex get_index(Symbol operator_symbol, uint32_t permutation) const
+    AbstractIndex get_index(Symbol name, uint32_t perm)
     {
-        IndexKey key(operator_symbol, permutation);
+        if (get_relation(name)->get_kind() == RELATION_AC)
+            perm = 0;
+
+        IndexKey key(name, perm);
         auto it = indices.find(key);
         assert(it != indices.end() && "Index not found");
         return it->second; // Returns a copy
@@ -178,5 +184,5 @@ class Database
      *
      * @note Must be called after creating indices and adding tuples to relations
      */
-    void build_indices();
+    void populate_indices();
 };

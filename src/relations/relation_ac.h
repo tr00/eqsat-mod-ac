@@ -37,7 +37,7 @@ class RelationAC
         data->emplace(new_term_id, tuple);
     }
 
-    AbstractIndex build_index()
+    AbstractIndex populate_index()
     {
         return AbstractIndex(MultisetIndex(data));
     }

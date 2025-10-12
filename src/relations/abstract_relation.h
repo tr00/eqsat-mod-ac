@@ -89,6 +89,11 @@ class AbstractRelation
         return *this;
     }
 
+    RelationKind get_kind() const
+    {
+        return kind;
+    }
+
     Symbol get_operator_symbol() const
     {
         switch (kind)
@@ -125,26 +130,14 @@ class AbstractRelation
         assert(0);
     }
 
-    AbstractIndex build_index(uint32_t vo)
+    AbstractIndex populate_index(uint32_t vo)
     {
         switch (kind)
         {
         case ROW_STORE:
-            return row_store.build_index(vo);
+            return row_store.populate_index(vo);
         case RELATION_AC:
-            assert(0 && "RelationAC does not support build_index with variable ordering");
-        }
-        assert(0);
-    }
-
-    AbstractIndex build_index()
-    {
-        switch (kind)
-        {
-        case ROW_STORE:
-            assert(0 && "RowStore requires build_index with variable ordering parameter");
-        case RELATION_AC:
-            return ac_rel.build_index();
+            return ac_rel.populate_index();
         }
         assert(0);
     }

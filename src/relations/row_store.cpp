@@ -5,7 +5,7 @@
 #include "permutation.h"
 #include "relations/row_store.h"
 
-AbstractIndex RowStore::build_index(uint32_t vo)
+AbstractIndex RowStore::populate_index(uint32_t vo)
 {
     auto trie = std::make_shared<TrieNode>();
 

@@ -6,6 +6,8 @@
 
 #include "symbol_table.h"
 
+#define AC -1
+
 /**
  * @brief Enumeration for distinguishing between different kinds of expression nodes.
  */

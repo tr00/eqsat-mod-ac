@@ -1,7 +1,8 @@
+#include <catch2/catch_test_macros.hpp>
+
 #include "egraph.h"
 #include "symbol_table.h"
 #include "theory.h"
-#include <catch2/catch_test_macros.hpp>
 
 TEST_CASE("EGraph can do simple pattern matching", "[egraph]")
 {
@@ -9,7 +10,7 @@ TEST_CASE("EGraph can do simple pattern matching", "[egraph]")
 
     auto one = theory.add_operator("one", 0);
     auto var = theory.add_operator("var", 0);
-    auto mul = theory.add_operator("mul", 2);
+    auto mul = theory.add_operator("mul", AC);
 
     EGraph egraph(theory);
 

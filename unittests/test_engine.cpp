@@ -13,7 +13,7 @@ TEST_CASE("Engine with single state - simple query", "[engine]")
 
     // Create database and add relation for "add"
     Database db;
-    db.add_relation(add, 3); // add(arg1, arg2; eclass_id)
+    db.create_relation(add, 3); // add(arg1, arg2; eclass_id)
 
     // Add some tuples: add(a, b; id) means add(a,b) is in e-class id
     // add(1, 2; 10) - add(1,2) is in e-class 10
@@ -24,8 +24,8 @@ TEST_CASE("Engine with single state - simple query", "[engine]")
     db.add_tuple(add, Vec<id_t>{1, 3, 12});
 
     // Build index for the relation
-    db.add_index(add, 0); // identity permutation
-    db.build_indices();
+    db.create_index(add, 0); // identity permutation
+    db.populate_indices();
 
     SECTION("Query for all results - single constraint")
     {
@@ -108,11 +108,11 @@ TEST_CASE("Engine with single state - empty database", "[engine]")
     theory.add_operator(mul, 2);
 
     Database db;
-    db.add_relation(mul, 3);
+    db.create_relation(mul, 3);
 
     // Build index but don't add any tuples
-    db.add_index(mul, 0);
-    db.build_indices();
+    db.create_index(mul, 0);
+    db.populate_indices();
 
     Query query(theory.intern("empty_query"));
     query.add_constraint(mul, Vec<var_t>{0, 1, 2});
@@ -134,13 +134,13 @@ TEST_CASE("Engine with single state - single tuple", "[engine]")
     theory.add_operator(f, 1); // unary operator
 
     Database db;
-    db.add_relation(f, 2); // arity 1 + 1 for e-class id
+    db.create_relation(f, 2); // arity 1 + 1 for e-class id
 
     // Add single tuple: f(5; 10) means f(5) is in e-class 10
     db.add_tuple(f, Vec<id_t>{5, 10});
 
-    db.add_index(f, 0);
-    db.build_indices();
+    db.create_index(f, 0);
+    db.populate_indices();
 
     Query query(theory.intern("single_tuple_query"));
     query.add_constraint(f, Vec<var_t>{0, 1});
@@ -163,15 +163,15 @@ TEST_CASE("Engine state intersection", "[engine]")
     theory.add_operator(g, 2);
 
     Database db;
-    db.add_relation(g, 3);
+    db.create_relation(g, 3);
 
     // Add multiple tuples: g(a, b; id) means g(a,b) is in e-class id
     db.add_tuple(g, Vec<id_t>{1, 2, 3});
     db.add_tuple(g, Vec<id_t>{1, 4, 5});
     db.add_tuple(g, Vec<id_t>{2, 3, 6});
 
-    db.add_index(g, 0);
-    db.build_indices();
+    db.create_index(g, 0);
+    db.populate_indices();
 
     Query query(theory.intern("intersection_query"));
     query.add_constraint(g, Vec<var_t>{0, 1, 2});
@@ -213,8 +213,8 @@ TEST_CASE("Engine multi-state join - two constraints", "[engine][multi-state]")
     Symbol mul = theory.add_operator("mul", 2);
 
     Database db;
-    db.add_relation(add, 3); // add(a, b; id)
-    db.add_relation(mul, 3); // mul(a, b; id)
+    db.create_relation(add, 3); // add(a, b; id)
+    db.create_relation(mul, 3); // mul(a, b; id)
 
     // Setup: add(1, 2; 10), add(3, 4; 11)
     db.add_tuple(add, Vec<id_t>{1, 2, 10});
@@ -226,9 +226,9 @@ TEST_CASE("Engine multi-state join - two constraints", "[engine][multi-state]")
     db.add_tuple(mul, Vec<id_t>{10, 7, 22});
 
     // Create indices for identity permutation
-    db.add_index(add, 0);
-    db.add_index(mul, 0);
-    db.build_indices();
+    db.create_index(add, 0);
+    db.create_index(mul, 0);
+    db.populate_indices();
 
     SECTION("Join on shared variable")
     {
@@ -284,9 +284,9 @@ TEST_CASE("Engine multi-state join - three constraints", "[engine][multi-state]"
     Symbol h = theory.add_operator("h", 1);
 
     Database db;
-    db.add_relation(f, 2); // f(a; id)
-    db.add_relation(g, 3); // g(a, b; id)
-    db.add_relation(h, 2); // h(a; id)
+    db.create_relation(f, 2); // f(a; id)
+    db.create_relation(g, 3); // g(a, b; id)
+    db.create_relation(h, 2); // h(a; id)
 
     // f: f(1; 10), f(2; 11), f(3; 12)
     db.add_tuple(f, Vec<id_t>{1, 10});
@@ -304,10 +304,10 @@ TEST_CASE("Engine multi-state join - three constraints", "[engine][multi-state]"
     db.add_tuple(h, Vec<id_t>{31, 41});
     db.add_tuple(h, Vec<id_t>{33, 43});
 
-    db.add_index(f, 0);
-    db.add_index(g, 0);
-    db.add_index(h, 0);
-    db.build_indices();
+    db.create_index(f, 0);
+    db.create_index(g, 0);
+    db.create_index(h, 0);
+    db.populate_indices();
 
     SECTION("Three-way join: f(x; y), g(y, z; w), h(w; r)")
     {
@@ -361,16 +361,16 @@ TEST_CASE("Engine multi-state - variable appears in multiple constraints", "[eng
     Symbol p = theory.add_operator("p", 2);
 
     Database db;
-    db.add_relation(p, 2);
+    db.create_relation(p, 2);
 
     db.add_tuple(p, Vec<id_t>{1, 2});
     db.add_tuple(p, Vec<id_t>{2, 3});
     db.add_tuple(p, Vec<id_t>{3, 4});
     db.add_tuple(p, Vec<id_t>{3, 1});
 
-    db.add_index(p, 0);
-    db.add_index(p, 1);
-    db.build_indices();
+    db.create_index(p, 0);
+    db.create_index(p, 1);
+    db.populate_indices();
 
     // TRIANGLE QUERY: (x, y) (y, z) (z, x)
 
@@ -416,8 +416,8 @@ TEST_CASE("Engine multi-state - empty intersection with backtracking", "[engine]
     Symbol b = theory.add_operator("b", 2);
 
     Database db;
-    db.add_relation(a, 3);
-    db.add_relation(b, 3);
+    db.create_relation(a, 3);
+    db.create_relation(b, 3);
 
     // a: a(1, 2; 10), a(3, 4; 11)
     db.add_tuple(a, Vec<id_t>{1, 2, 10});
@@ -426,9 +426,9 @@ TEST_CASE("Engine multi-state - empty intersection with backtracking", "[engine]
     // b: b(99, 5; 20) - no matching IDs with 'a' outputs
     db.add_tuple(b, Vec<id_t>{99, 5, 20});
 
-    db.add_index(a, 0);
-    db.add_index(b, 0);
-    db.build_indices();
+    db.create_index(a, 0);
+    db.create_index(b, 0);
+    db.populate_indices();
 
     SECTION("No matches due to disjoint e-class IDs")
     {
@@ -453,16 +453,16 @@ TEST_CASE("Engine multi-state - shared variable at different positions", "[engin
     Symbol op = theory.add_operator("op", 2);
 
     Database db;
-    db.add_relation(op, 3);
+    db.create_relation(op, 3);
 
     // op(1, 5; 10), op(2, 1; 11), op(3, 2; 12)
     db.add_tuple(op, Vec<id_t>{1, 5, 10});
     db.add_tuple(op, Vec<id_t>{2, 1, 11});
     db.add_tuple(op, Vec<id_t>{3, 2, 12});
 
-    db.add_index(op, 0);
-    db.add_index(op, 2);
-    db.build_indices();
+    db.create_index(op, 0);
+    db.create_index(op, 2);
+    db.populate_indices();
 
     SECTION("Variable x appears as first arg in first constraint, second arg in second")
     {
@@ -507,8 +507,8 @@ TEST_CASE("Engine with non-identity permutations", "[engine][multi-state][permut
     Symbol mul = theory.add_operator("mul", 2);
 
     Database db;
-    db.add_relation(add, 3); // add(a, b; id)
-    db.add_relation(mul, 3); // mul(a, b; id)
+    db.create_relation(add, 3); // add(a, b; id)
+    db.create_relation(mul, 3); // mul(a, b; id)
 
     // add: add(1, 2; 100), add(3, 4; 101), add(5, 6; 102)
     db.add_tuple(add, Vec<id_t>{1, 2, 100});
@@ -522,14 +522,14 @@ TEST_CASE("Engine with non-identity permutations", "[engine][multi-state][permut
     db.add_tuple(mul, Vec<id_t>{100, 30, 203});
 
     // Create multiple indices with different permutations
-    db.add_index(add, 0); // [0, 1, 2]
-    db.add_index(add, 2); // [1, 0, 2]
+    db.create_index(add, 0); // [0, 1, 2]
+    db.create_index(add, 2); // [1, 0, 2]
 
-    db.add_index(mul, 0); // [0, 1, 2]
-    db.add_index(mul, 2); // [1, 0, 2]
-    db.add_index(mul, 4); // [2, 0, 1]
+    db.create_index(mul, 0); // [0, 1, 2]
+    db.create_index(mul, 2); // [1, 0, 2]
+    db.create_index(mul, 4); // [2, 0, 1]
 
-    db.build_indices();
+    db.populate_indices();
 
     SECTION("Query using identity permutation on 'add'")
     {
@@ -636,8 +636,8 @@ TEST_CASE("Engine", "[engine]")
 
     Database db;
 
-    db.add_relation(inv, 2);
-    db.add_relation(mul, 3);
+    db.create_relation(inv, 2);
+    db.create_relation(mul, 3);
 
     // Q(r, a) := mul(t, a; r), inv(a; t)
 
@@ -647,8 +647,8 @@ TEST_CASE("Engine", "[engine]")
     query.add_head_var(2);
     query.add_head_var(0);
 
-    db.add_index(inv, 0);
-    db.add_index(mul, 2); // [1, 0, 2]
+    db.create_index(inv, 0);
+    db.create_index(mul, 2); // [1, 0, 2]
 
     SECTION("SUCCESS")
     {
@@ -661,7 +661,7 @@ TEST_CASE("Engine", "[engine]")
         db.add_tuple(mul, Vec<id_t>{101, 17, 201});
         db.add_tuple(mul, Vec<id_t>{102, 16, 202});
 
-        db.build_indices();
+        db.populate_indices();
 
         engine.prepare(query);
         auto results = engine.execute();

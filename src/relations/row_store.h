@@ -51,7 +51,7 @@ class RowStore
         return operator_symbol;
     }
 
-    AbstractIndex build_index(uint32_t vo);
+    AbstractIndex populate_index(uint32_t vo);
 
     void repair();
 };
