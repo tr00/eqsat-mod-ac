@@ -53,5 +53,13 @@ class RowStore
 
     AbstractIndex populate_index(uint32_t vo);
 
+    /**
+     * @brief Create an empty trie index for this relation
+     *
+     * @param perm The permutation index for field ordering
+     * @return An empty AbstractIndex containing a TrieIndex
+     */
+    AbstractIndex create_index(uint32_t perm);
+
     void repair();
 };

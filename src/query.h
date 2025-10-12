@@ -114,6 +114,12 @@ class Query
      * @return String representation of the query
      */
     std::string to_string(const SymbolTable& symbols) const;
+
+    /**
+     * @brief Get all required indices for this query
+     * @return Vector of (operator_symbol, permutation) pairs needed for execution
+     */
+    Vec<std::pair<Symbol, uint32_t>> get_required_indices() const;
 };
 
 namespace std

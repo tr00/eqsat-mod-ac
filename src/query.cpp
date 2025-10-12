@@ -105,3 +105,16 @@ std::string Query::to_string(const SymbolTable& symbols) const
     result += "]\n";
     return result;
 }
+
+Vec<std::pair<Symbol, uint32_t>> Query::get_required_indices() const
+{
+    Vec<std::pair<Symbol, uint32_t>> required;
+    required.reserve(constraints.size());
+
+    for (const auto& constraint : constraints)
+    {
+        required.push_back({constraint.operator_symbol, constraint.permutation});
+    }
+
+    return required;
+}

@@ -117,15 +117,19 @@ class Database
     }
 
     /**
-     * @brief Create an empty trie index for a relation with specific permutation
+     * @brief Create an empty index for a relation with specific permutation
      *
-     * Creates a new trie node that will be populated when build_indices() is called.
-     * The permutation_id determines how tuple fields are ordered in the index.
+     * Delegates to the relation to create the appropriate index type:
+     * - RowStore creates a TrieIndex
+     * - RelationAC creates a MultisetIndex (ignores permutation)
+     *
+     * The index will be populated when populate_indices() is called.
      *
      * @param name The operator symbol for the relation to index
      * @param perm The lexicographic permutation index for field ordering
      *
      * @note If an index with the same key already exists, it will be replaced
+     * @note For AC relations, permutation is always normalized to 0
      */
     void create_index(Symbol name, uint32_t perm)
     {
@@ -134,10 +138,10 @@ class Database
 
         IndexKey key{name, perm};
 
-        auto trie_node = std::make_shared<TrieNode>();
-        TrieIndex trie_index(trie_node);
+        auto *relation = get_relation(name);
+        assert(relation != nullptr && "Relation not found");
 
-        indices[key] = AbstractIndex(trie_index);
+        indices[key] = relation->create_index(perm);
     }
 
     /**

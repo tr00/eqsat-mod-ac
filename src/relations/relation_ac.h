@@ -37,6 +37,17 @@ class RelationAC
         data->emplace(new_term_id, tuple);
     }
 
+    /**
+     * @brief Create an empty multiset index for this AC relation
+     *
+     * @return An empty AbstractIndex containing a MultisetIndex
+     * @note Permutation parameter is ignored for AC relations
+     */
+    AbstractIndex create_index()
+    {
+        return AbstractIndex(MultisetIndex(data));
+    }
+
     AbstractIndex populate_index()
     {
         return AbstractIndex(MultisetIndex(data));

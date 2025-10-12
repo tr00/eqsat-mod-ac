@@ -142,5 +142,17 @@ class AbstractRelation
         assert(0);
     }
 
+    AbstractIndex create_index(uint32_t perm)
+    {
+        switch (kind)
+        {
+        case ROW_STORE:
+            return row_store.create_index(perm);
+        case RELATION_AC:
+            return ac_rel.create_index();
+        }
+        assert(0);
+    }
+
     // repair?
 };

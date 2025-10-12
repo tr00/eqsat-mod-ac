@@ -32,6 +32,15 @@ EGraph::EGraph(const Theory& theory) : theory(theory)
             queries.push_back(query);
             substs.push_back(subst);
         }
+
+        // create required indices for compiled queries
+        for (const auto& query : queries)
+        {
+            auto required = query.get_required_indices();
+            for (const auto& [op_symbol, perm] : required)
+                if (!db.has_index(op_symbol, perm))
+                    db.create_index(op_symbol, perm);
+        }
     }
 }
 
