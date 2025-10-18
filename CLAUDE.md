@@ -57,6 +57,8 @@ C++17 library implementing e-graphs (equality saturation) with custom database f
 
 - `Query` (`src/query.h`): Conjunctive queries with constraints
 - `Compiler` (`src/compiler.h`): Expression → query conversion
+  - **Invariant**: Child expressions always receive lower variable IDs than their parents
+  - **Format**: Constraints are built as `op(arg1, arg2, ..., argN; id)` with ID in LAST position
 - `Engine` (`src/engine.h`): Query execution engine
 
 ## File Structure
@@ -91,17 +93,20 @@ auto expr = Expr::make_operator(mul, {x_expr, y_expr});
 id_t expr_id = egraph.add_expr(expr);
 ```
 
-### Pattern Compilation
-
-```cpp
-Compiler compiler;
-Query compiled = compiler.compile_pattern(pattern_expr);
-```
-
-## Recent Fixes
-
-### Bug Fixes (2025-10-12)
+## Bug Fixes
 
 1. **Empty matches/heads handling**: Added validation in `EGraph::apply_matches()` to gracefully handle empty match vectors or zero head_size, preventing division by zero and invalid memory access.
 
 2. **Index recreation after clearing**: Fixed the saturation loop to properly recreate indices after `clear_indices()` is called. The EGraph now stores required indices information and recreates them between iterations, ensuring indices are available for all saturation iterations.
+
+3. **Constraint variable ordering consistency**: Fixed critical ordering inconsistency where e-class IDs were incorrectly placed at the beginning of constraint variables instead of at the end.
+
+   **Changes**:
+   - `src/compiler.cpp`: Modified to assign variable IDs AFTER recursing to children, ensuring children always have lower IDs than parents. Constraint variables are now built as `(arg1, ..., argN, id)` with ID in LAST position.
+   - `src/egraph.cpp`: Fixed match processing to read LHS root ID from `match[head_size - 1]` (last position) instead of `match[0]`.
+   - `unittests/test_compiler.cpp`: Updated all tests to reflect correct variable ordering.
+
+   **Invariants enforced**:
+   - Relations/constraints use format: `op(arg1, arg2, ..., argN; eclass_id)` with ID LAST
+   - For any expression, child variable IDs < parent variable ID
+   - Database storage, query constraints, and match processing all use consistent ordering

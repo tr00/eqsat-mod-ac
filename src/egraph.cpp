@@ -105,8 +105,8 @@ void EGraph::apply_matches(const Vec<id_t>& match_vec, Subst& subst)
 {
     size_t head_size = subst.head_size;
 
-    // Guard against empty matches or zero head_size
-    assert(match_vec.empty() || head_size == 0);
+    assert(!match_vec.empty());
+    assert(head_size != 0);
 
     size_t num_matches = match_vec.size() / head_size;
 
@@ -127,8 +127,8 @@ void EGraph::apply_matches(const Vec<id_t>& match_vec, Subst& subst)
         // Instantiate RHS
         id_t rhs_id = subst.instantiate(callback, match);
 
-        // LHS root is first element in match
-        id_t lhs_id = match[0];
+        // LHS root is LAST element in match (matches database tuple format)
+        id_t lhs_id = match[head_size - 1];
 
         // Unify
         unify(lhs_id, rhs_id);

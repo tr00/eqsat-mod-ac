@@ -11,7 +11,7 @@ int main()
 
     auto one = theory.add_operator("one", 0);
     auto var = theory.add_operator("var", 0);
-    auto mul = theory.add_operator("mul", AC);
+    auto mul = theory.add_operator("mul", 2);
 
     theory.add_rewrite_rule("identity", "(mul ?x (one))", "?x");
 

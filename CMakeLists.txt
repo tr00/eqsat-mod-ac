@@ -1,16 +1,7 @@
 cmake_minimum_required(VERSION 3.14)
 
-# Prefer clang++-19 if available, otherwise use system default
-find_program(CLANG19_C_COMPILER clang-19)
-find_program(CLANG19_CXX_COMPILER clang++-19)
-
-if(CLANG19_CXX_COMPILER AND CLANG19_C_COMPILER)
-    set(CMAKE_C_COMPILER "${CLANG19_C_COMPILER}")
-    set(CMAKE_CXX_COMPILER "${CLANG19_CXX_COMPILER}")
-    message(STATUS "Using clang-19 compiler")
-else()
-    message(STATUS "clang-19 not found, using system default compiler")
-endif()
+set(CMAKE_C_COMPILER "clang")
+set(CMAKE_CXX_COMPILER "clang++")
 
 project(eqsat-mod-ac)
 

@@ -36,19 +36,23 @@ var_t Compiler::compile_rec(const std::shared_ptr<Expr>& expr, HashMap<Symbol, v
     else
     {
         // Handle operators
-        // Assign a new variable ID for this expression
-        var_t id = next_id++;
-
-        // Create constraint variables list: first is the expression's own variable
+        // Create constraint variables list: children first, then the expression's own variable LAST
         Vec<var_t> constraint_vars;
-        constraint_vars.push_back(id);
 
         // Recursively compile children and add their variable IDs to constraint
+        // Children are compiled first to ensure they get lower variable IDs
         for (const auto& child : expr->children)
         {
             var_t child_var = compile_rec(child, symbol_to_var, query);
             constraint_vars.push_back(child_var);
         }
+
+        // Assign a new variable ID for this expression AFTER processing children
+        // This ensures children always have lower IDs than their parent
+        var_t id = next_id++;
+
+        // Add the expression's own variable LAST (matches database tuple format)
+        constraint_vars.push_back(id);
 
         // Create and add constraint for this expression
         query.add_constraint(expr->symbol, constraint_vars);
