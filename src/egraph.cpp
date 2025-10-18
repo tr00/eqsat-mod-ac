@@ -158,6 +158,10 @@ void EGraph::saturate(std::size_t max_iters)
 
         for (const auto& [name, match_vec] : matches)
         {
+            // Skip empty match vectors (no matches found)
+            if (match_vec.empty())
+                continue;
+
             // find substitution with the same name
             for (size_t i = 0; i < substs.size(); ++i)
             {
