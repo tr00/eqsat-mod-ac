@@ -83,6 +83,7 @@ class EGraph
     }
 
     void apply_matches(const Vec<id_t>& match_vec, Subst& subst);
+    bool rebuild();
 
     void saturate(size_t max_iters);
 };

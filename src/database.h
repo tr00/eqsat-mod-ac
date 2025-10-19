@@ -200,4 +200,20 @@ class Database
      * @note Must be called after creating indices and adding tuples to relations
      */
     void populate_indices();
+
+    /**
+     * @brief Rebuild all relations by detecting and unifying duplicate entries
+     *
+     * Iterates through all relations in the database. For each relation, sorts all
+     * tuples by their first (arity-1) attributes and detects neighboring tuples with
+     * identical arguments but different e-class IDs. When found, calls the unify
+     * callback to merge the e-classes.
+     *
+     * @param canonicalize Function to canonicalize an ID
+     * @param unify Function to call when two IDs need to be unified
+     * @return true if any unifications were performed in any relation, false otherwise
+     *
+     * @note For AC relations, rebuild is a no-op
+     */
+    bool rebuild(RowStore::canon_t canonicalize, RowStore::unify_t unify);
 };

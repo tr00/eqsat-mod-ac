@@ -135,6 +135,14 @@ void EGraph::apply_matches(const Vec<id_t>& match_vec, Subst& subst)
     }
 }
 
+bool EGraph::rebuild()
+{
+    auto canonicalize = [this](id_t id) -> id_t { return uf.find_root(id); };
+    auto unify = [this](id_t a, id_t b) -> id_t { return uf.unify(a, b); };
+
+    return db.rebuild(canonicalize, unify);
+}
+
 void EGraph::saturate(std::size_t max_iters)
 {
     Engine engine(db);

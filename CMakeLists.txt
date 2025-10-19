@@ -88,9 +88,11 @@ target_link_libraries(unittests PRIVATE eqsat Catch2::Catch2WithMain)
 
 # Create system test executable
 add_executable(systemtests
+    systemtests/test_congruence.cpp
     systemtests/test_egraph_basic.cpp
     systemtests/test_egraph_rewrite.cpp
     systemtests/test_database.cpp
+    systemtests/test_multiplicative_identity.cpp
 )
 
 target_include_directories(systemtests PRIVATE src)

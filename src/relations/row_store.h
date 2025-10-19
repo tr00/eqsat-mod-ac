@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cassert>
+#include <functional>
 
 #include "id.h"
 #include "indices/abstract_index.h"
@@ -61,5 +62,18 @@ class RowStore
      */
     AbstractIndex create_index(uint32_t perm);
 
-    void repair();
+    using canon_t = std::function<id_t(id_t)>;
+    using unify_t = std::function<id_t(id_t, id_t)>;
+
+    /**
+     * @brief Rebuild the relation by detecting and unifying duplicate entries
+     *
+     * Sorts all tuples by their first (arity-1) attributes and detects neighboring
+     * tuples with identical arguments but different e-class IDs. When found, calls
+     * the unify_callback to merge the e-classes.
+     *
+     * @param unify_callback Function to call when two IDs need to be unified
+     * @return true if any unifications were performed, false otherwise
+     */
+    bool rebuild(canon_t canonicalize, unify_t unify);
 };

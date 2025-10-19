@@ -154,5 +154,16 @@ class AbstractRelation
         assert(0);
     }
 
-    // repair?
+    bool rebuild(RowStore::canon_t canonicalize, RowStore::unify_t unify)
+    {
+        switch (kind)
+        {
+        case ROW_STORE:
+            return row_store.rebuild(canonicalize, unify);
+        case RELATION_AC:
+            // Ignoring AC relations as requested
+            return false;
+        }
+        assert(0);
+    }
 };

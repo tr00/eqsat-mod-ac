@@ -19,3 +19,16 @@ void Database::clear_indices()
 {
     indices.clear();
 }
+
+bool Database::rebuild(RowStore::canon_t canonicalize, RowStore::unify_t unify)
+{
+    bool did_something = false;
+
+    for (auto& [name, relation] : relations)
+    {
+        bool result = relation.rebuild(canonicalize, unify);
+        did_something = did_something || result;
+    }
+
+    return did_something;
+}

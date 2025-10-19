@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <cstdlib>
 
 #include "indices/abstract_index.h"
 #include "indices/trie_index.h"
@@ -36,13 +37,74 @@ AbstractIndex RowStore::populate_index(uint32_t vo)
     return AbstractIndex(TrieIndex(trie));
 }
 
-void RowStore::repair()
+// Comparison context for qsort
+struct TupleCompareContext
 {
-    // for t in tuples
-    // if lookup(canon(t)) != id
+    size_t arity;
+};
+
+// qsort comparison function for tuples
+// Compares first (arity - 1) elements, ignoring the last element (ID)
+static int tuple_compare(const void *a, const void *b, void *context)
+{
+    const id_t *tuple1 = static_cast<const id_t *>(a);
+    const id_t *tuple2 = static_cast<const id_t *>(b);
+    const TupleCompareContext *ctx = static_cast<const TupleCompareContext *>(context);
+
+    // Compare first (arity - 1) elements
+    for (size_t i = 0; i < ctx->arity - 1; ++i)
+    {
+        if (tuple1[i] < tuple2[i])
+            return -1;
+        if (tuple1[i] > tuple2[i])
+            return 1;
+    }
+    return 0; // Equal
 }
 
-// row-store: (a, b, c, d) --> id
-// -- we can do FD optimization
-// -- option A: canonicalize all tuples
-// -- option B: canonicalize on loopkup
+bool RowStore::rebuild(canon_t canonicalize, unify_t unify)
+{
+    for (auto& id : data)
+        id = canonicalize(id);
+
+    if (arity <= 1)
+        return false; // Nothing to rebuild if only ID column
+
+    const size_t num_tuples = size();
+    if (num_tuples <= 1)
+        return false; // Nothing to compare
+
+    bool did_something = false;
+
+    // Sort tuples by first (arity - 1) elements using qsort_r
+    TupleCompareContext ctx{arity};
+    qsort_r(data.data(), num_tuples, arity * sizeof(id_t), tuple_compare, &ctx);
+
+    // Find neighboring tuples with identical arguments but different IDs
+    for (size_t i = 0; i + 1 < num_tuples; ++i)
+    {
+        id_t *tuple1 = &data[i * arity];
+        id_t *tuple2 = &data[(i + 1) * arity];
+
+        // check if first (arity - 1) elements are identical
+        for (size_t j = 0; j < arity - 1; ++j)
+            if (tuple1[j] != tuple2[j])
+                continue;
+
+        id_t id1 = tuple1[arity - 1];
+        id_t id2 = tuple2[arity - 1];
+
+        if (id1 == id2)
+            continue;
+
+        // unify and update ids
+        id_t newid = unify(id1, id2);
+
+        tuple1[arity - 1] = newid;
+        tuple2[arity - 1] = newid;
+
+        did_something = true;
+    }
+
+    return did_something;
+}
