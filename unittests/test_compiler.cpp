@@ -68,9 +68,6 @@ TEST_CASE("Deeply nested expression compilation", "[pattern_compiler]")
     Theory theory;
     Symbol add = theory.intern("add");
     Symbol mul = theory.intern("mul");
-    Symbol x = theory.intern("x");
-    Symbol y = theory.intern("y");
-    Symbol z = theory.intern("z");
 
     Compiler compiler;
     RewriteRule rule = theory.add_rewrite_rule("test_rule", "(add (mul ?x ?y) ?z)", "(add (mul ?x ?y) ?z)");

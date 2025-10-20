@@ -151,12 +151,12 @@ class AbstractRelation
         __builtin_unreachable();
     }
 
-    AbstractIndex create_index(uint32_t perm)
+    AbstractIndex create_index()
     {
         switch (kind)
         {
         case ROW_STORE:
-            return row_store.create_index(perm);
+            return row_store.create_index();
         case RELATION_AC:
             return ac_rel.create_index();
         }

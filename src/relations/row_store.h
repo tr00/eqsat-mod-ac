@@ -62,7 +62,7 @@ class RowStore
      * @param perm The permutation index for field ordering
      * @return An empty AbstractIndex containing a TrieIndex
      */
-    AbstractIndex create_index(uint32_t perm);
+    AbstractIndex create_index();
 
     /**
      * @brief Rebuild the relation by detecting and unifying duplicate entries

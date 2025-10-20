@@ -137,7 +137,7 @@ class Database
         auto *relation = get_relation(name);
         assert(relation != nullptr && "Relation not found");
 
-        indices[key] = relation->create_index(perm);
+        indices[key] = relation->create_index();
     }
 
     /**

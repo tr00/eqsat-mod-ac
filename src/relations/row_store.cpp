@@ -6,7 +6,7 @@
 #include "permutation.h"
 #include "relations/row_store.h"
 
-AbstractIndex RowStore::create_index(uint32_t perm)
+AbstractIndex RowStore::create_index()
 {
     auto trie_node = std::make_shared<TrieNode>();
     TrieIndex trie_index(trie_node);

@@ -68,7 +68,7 @@ std::pair<Query, Subst> Compiler::compile(RewriteRule rule)
     query.add_head_var(0);
 
     // Compile the pattern recursively
-    var_t root = compile_rec(rule.lhs, env, query);
+    compile_rec(rule.lhs, env, query);
 
     HashMap<Symbol, int> env2;
     auto transl = create_consecutive_index_map(query.head);
