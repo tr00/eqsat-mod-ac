@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <cassert>
 #include <cstddef>
 #include <iostream>
@@ -75,9 +76,20 @@ id_t EGraph::add_enode(Symbol symbol, Vec<id_t> children)
 
 id_t EGraph::add_enode(ENode enode)
 {
+    // if AC canonicalize the children by sorting
+    if (theory.get_arity(enode.op) == AC)
+    {
+        auto children = enode.children;
+        std::sort(children.begin(), children.end());
+        enode = ENode(enode.op, children);
+    }
+
+    // lookup if enode already exists
     auto it = memo.find(enode);
     if (it != memo.end()) return it->second;
 
+    // create new eclass-id
+    // and insert into db and memo
     ++enodes;
     id_t id = uf.make_set();
 

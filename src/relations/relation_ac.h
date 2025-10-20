@@ -32,8 +32,8 @@ class RelationAC
 
     void add_tuple(const Vec<id_t>& tuple)
     {
-        id_t term = static_cast<id_t>(size());
         id_t eclass = tuple.back();
+        id_t term = static_cast<id_t>(size());
 
         Vec<id_t> copy = tuple;
         copy.pop_back();

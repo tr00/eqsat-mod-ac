@@ -21,6 +21,17 @@ class ENode
     {
     }
 
+    ENode& operator=(const ENode& other)
+    {
+        if (this != &other)
+        {
+            // Since children is const, we need to use placement new
+            this->~ENode();
+            new (this) ENode(other.op, other.children);
+        }
+        return *this;
+    }
+
     bool operator==(const ENode& other) const
     {
         return op == other.op && children == other.children;

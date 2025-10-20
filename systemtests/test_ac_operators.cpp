@@ -7,7 +7,7 @@
 // AC operators should match patterns regardless of argument order
 // and ensure congruence closure respects commutativity
 
-TEST_CASE("AC operators support commutative pattern matching", "[egraph][ac1][pattern]")
+TEST_CASE("AC operators support commutative pattern matching", "[egraph][ac][pattern]")
 {
     Theory theory;
 
@@ -37,7 +37,6 @@ TEST_CASE("AC operators support commutative pattern matching", "[egraph][ac1][pa
 
         // With AC: Pattern (mul ?x (b)) should match mul(a, b)
         // binding ?x to a, thus making a ≡ mul(a, b)
-        // TODO: Change to true when AC is implemented
         REQUIRE(egraph.is_equiv(a_id, mul_id) == true);
     }
 
@@ -56,8 +55,7 @@ TEST_CASE("AC operators support commutative pattern matching", "[egraph][ac1][pa
 
         // With AC: Pattern (mul ?x (b)) should ALSO match mul(b, a)
         // binding ?x to a, thus making a ≡ mul(b, a)
-        // TODO: Change to true when AC is implemented
-        REQUIRE(egraph.is_equiv(a_id, mul_id) == false);
+        REQUIRE(egraph.is_equiv(a_id, mul_id) == true);
     }
 }
 
@@ -68,8 +66,7 @@ TEST_CASE("AC operators enforce commutative hash-consing", "[egraph][ac][hashcon
     auto x = theory.add_operator("x", 0);
     auto y = theory.add_operator("y", 0);
 
-    // TODO: Replace with theory.add_operator_ac("add", 2) when AC API is available
-    auto add = theory.add_operator("add", 2);
+    auto add = theory.add_operator("add", AC);
 
     EGraph egraph(theory);
 
@@ -85,8 +82,7 @@ TEST_CASE("AC operators enforce commutative hash-consing", "[egraph][ac][hashcon
         id_t yx_id = egraph.add_expr(add_yx);
 
         // With AC: add(x, y) and add(y, x) should hash-cons to same e-class
-        // TODO: Change to true when AC hash-consing is implemented
-        REQUIRE(egraph.is_equiv(xy_id, yx_id) == false);
+        REQUIRE(egraph.is_equiv(xy_id, yx_id) == true);
     }
 
     SECTION("Multiple insertions of commuted terms produce single e-class")
@@ -105,8 +101,7 @@ TEST_CASE("AC operators enforce commutative hash-consing", "[egraph][ac][hashcon
         id_t id3 = egraph.add_expr(add_xy);
 
         // With AC: All should map to the same e-class
-        // TODO: Change to true when AC is implemented
-        REQUIRE(egraph.is_equiv(id1, id2) == false);
+        REQUIRE(egraph.is_equiv(id1, id2) == true);
         REQUIRE(egraph.is_equiv(id1, id3) == true); // This already works (hash-consing)
     }
 }
