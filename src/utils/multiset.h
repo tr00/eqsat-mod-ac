@@ -1,10 +1,12 @@
 
 #pragma once
 
-#include "id.h"
 #include <algorithm>
 #include <functional>
 #include <utility>
+
+#include "../id.h"
+#include "../utils/vec.h"
 
 class MultisetSupport;
 

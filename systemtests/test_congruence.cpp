@@ -5,7 +5,6 @@
 
 TEST_CASE("EGraph proves fa = fb via congruence of a=b", "[egraph][rewrite][congruence]")
 {
-    // Create theory with operators: one, var, mul
     Theory theory;
 
     auto a = theory.add_operator("a", 0);
@@ -34,7 +33,6 @@ TEST_CASE("EGraph proves fa = fb via congruence of a=b", "[egraph][rewrite][cong
 
 TEST_CASE("EGraph proves g(f(a)) = g(f(b)) via congruence of a=b", "[egraph][rewrite][congruence]")
 {
-    // Create theory with operators: one, var, mul
     Theory theory;
 
     auto a = theory.add_operator("a", 0);

@@ -99,16 +99,17 @@ class AbstractRelation
         return kind;
     }
 
-    Symbol get_operator_symbol() const
+    Symbol get_symbol() const
     {
         switch (kind)
         {
         case ROW_STORE:
-            return row_store.get_operator_symbol();
+            return row_store.get_symbol();
         case RELATION_AC:
-            return ac_rel.get_operator_symbol();
+            return ac_rel.get_symbol();
         }
-        assert(0);
+
+        __builtin_unreachable();
     }
 
     size_t size() const
@@ -120,7 +121,8 @@ class AbstractRelation
         case RELATION_AC:
             return ac_rel.size();
         }
-        assert(0);
+
+        __builtin_unreachable();
     }
 
     void add_tuple(const Vec<id_t>& tuple)
@@ -132,7 +134,8 @@ class AbstractRelation
         case RELATION_AC:
             return ac_rel.add_tuple(tuple);
         }
-        assert(0);
+
+        __builtin_unreachable();
     }
 
     AbstractIndex populate_index(uint32_t vo)
@@ -144,7 +147,8 @@ class AbstractRelation
         case RELATION_AC:
             return ac_rel.populate_index();
         }
-        assert(0);
+
+        __builtin_unreachable();
     }
 
     AbstractIndex create_index(uint32_t perm)
@@ -156,10 +160,11 @@ class AbstractRelation
         case RELATION_AC:
             return ac_rel.create_index();
         }
-        assert(0);
+
+        __builtin_unreachable();
     }
 
-    bool rebuild(RowStore::canon_t canonicalize, RowStore::unify_t unify)
+    bool rebuild(std::function<id_t(id_t)> canonicalize, std::function<id_t(id_t, id_t)> unify)
     {
         switch (kind)
         {
@@ -168,6 +173,7 @@ class AbstractRelation
         case RELATION_AC:
             return ac_rel.rebuild(canonicalize, unify);
         }
-        assert(0);
+
+        __builtin_unreachable();
     }
 };

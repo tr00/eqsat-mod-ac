@@ -70,20 +70,14 @@ id_t EGraph::add_expr(std::shared_ptr<Expr> expr)
 
 id_t EGraph::add_enode(Symbol symbol, Vec<id_t> children)
 {
+    if (theory.get_arity(symbol) == AC) std::sort(children.begin(), children.end());
+
     ENode enode(symbol, std::move(children));
     return add_enode(std::move(enode));
 }
 
 id_t EGraph::add_enode(ENode enode)
 {
-    // if AC canonicalize the children by sorting
-    if (theory.get_arity(enode.op) == AC)
-    {
-        auto children = enode.children;
-        std::sort(children.begin(), children.end());
-        enode = ENode(enode.op, children);
-    }
-
     // lookup if enode already exists
     auto it = memo.find(enode);
     if (it != memo.end()) return it->second;
@@ -156,7 +150,7 @@ void EGraph::saturate(std::size_t max_iters)
     Engine engine(db);
     HashMap<Symbol, Vec<id_t>> matches;
 
-    for (auto query : queries)
+    for (const auto& query : queries)
         matches[query.name] = Vec<id_t>();
 
     for (std::size_t iter = 0; iter < max_iters; ++iter)
@@ -169,7 +163,7 @@ void EGraph::saturate(std::size_t max_iters)
         for (const auto& query : queries)
         {
             engine.prepare(query);
-            matches[query.name] = std::move(engine.execute());
+            matches[query.name] = engine.execute();
         }
 
         for (const auto& [name, match_vec] : matches)

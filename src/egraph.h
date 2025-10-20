@@ -12,7 +12,7 @@
 class ENode
 {
   public:
-    Symbol op;
+    const Symbol op;
     const Vec<id_t> children;
 
     ENode(Symbol op, Vec<id_t> children)
@@ -21,16 +21,9 @@ class ENode
     {
     }
 
-    ENode& operator=(const ENode& other)
-    {
-        if (this != &other)
-        {
-            // Since children is const, we need to use placement new
-            this->~ENode();
-            new (this) ENode(other.op, other.children);
-        }
-        return *this;
-    }
+    ENode& operator=(const ENode&) = delete;
+    ENode(const ENode&) = default;
+    ENode(ENode&&) = default;
 
     bool operator==(const ENode& other) const
     {

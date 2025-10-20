@@ -1,3 +1,5 @@
+#include <cassert>
+
 #include "symbol_table.h"
 
 Symbol SymbolTable::intern(const std::string& str)

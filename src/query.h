@@ -154,9 +154,9 @@ class Subst
 
     Subst(Symbol name, std::shared_ptr<Expr> root, HashMap<Symbol, int> env, size_t head_size)
         : name(name)
+        , head_size(head_size)
         , root(root)
         , env(env)
-        , head_size(head_size)
     {
     }
 

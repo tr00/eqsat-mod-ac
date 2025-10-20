@@ -2,9 +2,9 @@
 
 #include <memory>
 #include <string>
-#include <unordered_map>
 
 #include "symbol_table.h"
+#include "utils/vec.h"
 
 #define AC -1
 
@@ -131,7 +131,7 @@ class Theory
     SymbolTable symbols;
 
     // symbol --> arity
-    std::unordered_map<Symbol, int> operators;
+    HashMap<Symbol, int> operators;
     Vec<RewriteRule> rewrite_rules;
 
     Theory()

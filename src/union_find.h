@@ -1,6 +1,7 @@
 #pragma once
 
 #include "id.h"
+#include "utils/vec.h"
 
 class UnionFind
 {
@@ -22,7 +23,7 @@ class UnionFind
     id_t make_set();
     id_t unify(id_t a, id_t b);
 
-    inline id_t find_root(id_t x)
+    inline id_t find_root(id_t x) noexcept
     {
         // quick check which helps the branch predictor
         // since most of our ids are already canonical
@@ -32,12 +33,12 @@ class UnionFind
         return _find_root_ph(x);
     }
 
-    inline bool same(id_t a, id_t b)
+    inline bool same(id_t a, id_t b) noexcept
     {
         return find_root(a) == find_root(b);
     }
 
-    std::size_t size() const
+    std::size_t size() const noexcept
     {
         return vec.size();
     }

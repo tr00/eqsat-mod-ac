@@ -1,13 +1,12 @@
 #pragma once
 
-#include <gch/small_vector.hpp>
-
 #include "../id.h"
+#include "../utils/vec.h"
 
 class SortedVecSet
 {
   private:
-    gch::small_vector<id_t, 8> data;
+    Vec<id_t> data;
 
   public:
     SortedVecSet() {};

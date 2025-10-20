@@ -2,7 +2,7 @@
 
 #include <cstdint>
 
-#include "id.h"
+#include "utils/vec.h"
 
 /**
  * @brief Permutation utilities for converting between permutation vectors and indices

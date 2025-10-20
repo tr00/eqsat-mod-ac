@@ -210,5 +210,5 @@ class Database
      *
      * @note For AC relations, rebuild is a no-op
      */
-    bool rebuild(RowStore::canon_t canonicalize, RowStore::unify_t unify);
+    bool rebuild(std::function<id_t(id_t)> canonicalize, std::function<id_t(id_t, id_t)> unify);
 };

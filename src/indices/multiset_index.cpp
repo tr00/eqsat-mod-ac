@@ -20,7 +20,7 @@ AbstractSet MultisetIndex::project()
         return AbstractSet(MultisetSupport(*mset));
     }
 
-    assert(0);
+    __builtin_unreachable();
 }
 
 void MultisetIndex::select(id_t key)

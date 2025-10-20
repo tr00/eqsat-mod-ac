@@ -12,12 +12,12 @@ class RowStore
   private:
     Vec<id_t> data;
     size_t arity;
-    Symbol operator_symbol;
+    Symbol symbol;
 
   public:
-    RowStore(Symbol name, size_t arity)
-        : operator_symbol(name)
-        , arity(arity)
+    RowStore(Symbol symbol, size_t arity)
+        : arity(arity)
+        , symbol(symbol)
     {
     }
 
@@ -49,9 +49,9 @@ class RowStore
      *
      * @return The operator symbol for this relation
      */
-    Symbol get_operator_symbol() const
+    Symbol get_symbol() const
     {
-        return operator_symbol;
+        return symbol;
     }
 
     AbstractIndex populate_index(uint32_t vo);
@@ -64,9 +64,6 @@ class RowStore
      */
     AbstractIndex create_index(uint32_t perm);
 
-    using canon_t = std::function<id_t(id_t)>;
-    using unify_t = std::function<id_t(id_t, id_t)>;
-
     /**
      * @brief Rebuild the relation by detecting and unifying duplicate entries
      *
@@ -77,5 +74,5 @@ class RowStore
      * @param unify_callback Function to call when two IDs need to be unified
      * @return true if any unifications were performed, false otherwise
      */
-    bool rebuild(canon_t canonicalize, unify_t unify);
+    bool rebuild(std::function<id_t(id_t)> canonicalize, std::function<id_t(id_t, id_t)> unify);
 };

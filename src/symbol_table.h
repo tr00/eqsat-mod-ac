@@ -3,7 +3,7 @@
 #include <cstdint>
 #include <string>
 
-#include "id.h"
+#include "utils/hashmap.h"
 
 using Symbol = uint32_t;
 

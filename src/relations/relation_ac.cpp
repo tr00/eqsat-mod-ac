@@ -1,7 +1,8 @@
-#include "relation_ac.h"
-#include "id.h"
-#include "utils/multiset.h"
 #include <functional>
+
+#include "id.h"
+#include "relation_ac.h"
+#include "utils/multiset.h"
 
 namespace
 {
@@ -24,7 +25,7 @@ struct MultisetPtrEqual
 
 bool RelationAC::rebuild(std::function<id_t(id_t)> canonicalize, std::function<id_t(id_t, id_t)> unify)
 {
-    ankerl::unordered_dense::map<const Multiset *, id_t, MultisetPtrHash, MultisetPtrEqual> cache;
+    HashMap<const Multiset *, id_t, MultisetPtrHash, MultisetPtrEqual> cache;
 
     bool changed = false;
 

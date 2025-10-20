@@ -1,4 +1,5 @@
 #include <cassert>
+#include <functional>
 
 #include "database.h"
 
@@ -20,7 +21,7 @@ void Database::clear_indices()
     indices.clear();
 }
 
-bool Database::rebuild(RowStore::canon_t canonicalize, RowStore::unify_t unify)
+bool Database::rebuild(std::function<id_t(id_t)> canonicalize, std::function<id_t(id_t, id_t)> unify)
 {
     bool did_something = false;
 

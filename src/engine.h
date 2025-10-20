@@ -27,10 +27,10 @@ class Engine
   private:
     Vec<State> states;
     Vec<var_t> head;
-    Database& db;
+    const Database& db;
 
   public:
-    Engine(Database& db)
+    Engine(const Database& db)
         : db(db)
     {
     }

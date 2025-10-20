@@ -21,7 +21,7 @@ class RelationAC
     {
     }
 
-    Symbol get_operator_symbol() const
+    Symbol get_symbol() const
     {
         return symbol;
     }
@@ -33,6 +33,8 @@ class RelationAC
 
     void add_tuple(const Vec<id_t>& tuple)
     {
+        // TODO: test set inclusion and create new subterm
+
         id_t eclass = tuple.back();
         id_t term = static_cast<id_t>(size());
 

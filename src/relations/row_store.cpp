@@ -60,7 +60,7 @@ static int tuple_compare(const void *a, const void *b, void *context)
     return 0; // Equal
 }
 
-bool RowStore::rebuild(canon_t canonicalize, unify_t unify)
+bool RowStore::rebuild(std::function<id_t(id_t)> canonicalize, std::function<id_t(id_t, id_t)> unify)
 {
     for (auto& id : data)
         id = canonicalize(id);

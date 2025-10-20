@@ -1,7 +1,9 @@
 #pragma once
 
-#include "id.h"
 #include <functional>
+
+#include "../id.h"
+#include "../utils/hashmap.h"
 
 class WrappedHashMapSet
 {
