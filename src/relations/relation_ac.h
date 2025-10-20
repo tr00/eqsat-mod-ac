@@ -4,6 +4,7 @@
 #include "indices/abstract_index.h"
 #include "symbol_table.h"
 #include "utils/multiset.h"
+#include <functional>
 #include <memory>
 
 class RelationAC
@@ -58,4 +59,6 @@ class RelationAC
     {
         return AbstractIndex(MultisetIndex(data));
     }
+
+    bool rebuild(std::function<id_t(id_t)> canonicalize, std::function<id_t(id_t, id_t)> unify);
 };

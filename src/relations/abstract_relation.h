@@ -166,8 +166,7 @@ class AbstractRelation
         case ROW_STORE:
             return row_store.rebuild(canonicalize, unify);
         case RELATION_AC:
-            // Ignoring AC relations as requested
-            return false;
+            return ac_rel.rebuild(canonicalize, unify);
         }
         assert(0);
     }

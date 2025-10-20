@@ -112,28 +112,27 @@ TEST_CASE("AC operators support commutative congruence closure", "[egraph][ac][c
 
     auto a = theory.add_operator("a", 0);
     auto b = theory.add_operator("b", 0);
-    auto f = theory.add_operator("f", 1);
+    auto c = theory.add_operator("c", 0);
 
-    // TODO: Replace with theory.add_operator_ac("mul", 2) when AC API is available
-    auto mul = theory.add_operator("mul", 2);
+    auto mul = theory.add_operator("mul", AC);
 
     EGraph egraph(theory);
 
-    SECTION("If a=b, then mul(a, f) ≡ mul(f, b) via AC congruence")
+    SECTION("If a=b, then mul(a, c) ≡ mul(c, b) via AC congruence")
     {
         auto a_expr = Expr::make_operator(a);
         auto b_expr = Expr::make_operator(b);
-        auto f_expr = Expr::make_operator(f, {a_expr});
+        auto c_expr = Expr::make_operator(c);
 
-        auto mul_af = Expr::make_operator(mul, {a_expr, f_expr});
-        auto mul_fb = Expr::make_operator(mul, {f_expr, b_expr});
+        auto mul_ac = Expr::make_operator(mul, {a_expr, c_expr});
+        auto mul_cb = Expr::make_operator(mul, {c_expr, b_expr});
 
         id_t a_id = egraph.add_expr(a_expr);
         id_t b_id = egraph.add_expr(b_expr);
-        id_t mul_af_id = egraph.add_expr(mul_af);
-        id_t mul_fb_id = egraph.add_expr(mul_fb);
+        id_t mul_ac_id = egraph.add_expr(mul_ac);
+        id_t mul_cb_id = egraph.add_expr(mul_cb);
 
-        REQUIRE(egraph.is_equiv(mul_af_id, mul_fb_id) == false);
+        REQUIRE(egraph.is_equiv(mul_ac_id, mul_cb_id) == false);
 
         // Unify a and b
         egraph.unify(a_id, b_id);
@@ -144,8 +143,7 @@ TEST_CASE("AC operators support commutative congruence closure", "[egraph][ac][c
 
         // With AC: mul(a, f) and mul(f, b) should be congruent
         // because a=b makes the args equivalent sets: {a, f} ≡ {f, b}
-        // TODO: Change to true when AC congruence is implemented
-        REQUIRE(egraph.is_equiv(mul_af_id, mul_fb_id) == false);
+        REQUIRE(egraph.is_equiv(mul_ac_id, mul_cb_id) == true);
     }
 
     SECTION("AC congruence with nested terms")
@@ -167,8 +165,7 @@ TEST_CASE("AC operators support commutative congruence closure", "[egraph][ac][c
         // mul(mul(a, b), a) has args {mul(a,b), a}
         // mul(a, mul(b, a)) has args {a, mul(b,a)}
         // If mul(a,b) ≡ mul(b,a) (AC hash-cons), then the arg sets are equal
-        // TODO: Change to true when AC is implemented
-        REQUIRE(egraph.is_equiv(id1, id2) == false);
+        REQUIRE(egraph.is_equiv(id1, id2) == true);
     }
 }
 
@@ -323,8 +320,7 @@ TEST_CASE("AC interaction with rebuild after unification", "[egraph][ac][rebuild
 
         // After rebuild with AC: add(a, b) ≡ add(c, b) because a ≡ c
         // so canonical args {a, b} ≡ {c, b}
-        // TODO: Change to true when AC rebuild is implemented
-        REQUIRE(egraph.is_equiv(add_ab_id, add_cb_id) == false);
+        REQUIRE(egraph.is_equiv(add_ab_id, add_cb_id) == true);
     }
 
     SECTION("AC rebuild handles commuted duplicates correctly")
