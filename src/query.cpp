@@ -3,7 +3,6 @@
 #include "permutation.h"
 #include "query.h"
 
-// Constraint implementation
 Constraint::Constraint(Symbol op, const Vec<var_t>& vars) : operator_symbol(op), variables(vars)
 {
     // Compute permutation: map from current positions to sorted positions
@@ -20,15 +19,14 @@ Constraint::Constraint(Symbol op, const Vec<var_t>& vars) : operator_symbol(op),
     // Sort by value to get the sorted order
     std::sort(indexed_vars.begin(), indexed_vars.end());
 
-    // Build the permutation: for each position, what's its rank in sorted order?
+    // Build the permutation: for each variable (in sorted order), where is it located?
     Vec<uint32_t> perm(vars.size());
     for (size_t sorted_pos = 0; sorted_pos < indexed_vars.size(); ++sorted_pos)
     {
         uint32_t original_pos = indexed_vars[sorted_pos].second;
-        perm[original_pos] = static_cast<uint32_t>(sorted_pos);
+        perm[sorted_pos] = original_pos;
     }
 
-    // Convert permutation to index
     permutation = permutation_to_index(perm);
 }
 

@@ -101,38 +101,35 @@ id_t EGraph::unify(id_t a, id_t b)
     return id;
 }
 
-void EGraph::apply_matches(const Vec<id_t>& match_vec, Subst& subst)
+void EGraph::apply_matches(const Vec<id_t>& matches, Subst& subst)
 {
     size_t head_size = subst.head_size;
 
-    assert(!match_vec.empty());
+    assert(!matches.empty());
     assert(head_size != 0);
 
-    size_t num_matches = match_vec.size() / head_size;
+    size_t num_matches = matches.size() / head_size;
 
+    Vec<id_t> match(head_size);
     for (size_t j = 0; j < num_matches; ++j)
     {
-        // Extract match tuple
-        Vec<id_t> match(head_size);
         for (size_t k = 0; k < head_size; ++k)
-        {
-            match[k] = match_vec[j * head_size + k];
-        }
+            match[k] = matches[j * head_size + k];
 
-        // Create callback for instantiation
-        auto callback = [this](Symbol sym, Vec<id_t> children) -> id_t {
-            return this->add_enode(sym, std::move(children));
-        };
-
-        // Instantiate RHS
-        id_t rhs_id = subst.instantiate(callback, match);
-
-        // LHS root is LAST element in match (matches database tuple format)
-        id_t lhs_id = match[head_size - 1];
-
-        // Unify
-        unify(lhs_id, rhs_id);
+        apply_match(match, subst);
     }
+}
+
+void EGraph::apply_match(const Vec<id_t>& match, Subst& subst)
+{
+    auto callback = [this](Symbol sym, Vec<id_t> children) -> id_t {
+        return this->add_enode(sym, std::move(children));
+    };
+
+    id_t lhs_id = match[0];
+    id_t rhs_id = subst.instantiate(callback, match);
+
+    unify(lhs_id, rhs_id);
 }
 
 bool EGraph::rebuild()

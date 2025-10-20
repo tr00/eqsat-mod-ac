@@ -35,26 +35,18 @@ var_t Compiler::compile_rec(const std::shared_ptr<Expr>& expr, HashMap<Symbol, v
     }
     else
     {
-        // Handle operators
-        // Create constraint variables list: children first, then the expression's own variable LAST
         Vec<var_t> constraint_vars;
 
-        // Recursively compile children and add their variable IDs to constraint
-        // Children are compiled first to ensure they get lower variable IDs
+        var_t id = next_id++;
+
         for (const auto& child : expr->children)
         {
             var_t child_var = compile_rec(child, symbol_to_var, query);
             constraint_vars.push_back(child_var);
         }
 
-        // Assign a new variable ID for this expression AFTER processing children
-        // This ensures children always have lower IDs than their parent
-        var_t id = next_id++;
-
-        // Add the expression's own variable LAST (matches database tuple format)
         constraint_vars.push_back(id);
 
-        // Create and add constraint for this expression
         query.add_constraint(expr->symbol, constraint_vars);
 
         return id;
@@ -72,11 +64,11 @@ std::pair<Query, Subst> Compiler::compile(RewriteRule rule)
     // Create empty query with name
     Query query(rule.name);
 
+    // Add the root variable to the head
+    query.add_head_var(0);
+
     // Compile the pattern recursively
     var_t root = compile_rec(rule.lhs, env, query);
-
-    // Add the root variable to the head
-    query.add_head_var(root);
 
     HashMap<Symbol, int> env2;
     auto transl = create_consecutive_index_map(query.head);
