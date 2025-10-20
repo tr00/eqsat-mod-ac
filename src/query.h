@@ -153,7 +153,10 @@ class Subst
     id_t instantiate_rec(callback_t f, const Vec<id_t>& match, std::shared_ptr<Expr> expr);
 
     Subst(Symbol name, std::shared_ptr<Expr> root, HashMap<Symbol, int> env, size_t head_size)
-        : name(name), root(root), env(env), head_size(head_size)
+        : name(name)
+        , root(root)
+        , env(env)
+        , head_size(head_size)
     {
     }
 

@@ -10,7 +10,9 @@ class SortedIterSet
     Vec<id_t>::const_iterator end;
 
   public:
-    SortedIterSet(const Vec<id_t>& data) : begin(data.begin()), end(data.end())
+    SortedIterSet(const Vec<id_t>& data)
+        : begin(data.begin())
+        , end(data.end())
     {
     }
 

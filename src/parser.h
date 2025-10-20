@@ -21,7 +21,10 @@ struct Token
     std::string value;
     size_t position;
 
-    Token(TokenType t, std::string v, size_t pos) : type(t), value(v), position(pos)
+    Token(TokenType t, std::string v, size_t pos)
+        : type(t)
+        , value(v)
+        , position(pos)
     {
     }
 };

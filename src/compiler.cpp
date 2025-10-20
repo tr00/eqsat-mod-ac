@@ -15,7 +15,8 @@ HashMap<var_t, int> create_consecutive_index_map(const Vec<var_t>& unique_indice
     return index_map;
 }
 
-Compiler::Compiler() : next_id(0)
+Compiler::Compiler()
+    : next_id(0)
 {
 }
 
@@ -24,8 +25,7 @@ var_t Compiler::compile_rec(const std::shared_ptr<Expr>& expr, HashMap<Symbol, v
     if (expr->is_variable())
     {
         auto it = symbol_to_var.find(expr->symbol);
-        if (it != symbol_to_var.end())
-            return it->second;
+        if (it != symbol_to_var.end()) return it->second;
 
         // create new var_t and add to map and head
         var_t id = next_id++;

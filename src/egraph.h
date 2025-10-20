@@ -15,7 +15,9 @@ class ENode
     Symbol op;
     const Vec<id_t> children;
 
-    ENode(Symbol op, Vec<id_t> children) : op(op), children(children)
+    ENode(Symbol op, Vec<id_t> children)
+        : op(op)
+        , children(children)
     {
     }
 

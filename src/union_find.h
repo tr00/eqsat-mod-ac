@@ -26,8 +26,7 @@ class UnionFind
     {
         // quick check which helps the branch predictor
         // since most of our ids are already canonical
-        if (vec[x] == x)
-            return x;
+        if (vec[x] == x) return x;
 
         // iterative version with path halving
         return _find_root_ph(x);

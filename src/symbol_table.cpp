@@ -16,8 +16,7 @@ Symbol SymbolTable::intern(const std::string& str)
 const std::string& SymbolTable::get_string(Symbol symbol) const
 {
     for (auto const& [key, val] : map)
-        if (val == symbol)
-            return key;
+        if (val == symbol) return key;
 
     assert(0);
 }

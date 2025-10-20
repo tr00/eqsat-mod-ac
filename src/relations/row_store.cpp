@@ -54,10 +54,8 @@ static int tuple_compare(const void *a, const void *b, void *context)
     // Compare first (arity - 1) elements
     for (size_t i = 0; i < ctx->arity - 1; ++i)
     {
-        if (tuple1[i] < tuple2[i])
-            return -1;
-        if (tuple1[i] > tuple2[i])
-            return 1;
+        if (tuple1[i] < tuple2[i]) return -1;
+        if (tuple1[i] > tuple2[i]) return 1;
     }
     return 0; // Equal
 }
@@ -67,12 +65,10 @@ bool RowStore::rebuild(canon_t canonicalize, unify_t unify)
     for (auto& id : data)
         id = canonicalize(id);
 
-    if (arity <= 1)
-        return false; // Nothing to rebuild if only ID column
+    if (arity <= 1) return false; // Nothing to rebuild if only ID column
 
     const size_t num_tuples = size();
-    if (num_tuples <= 1)
-        return false; // Nothing to compare
+    if (num_tuples <= 1) return false; // Nothing to compare
 
     bool did_something = false;
 
@@ -88,14 +84,12 @@ bool RowStore::rebuild(canon_t canonicalize, unify_t unify)
 
         // check if first (arity - 1) elements are identical
         for (size_t j = 0; j < arity - 1; ++j)
-            if (tuple1[j] != tuple2[j])
-                continue;
+            if (tuple1[j] != tuple2[j]) continue;
 
         id_t id1 = tuple1[arity - 1];
         id_t id2 = tuple2[arity - 1];
 
-        if (id1 == id2)
-            continue;
+        if (id1 == id2) continue;
 
         // unify and update ids
         id_t newid = unify(id1, id2);

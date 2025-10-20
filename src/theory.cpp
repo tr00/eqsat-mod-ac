@@ -3,11 +3,16 @@
 #include "parser.h"
 #include "theory.h"
 
-Expr::Expr(NodeKind k, Symbol sym) : kind(k), symbol(sym)
+Expr::Expr(NodeKind k, Symbol sym)
+    : kind(k)
+    , symbol(sym)
 {
 }
 
-Expr::Expr(NodeKind k, Symbol op, const Vec<std::shared_ptr<Expr>>& children) : kind(k), symbol(op), children(children)
+Expr::Expr(NodeKind k, Symbol op, const Vec<std::shared_ptr<Expr>>& children)
+    : kind(k)
+    , symbol(op)
+    , children(children)
 {
 }
 
@@ -27,7 +32,9 @@ std::shared_ptr<Expr> Expr::make_operator(Symbol op, const Vec<std::shared_ptr<E
 }
 
 RewriteRule::RewriteRule(Symbol name, std::shared_ptr<Expr> lhs, std::shared_ptr<Expr> rhs)
-    : name(name), lhs(lhs), rhs(rhs)
+    : name(name)
+    , lhs(lhs)
+    , rhs(rhs)
 {
 }
 
@@ -69,8 +76,7 @@ RewriteRule Theory::add_rewrite_rule(const std::string& name, const std::string&
 
 std::string Expr::to_sexpr(const SymbolTable& symbols) const
 {
-    if (is_variable())
-        return "?" + symbols.get_string(symbol);
+    if (is_variable()) return "?" + symbols.get_string(symbol);
 
     std::string result = "(" + symbols.get_string(symbol);
 

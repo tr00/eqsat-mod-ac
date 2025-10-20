@@ -8,7 +8,8 @@
 #include "engine.h"
 #include "id.h"
 
-EGraph::EGraph(const Theory& theory) : theory(theory)
+EGraph::EGraph(const Theory& theory)
+    : theory(theory)
 {
 
     // initialize database with one relation per operator
@@ -51,8 +52,7 @@ EGraph::EGraph(const Theory& theory) : theory(theory)
 
 id_t EGraph::add_expr(std::shared_ptr<Expr> expr)
 {
-    if (expr->is_variable())
-        throw std::runtime_error("Cannot insert pattern variables into e-graph");
+    if (expr->is_variable()) throw std::runtime_error("Cannot insert pattern variables into e-graph");
 
     // Recursively insert children and collect their ids
     Vec<id_t> child_ids;
@@ -76,8 +76,7 @@ id_t EGraph::add_enode(Symbol symbol, Vec<id_t> children)
 id_t EGraph::add_enode(ENode enode)
 {
     auto it = memo.find(enode);
-    if (it != memo.end())
-        return it->second;
+    if (it != memo.end()) return it->second;
 
     ++enodes;
     id_t id = uf.make_set();
@@ -164,8 +163,7 @@ void EGraph::saturate(std::size_t max_iters)
         for (const auto& [name, match_vec] : matches)
         {
             // Skip empty match vectors (no matches found)
-            if (match_vec.empty())
-                continue;
+            if (match_vec.empty()) continue;
 
             // find substitution with the same name
             for (size_t i = 0; i < substs.size(); ++i)

@@ -15,7 +15,9 @@ class RowStore
     Symbol operator_symbol;
 
   public:
-    RowStore(Symbol name, size_t arity) : operator_symbol(name), arity(arity)
+    RowStore(Symbol name, size_t arity)
+        : operator_symbol(name)
+        , arity(arity)
     {
     }
 

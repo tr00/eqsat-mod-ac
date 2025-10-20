@@ -82,8 +82,7 @@ void apply_permutation(const Vec<uint32_t>& perm_indices, Vec<uint32_t>& vec)
 
     // Validate that all indices are within bounds
     for (size_t i = 0; i < n; ++i)
-        if (perm_indices[i] >= n)
-            throw std::out_of_range("Permutation index out of bounds");
+        if (perm_indices[i] >= n) throw std::out_of_range("Permutation index out of bounds");
 
     // Apply the permutation in-place using a temporary copy
     Vec<uint32_t> temp = vec;
@@ -93,23 +92,20 @@ void apply_permutation(const Vec<uint32_t>& perm_indices, Vec<uint32_t>& vec)
 
 bool is_valid_permutation(const Vec<uint32_t>& perm)
 {
-    if (perm.empty())
-        return true;
+    if (perm.empty()) return true;
 
     // Find min and max elements
     uint32_t min_elem = *std::min_element(perm.begin(), perm.end());
     uint32_t max_elem = *std::max_element(perm.begin(), perm.end());
 
     // Check if range is correct
-    if (max_elem - min_elem + 1 != perm.size())
-        return false;
+    if (max_elem - min_elem + 1 != perm.size()) return false;
 
     // Check for duplicates using a set
     std::unordered_set<uint32_t> seen;
     for (uint32_t elem : perm)
     {
-        if (seen.count(elem) > 0)
-            return false;
+        if (seen.count(elem) > 0) return false;
 
         seen.insert(elem);
     }
@@ -119,15 +115,12 @@ bool is_valid_permutation(const Vec<uint32_t>& perm)
 
 uint32_t permutation_to_index(const Vec<uint32_t>& perm)
 {
-    if (!is_valid_permutation(perm))
-        throw std::invalid_argument("Input is not a valid permutation");
+    if (!is_valid_permutation(perm)) throw std::invalid_argument("Input is not a valid permutation");
 
-    if (perm.empty())
-        return 0;
+    if (perm.empty()) return 0;
 
     size_t n = perm.size();
-    if (n > 12)
-        throw std::invalid_argument("Permutation too large (max size is 12)");
+    if (n > 12) throw std::invalid_argument("Permutation too large (max size is 12)");
 
     // Create sorted copy of elements to use as reference
     Vec<uint32_t> available = perm;

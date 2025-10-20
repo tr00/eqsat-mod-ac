@@ -30,11 +30,13 @@ class Multiset
     friend class MultisetSupport;
 
   public:
-    Multiset() : data()
+    Multiset()
+        : data()
     {
     }
 
-    Multiset(const Vec<id_t>& vec) : data()
+    Multiset(const Vec<id_t>& vec)
+        : data()
     {
         data.reserve(vec.size());
 

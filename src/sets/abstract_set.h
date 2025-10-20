@@ -1,8 +1,10 @@
 #pragma once
 
 #include <cassert>
+#include <functional>
 
 #include "../id.h"
+#include "sets/hashmap_wrapper.h"
 #include "sets/multiset_support.h"
 #include "sorted_iter_set.h"
 #include "sorted_vec_set.h"
@@ -12,6 +14,7 @@ enum SetKind
     SORTED_VEC,
     SORTED_ITER,
     MSET_SUPPORT,
+    HMAP_WRAPPER,
 };
 
 class AbstractSet
@@ -22,16 +25,28 @@ class AbstractSet
         SortedVecSet sorted_vec;
         SortedIterSet sorted_iter;
         MultisetSupport mset_support;
+        WrappedHashMapSet hmap_wrapper;
     };
 
   public:
-    explicit AbstractSet(SortedVecSet s) : kind(SORTED_VEC), sorted_vec(std::move(s))
+    explicit AbstractSet(SortedVecSet s)
+        : kind(SORTED_VEC)
+        , sorted_vec(std::move(s))
     {
     }
-    explicit AbstractSet(SortedIterSet s) : kind(SORTED_ITER), sorted_iter(std::move(s))
+    explicit AbstractSet(SortedIterSet s)
+        : kind(SORTED_ITER)
+        , sorted_iter(std::move(s))
     {
     }
-    explicit AbstractSet(MultisetSupport s) : kind(MSET_SUPPORT), mset_support(std::move(s))
+    explicit AbstractSet(MultisetSupport s)
+        : kind(MSET_SUPPORT)
+        , mset_support(std::move(s))
+    {
+    }
+    explicit AbstractSet(WrappedHashMapSet s)
+        : kind(HMAP_WRAPPER)
+        , hmap_wrapper(std::move(s))
     {
     }
 
@@ -48,13 +63,17 @@ class AbstractSet
         case MSET_SUPPORT:
             mset_support.~MultisetSupport();
             break;
+        case HMAP_WRAPPER:
+            hmap_wrapper.~WrappedHashMapSet();
+            break;
         }
     }
 
     AbstractSet(const AbstractSet& other) = delete;
     AbstractSet& operator=(const AbstractSet& other) = delete;
 
-    AbstractSet(AbstractSet&& other) : kind(other.kind)
+    AbstractSet(AbstractSet&& other)
+        : kind(other.kind)
     {
         switch (kind)
         {
@@ -66,6 +85,9 @@ class AbstractSet
             break;
         case MSET_SUPPORT:
             new (&mset_support) MultisetSupport(std::move(other.mset_support));
+            break;
+        case HMAP_WRAPPER:
+            new (&hmap_wrapper) WrappedHashMapSet(std::move(other.hmap_wrapper));
             break;
         }
     }
@@ -86,6 +108,9 @@ class AbstractSet
             case MSET_SUPPORT:
                 mset_support.~MultisetSupport();
                 break;
+            case HMAP_WRAPPER:
+                hmap_wrapper.~WrappedHashMapSet();
+                break;
             }
             // Move construct new object
             kind = other.kind;
@@ -99,6 +124,9 @@ class AbstractSet
                 break;
             case MSET_SUPPORT:
                 new (&mset_support) MultisetSupport(std::move(other.mset_support));
+                break;
+            case HMAP_WRAPPER:
+                new (&hmap_wrapper) WrappedHashMapSet(std::move(other.hmap_wrapper));
                 break;
             }
         }
@@ -115,6 +143,8 @@ class AbstractSet
             return sorted_iter.contains(id);
         case MSET_SUPPORT:
             return mset_support.contains(id);
+        case HMAP_WRAPPER:
+            return hmap_wrapper.contains(id);
         }
         assert(0);
     }
@@ -129,6 +159,8 @@ class AbstractSet
             return sorted_iter.size();
         case MSET_SUPPORT:
             return mset_support.size();
+        case HMAP_WRAPPER:
+            return hmap_wrapper.size();
         }
         assert(0);
     }
@@ -138,8 +170,7 @@ class AbstractSet
         return size() == 0;
     }
 
-    template <typename Func>
-    void for_each(Func f) const
+    void for_each(std::function<void(id_t)> f) const
     {
         switch (kind)
         {
@@ -149,6 +180,8 @@ class AbstractSet
             return sorted_iter.for_each(f);
         case MSET_SUPPORT:
             return mset_support.for_each(f);
+        case HMAP_WRAPPER:
+            return hmap_wrapper.for_each(f);
         }
         assert(0);
     }

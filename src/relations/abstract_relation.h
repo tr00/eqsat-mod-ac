@@ -23,11 +23,15 @@ class AbstractRelation
     };
 
   public:
-    explicit AbstractRelation(RowStore rel) : kind(ROW_STORE), row_store(std::move(rel))
+    explicit AbstractRelation(RowStore rel)
+        : kind(ROW_STORE)
+        , row_store(std::move(rel))
     {
     }
 
-    explicit AbstractRelation(RelationAC rel) : kind(RELATION_AC), ac_rel(std::move(rel))
+    explicit AbstractRelation(RelationAC rel)
+        : kind(RELATION_AC)
+        , ac_rel(std::move(rel))
     {
     }
 
@@ -47,7 +51,8 @@ class AbstractRelation
     AbstractRelation(const AbstractRelation&) = delete;
     AbstractRelation& operator=(const AbstractRelation&) = delete;
 
-    AbstractRelation(AbstractRelation&& other) : kind(other.kind)
+    AbstractRelation(AbstractRelation&& other)
+        : kind(other.kind)
     {
         switch (kind)
         {

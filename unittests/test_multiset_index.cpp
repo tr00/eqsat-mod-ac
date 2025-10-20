@@ -5,21 +5,27 @@
 
 TEST_CASE("MultisetIndex basic operations", "[multiset_index]")
 {
-    auto rel = std::make_shared<HashMap<id_t, Multiset>>();
+    // New structure: HashMap<eclass_id, HashMap<term_id, Multiset>>
+    auto rel = std::make_shared<HashMap<id_t, HashMap<id_t, Multiset>>>();
 
-    SECTION("Single relation with elements")
+    SECTION("Single eclass with single term")
     {
         Multiset ms;
         ms.insert(10);
         ms.insert(20);
         ms.insert(30);
 
-        (*rel)[1] = std::move(ms);
+        HashMap<id_t, Multiset> terms;
+        terms[100] = std::move(ms); // term_id = 100
+
+        (*rel)[1] = std::move(terms); // eclass_id = 1
 
         MultisetIndex index(rel);
 
-        // Initial select to set up mset
+        // Select eclass-id
         index.select(1);
+        // Select term-id
+        index.select(100);
 
         AbstractSet keys = index.project();
         REQUIRE(keys.size() == 3);
@@ -28,31 +34,38 @@ TEST_CASE("MultisetIndex basic operations", "[multiset_index]")
         REQUIRE(keys.contains(30));
     }
 
-    SECTION("Multiple relations")
+    SECTION("Multiple eclasses and terms")
     {
+        // Eclass 1, term 100
         Multiset ms1;
         ms1.insert(10);
         ms1.insert(20);
 
+        // Eclass 1, term 101
         Multiset ms2;
         ms2.insert(30);
         ms2.insert(40);
 
-        (*rel)[1] = std::move(ms1);
-        (*rel)[2] = std::move(ms2);
+        HashMap<id_t, Multiset> terms1;
+        terms1[100] = std::move(ms1);
+        terms1[101] = std::move(ms2);
+
+        (*rel)[1] = std::move(terms1);
 
         MultisetIndex index(rel);
 
-        // Select first relation
+        // Select first term
         index.select(1);
+        index.select(100);
         AbstractSet keys1 = index.project();
         REQUIRE(keys1.size() == 2);
         REQUIRE(keys1.contains(10));
         REQUIRE(keys1.contains(20));
 
-        // Reset and select second relation
+        // Reset and select second term
         index.reset();
-        index.select(2);
+        index.select(1);
+        index.select(101);
         AbstractSet keys2 = index.project();
         REQUIRE(keys2.size() == 2);
         REQUIRE(keys2.contains(30));
@@ -62,19 +75,23 @@ TEST_CASE("MultisetIndex basic operations", "[multiset_index]")
 
 TEST_CASE("MultisetIndex select and unselect", "[multiset_index]")
 {
-    auto rel = std::make_shared<HashMap<id_t, Multiset>>();
+    auto rel = std::make_shared<HashMap<id_t, HashMap<id_t, Multiset>>>();
     Multiset ms;
     ms.insert(10);
     ms.insert(20);
     ms.insert(30);
     ms.insert(10); // Add duplicate
 
-    (*rel)[1] = std::move(ms);
+    HashMap<id_t, Multiset> terms;
+    terms[100] = std::move(ms);
+    (*rel)[1] = std::move(terms);
+
     MultisetIndex index(rel);
 
-    SECTION("First select sets mset")
+    SECTION("Select eclass and term sets mset")
     {
         index.select(1);
+        index.select(100);
 
         AbstractSet keys = index.project();
         REQUIRE(keys.size() == 3);
@@ -83,9 +100,10 @@ TEST_CASE("MultisetIndex select and unselect", "[multiset_index]")
         REQUIRE(keys.contains(30));
     }
 
-    SECTION("Second select removes element from multiset")
+    SECTION("Select child removes element from multiset")
     {
         index.select(1);
+        index.select(100);
 
         // Check initial state - 10 should have count 2
         AbstractSet keys1 = index.project();
@@ -104,6 +122,7 @@ TEST_CASE("MultisetIndex select and unselect", "[multiset_index]")
     SECTION("Select element with count 1 removes it")
     {
         index.select(1);
+        index.select(100);
         index.select(20); // 20 has count 1
 
         AbstractSet keys = index.project();
@@ -115,6 +134,7 @@ TEST_CASE("MultisetIndex select and unselect", "[multiset_index]")
     SECTION("Unselect restores element")
     {
         index.select(1);
+        index.select(100);
         index.select(20);
 
         // 20 should be removed
@@ -130,6 +150,7 @@ TEST_CASE("MultisetIndex select and unselect", "[multiset_index]")
     SECTION("Multiple select and unselect")
     {
         index.select(1);
+        index.select(100);
         index.select(10);
         index.select(20);
 
@@ -147,14 +168,15 @@ TEST_CASE("MultisetIndex select and unselect", "[multiset_index]")
         REQUIRE(keys3.contains(10));
     }
 
-    SECTION("Unselect at top level resets mset")
+    SECTION("Unselect at term level resets mset")
     {
         index.select(1);
+        index.select(100);
         index.unselect();
 
         // mset should be nullptr again
         // We can verify by selecting again
-        index.select(1);
+        index.select(100);
         AbstractSet keys = index.project();
         REQUIRE(keys.size() == 3);
     }
@@ -162,13 +184,16 @@ TEST_CASE("MultisetIndex select and unselect", "[multiset_index]")
 
 TEST_CASE("MultisetIndex reset operation", "[multiset_index]")
 {
-    auto rel = std::make_shared<HashMap<id_t, Multiset>>();
+    auto rel = std::make_shared<HashMap<id_t, HashMap<id_t, Multiset>>>();
     Multiset ms;
     ms.insert(10);
     ms.insert(20);
     ms.insert(30);
 
-    (*rel)[1] = std::move(ms);
+    HashMap<id_t, Multiset> terms;
+    terms[100] = std::move(ms);
+    (*rel)[1] = std::move(terms);
+
     MultisetIndex index(rel);
 
     SECTION("Reset without selections does nothing")
@@ -176,6 +201,7 @@ TEST_CASE("MultisetIndex reset operation", "[multiset_index]")
         index.reset();
         // Should be able to select normally
         index.select(1);
+        index.select(100);
         AbstractSet keys = index.project();
         REQUIRE(keys.size() == 3);
     }
@@ -183,6 +209,7 @@ TEST_CASE("MultisetIndex reset operation", "[multiset_index]")
     SECTION("Reset after selections restores all elements")
     {
         index.select(1);
+        index.select(100);
         index.select(10);
         index.select(20);
 
@@ -195,6 +222,7 @@ TEST_CASE("MultisetIndex reset operation", "[multiset_index]")
         // Reset should restore everything
         index.reset();
         index.select(1);
+        index.select(100);
         AbstractSet keys2 = index.project();
         REQUIRE(keys2.size() == 3);
         REQUIRE(keys2.contains(10));
@@ -205,12 +233,14 @@ TEST_CASE("MultisetIndex reset operation", "[multiset_index]")
     SECTION("Reset clears mset pointer")
     {
         index.select(1);
+        index.select(100);
         index.select(10);
 
         index.reset();
 
         // Should be back at initial state
         index.select(1);
+        index.select(100);
         AbstractSet keys = index.project();
         REQUIRE(keys.size() == 3);
     }
@@ -218,15 +248,18 @@ TEST_CASE("MultisetIndex reset operation", "[multiset_index]")
 
 TEST_CASE("MultisetIndex edge cases", "[multiset_index]")
 {
-    auto rel = std::make_shared<HashMap<id_t, Multiset>>();
+    auto rel = std::make_shared<HashMap<id_t, HashMap<id_t, Multiset>>>();
 
     SECTION("Empty multiset in relation")
     {
         Multiset ms; // Empty
-        (*rel)[1] = std::move(ms);
+        HashMap<id_t, Multiset> terms;
+        terms[100] = std::move(ms);
+        (*rel)[1] = std::move(terms);
 
         MultisetIndex index(rel);
         index.select(1);
+        index.select(100);
 
         AbstractSet keys = index.project();
         REQUIRE(keys.empty());
@@ -241,10 +274,13 @@ TEST_CASE("MultisetIndex edge cases", "[multiset_index]")
         }
         ms.insert(100);
 
-        (*rel)[1] = std::move(ms);
+        HashMap<id_t, Multiset> terms;
+        terms[200] = std::move(ms);
+        (*rel)[1] = std::move(terms);
         MultisetIndex index(rel);
 
         index.select(1);
+        index.select(200);
 
         // Select 42 multiple times
         for (int i = 0; i < 5; ++i)
@@ -277,10 +313,13 @@ TEST_CASE("MultisetIndex edge cases", "[multiset_index]")
         ms.insert(10);
         ms.insert(10);
 
-        (*rel)[1] = std::move(ms);
+        HashMap<id_t, Multiset> terms;
+        terms[100] = std::move(ms);
+        (*rel)[1] = std::move(terms);
         MultisetIndex index(rel);
 
         index.select(1);
+        index.select(100);
 
         // Remove all occurrences
         index.select(10);
@@ -304,10 +343,13 @@ TEST_CASE("MultisetIndex edge cases", "[multiset_index]")
         ms.insert(3);
         ms.insert(2); // 2 has count 2
 
-        (*rel)[100] = std::move(ms);
+        HashMap<id_t, Multiset> terms;
+        terms[500] = std::move(ms);
+        (*rel)[100] = std::move(terms);
         MultisetIndex index(rel);
 
-        index.select(100); // Initial select
+        index.select(100); // eclass-id
+        index.select(500); // term-id
         index.select(1);   // Remove 1
         index.select(2);   // Decrement 2 (still present)
 
@@ -327,6 +369,7 @@ TEST_CASE("MultisetIndex edge cases", "[multiset_index]")
         index.reset(); // Restore everything
 
         index.select(100);
+        index.select(500);
         AbstractSet keys3 = index.project();
         REQUIRE(keys3.contains(1));
         REQUIRE(keys3.contains(2));
@@ -336,19 +379,22 @@ TEST_CASE("MultisetIndex edge cases", "[multiset_index]")
 
 TEST_CASE("MultisetIndex for_each iteration", "[multiset_index]")
 {
-    auto rel = std::make_shared<HashMap<id_t, Multiset>>();
+    auto rel = std::make_shared<HashMap<id_t, HashMap<id_t, Multiset>>>();
     Multiset ms;
     ms.insert(10);
     ms.insert(20);
     ms.insert(30);
     ms.insert(10);
 
-    (*rel)[1] = std::move(ms);
+    HashMap<id_t, Multiset> terms;
+    terms[100] = std::move(ms);
+    (*rel)[1] = std::move(terms);
     MultisetIndex index(rel);
 
     SECTION("Iterate over all elements")
     {
         index.select(1);
+        index.select(100);
         AbstractSet keys = index.project();
 
         Vec<id_t> collected;
@@ -363,6 +409,7 @@ TEST_CASE("MultisetIndex for_each iteration", "[multiset_index]")
     SECTION("Iterate after removing elements")
     {
         index.select(1);
+        index.select(100);
         index.select(20);
 
         AbstractSet keys = index.project();
@@ -374,5 +421,68 @@ TEST_CASE("MultisetIndex for_each iteration", "[multiset_index]")
         REQUIRE(std::find(collected.begin(), collected.end(), 10) != collected.end());
         REQUIRE(std::find(collected.begin(), collected.end(), 30) != collected.end());
         REQUIRE(std::find(collected.begin(), collected.end(), 20) == collected.end());
+    }
+}
+
+TEST_CASE("MultisetIndex project at different levels", "[multiset_index]")
+{
+    auto rel = std::make_shared<HashMap<id_t, HashMap<id_t, Multiset>>>();
+
+    // Setup: eclass 1 with terms 100, 101
+    //        eclass 2 with term 200
+    Multiset ms1;
+    ms1.insert(10);
+    ms1.insert(20);
+
+    Multiset ms2;
+    ms2.insert(30);
+
+    Multiset ms3;
+    ms3.insert(40);
+    ms3.insert(50);
+
+    HashMap<id_t, Multiset> terms1;
+    terms1[100] = std::move(ms1);
+    terms1[101] = std::move(ms2);
+
+    HashMap<id_t, Multiset> terms2;
+    terms2[200] = std::move(ms3);
+
+    (*rel)[1] = std::move(terms1);
+    (*rel)[2] = std::move(terms2);
+
+    MultisetIndex index(rel);
+
+    SECTION("Project at eclass level shows all eclasses")
+    {
+        AbstractSet eclasses = index.project();
+        REQUIRE(eclasses.size() == 2);
+        REQUIRE(eclasses.contains(1));
+        REQUIRE(eclasses.contains(2));
+    }
+
+    SECTION("Project at term level shows terms for selected eclass")
+    {
+        index.select(1);
+        AbstractSet terms = index.project();
+        REQUIRE(terms.size() == 2);
+        REQUIRE(terms.contains(100));
+        REQUIRE(terms.contains(101));
+
+        index.reset();
+        index.select(2);
+        AbstractSet terms2 = index.project();
+        REQUIRE(terms2.size() == 1);
+        REQUIRE(terms2.contains(200));
+    }
+
+    SECTION("Project at child level shows children for selected term")
+    {
+        index.select(1);
+        index.select(100);
+        AbstractSet children = index.project();
+        REQUIRE(children.size() == 2);
+        REQUIRE(children.contains(10));
+        REQUIRE(children.contains(20));
     }
 }

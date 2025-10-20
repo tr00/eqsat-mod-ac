@@ -4,7 +4,9 @@
 
 #include "parser.h"
 
-Parser::Parser(SymbolTable& symbols) : symbols(symbols), current_token(0)
+Parser::Parser(SymbolTable& symbols)
+    : symbols(symbols)
+    , current_token(0)
 {
 }
 

@@ -33,11 +33,9 @@ id_t UnionFind::unify(id_t a, id_t b)
     id_t root_a = find_root(a);
     id_t root_b = find_root(b);
 
-    if (root_a == root_b)
-        return root_a;
+    if (root_a == root_b) return root_a;
 
-    if (root_a > root_b)
-        std::swap(root_a, root_b);
+    if (root_a > root_b) std::swap(root_a, root_b);
 
     vec[root_b] = root_a;
 

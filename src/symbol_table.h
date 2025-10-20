@@ -14,7 +14,8 @@ class SymbolTable
     Symbol next_id;
 
   public:
-    SymbolTable() : next_id(0)
+    SymbolTable()
+        : next_id(0)
     {
     }
 

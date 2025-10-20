@@ -105,11 +105,9 @@ Vec<id_t> Engine::execute()
     id_t cand;
 
 DEEPER:
-    if (state == states.end())
-        goto YIELD;
+    if (state == states.end()) goto YIELD;
 
-    if (state->intersect() == 0)
-        goto BACKTRACK;
+    if (state->intersect() == 0) goto BACKTRACK;
 
     state->prepare();
 
@@ -125,16 +123,14 @@ DEEPER:
 
 BACKTRACK:
 
-    if (state == states.begin())
-        return results;
+    if (state == states.begin()) return results;
 
     --state;
 
     for (auto index : state->indices)
         index->unselect();
 
-    if (state->empty())
-        goto BACKTRACK;
+    if (state->empty()) goto BACKTRACK;
 
     // ith candidate
     cand = state->next();

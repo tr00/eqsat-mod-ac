@@ -21,15 +21,20 @@ class AbstractIndex
 
   public:
     // Default constructor creates a NONE index (no allocation)
-    AbstractIndex() : kind(NONE)
+    AbstractIndex()
+        : kind(NONE)
     {
     }
 
-    explicit AbstractIndex(TrieIndex index) : kind(TRIE), trie(std::move(index))
+    explicit AbstractIndex(TrieIndex index)
+        : kind(TRIE)
+        , trie(std::move(index))
     {
     }
 
-    explicit AbstractIndex(MultisetIndex index) : kind(MSET), mst(std::move(index))
+    explicit AbstractIndex(MultisetIndex index)
+        : kind(MSET)
+        , mst(std::move(index))
     {
     }
 
@@ -49,7 +54,8 @@ class AbstractIndex
     }
 
     // Copy constructor - allows independent traversal of the same underlying data
-    AbstractIndex(const AbstractIndex& other) : kind(other.kind)
+    AbstractIndex(const AbstractIndex& other)
+        : kind(other.kind)
     {
         switch (kind)
         {
@@ -99,7 +105,8 @@ class AbstractIndex
     }
 
     // Move constructor
-    AbstractIndex(AbstractIndex&& other) : kind(other.kind)
+    AbstractIndex(AbstractIndex&& other)
+        : kind(other.kind)
     {
         switch (kind)
         {

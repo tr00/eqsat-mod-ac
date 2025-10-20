@@ -50,12 +50,9 @@ TEST_CASE("Engine with single state - simple query", "[engine]")
 
         for (size_t i = 0; i < results.size(); i += 3)
         {
-            if (results[i] == 1 && results[i + 1] == 2 && results[i + 2] == 10)
-                found_1_2_10 = true;
-            if (results[i] == 4 && results[i + 1] == 5 && results[i + 2] == 11)
-                found_4_5_11 = true;
-            if (results[i] == 1 && results[i + 1] == 3 && results[i + 2] == 12)
-                found_1_3_12 = true;
+            if (results[i] == 1 && results[i + 1] == 2 && results[i + 2] == 10) found_1_2_10 = true;
+            if (results[i] == 4 && results[i + 1] == 5 && results[i + 2] == 11) found_4_5_11 = true;
+            if (results[i] == 1 && results[i + 1] == 3 && results[i + 2] == 12) found_1_3_12 = true;
         }
 
         REQUIRE(found_1_2_10);
@@ -193,12 +190,9 @@ TEST_CASE("Engine state intersection", "[engine]")
 
     for (size_t i = 0; i < results.size(); i += 3)
     {
-        if (results[i] == 1 && results[i + 1] == 2 && results[i + 2] == 3)
-            found_1_2_3 = true;
-        if (results[i] == 1 && results[i + 1] == 4 && results[i + 2] == 5)
-            found_1_4_5 = true;
-        if (results[i] == 2 && results[i + 1] == 3 && results[i + 2] == 6)
-            found_2_3_6 = true;
+        if (results[i] == 1 && results[i + 1] == 2 && results[i + 2] == 3) found_1_2_3 = true;
+        if (results[i] == 1 && results[i + 1] == 4 && results[i + 2] == 5) found_1_4_5 = true;
+        if (results[i] == 2 && results[i + 1] == 3 && results[i + 2] == 6) found_2_3_6 = true;
     }
 
     REQUIRE(found_1_2_3);
@@ -394,14 +388,11 @@ TEST_CASE("Engine multi-state - variable appears in multiple constraints", "[eng
 
     for (size_t i = 0; i < results.size(); i += 3)
     {
-        if (results[i] == 1 && results[i + 1] == 2 && results[i + 2] == 3)
-            found_1_2_3 = true;
+        if (results[i] == 1 && results[i + 1] == 2 && results[i + 2] == 3) found_1_2_3 = true;
 
-        if (results[i] == 2 && results[i + 1] == 3 && results[i + 2] == 1)
-            found_2_3_1 = true;
+        if (results[i] == 2 && results[i + 1] == 3 && results[i + 2] == 1) found_2_3_1 = true;
 
-        if (results[i] == 3 && results[i + 1] == 1 && results[i + 2] == 2)
-            found_3_1_2 = true;
+        if (results[i] == 3 && results[i + 1] == 1 && results[i + 2] == 2) found_3_1_2 = true;
     }
 
     REQUIRE(found_1_2_3);
@@ -489,10 +480,8 @@ TEST_CASE("Engine multi-state - shared variable at different positions", "[engin
 
         for (size_t i = 0; i < results.size(); i += 3)
         {
-            if (results[i] == 1 && results[i + 1] == 5 && results[i + 2] == 2)
-                found_1_5_2 = true;
-            if (results[i] == 2 && results[i + 1] == 1 && results[i + 2] == 3)
-                found_2_1_3 = true;
+            if (results[i] == 1 && results[i + 1] == 5 && results[i + 2] == 2) found_1_5_2 = true;
+            if (results[i] == 2 && results[i + 1] == 1 && results[i + 2] == 3) found_2_1_3 = true;
         }
 
         REQUIRE(found_1_5_2);

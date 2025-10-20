@@ -3,7 +3,9 @@
 #include "permutation.h"
 #include "query.h"
 
-Constraint::Constraint(Symbol op, const Vec<var_t>& vars) : operator_symbol(op), variables(vars)
+Constraint::Constraint(Symbol op, const Vec<var_t>& vars)
+    : operator_symbol(op)
+    , variables(vars)
 {
     // Compute permutation: map from current positions to sorted positions
     // This represents the relative ordering of variables
@@ -30,12 +32,15 @@ Constraint::Constraint(Symbol op, const Vec<var_t>& vars) : operator_symbol(op),
     permutation = permutation_to_index(perm);
 }
 
-Query::Query(Symbol name) : name(name)
+Query::Query(Symbol name)
+    : name(name)
 {
 }
 
 Query::Query(Symbol name, const Vec<Constraint>& constraints, const Vec<var_t>& head)
-    : name(name), constraints(constraints), head(head)
+    : name(name)
+    , constraints(constraints)
+    , head(head)
 {
 }
 
@@ -63,8 +68,7 @@ id_t Subst::instantiate(callback_t f, const Vec<id_t>& match)
 
 id_t Subst::instantiate_rec(callback_t f, const Vec<id_t>& match, std::shared_ptr<Expr> expr)
 {
-    if (expr->is_variable())
-        return match[env[expr->symbol]];
+    if (expr->is_variable()) return match[env[expr->symbol]];
 
     Vec<id_t> children;
     children.reserve(expr->nchildren());
@@ -87,8 +91,7 @@ std::string Query::to_string(const SymbolTable& symbols) const
         result += "    " + symbols.get_string(constraint.operator_symbol) + "(";
         for (size_t i = 0; i < constraint.variables.size(); ++i)
         {
-            if (i > 0)
-                result += ", ";
+            if (i > 0) result += ", ";
             result += "v" + std::to_string(constraint.variables[i]);
         }
         result += ") [perm=" + std::to_string(constraint.permutation) + "]\n";
@@ -96,8 +99,7 @@ std::string Query::to_string(const SymbolTable& symbols) const
     result += "  Head: [";
     for (size_t i = 0; i < head.size(); ++i)
     {
-        if (i > 0)
-            result += ", ";
+        if (i > 0) result += ", ";
         result += "v" + std::to_string(head[i]);
     }
     result += "]\n";

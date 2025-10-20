@@ -8,7 +8,8 @@ class MultisetSupport
     Multiset& mset;
 
   public:
-    explicit MultisetSupport(Multiset& m) : mset(m)
+    explicit MultisetSupport(Multiset& m)
+        : mset(m)
     {
     }
 
@@ -31,7 +32,6 @@ class MultisetSupport
     void for_each(Func f) const
     {
         for (const auto& [item, count] : mset.data)
-            if (count > 0)
-                f(item);
+            if (count > 0) f(item);
     }
 };

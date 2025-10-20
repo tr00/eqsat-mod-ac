@@ -30,7 +30,8 @@ class Engine
     Database& db;
 
   public:
-    Engine(Database& db) : db(db)
+    Engine(Database& db)
+        : db(db)
     {
     }
 

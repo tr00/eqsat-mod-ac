@@ -93,7 +93,7 @@ add_executable(systemtests
     systemtests/test_egraph_rewrite.cpp
     systemtests/test_database.cpp
     systemtests/test_multiplicative_identity.cpp
-    # systemtests/test_ac_operators.cpp
+    systemtests/test_ac_operators.cpp
 )
 
 target_include_directories(systemtests PRIVATE src)
