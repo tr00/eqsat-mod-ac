@@ -137,16 +137,37 @@ class Multiset
 
         std::sort(data.begin(), data.end(), [](const auto& lhs, const auto& rhs) { return lhs.first < rhs.first; });
 
-        // TODO: merge entries with same id
+        // Merge entries with same id
+        if (data.empty()) return;
+
+        size_t write_idx = 0;
+        for (size_t read_idx = 1; read_idx < data.size(); ++read_idx)
+        {
+            if (data[write_idx].first == data[read_idx].first)
+            {
+                // Same id - merge counts
+                data[write_idx].second += data[read_idx].second;
+            }
+            else
+            {
+                // Different id - move to next write position
+                ++write_idx;
+                if (write_idx != read_idx)
+                {
+                    data[write_idx] = data[read_idx];
+                }
+            }
+        }
+
+        // Resize to remove merged entries
+        data.resize(write_idx + 1);
     }
 
-    // Hash function for use in hash maps
     size_t hash() const
     {
         size_t h = 0;
         for (const auto& [id, count] : data)
         {
-            // Combine hash of id and count
             size_t pair_hash = std::hash<id_t>{}(id) ^ (std::hash<uint32_t>{}(count) << 1);
             h ^= pair_hash + 0x9e3779b9 + (h << 6) + (h >> 2);
         }

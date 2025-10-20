@@ -19,7 +19,6 @@ class WrappedHashMapSet
               [](const void *ptr, id_t id) -> bool { return static_cast<const HashMap<id_t, V> *>(ptr)->contains(id); })
         , size_fn([](const void *ptr) -> size_t { return static_cast<const HashMap<id_t, V> *>(ptr)->size(); })
         , for_each_fn([](const void *ptr, std::function<void(id_t)> f) {
-            // BUG: might call f multiple times with the same key!!
             for (const auto& [key, _] : *static_cast<const HashMap<id_t, V> *>(ptr))
                 f(key);
         })
