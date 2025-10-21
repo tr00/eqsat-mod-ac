@@ -83,7 +83,7 @@ void RelationAC::add_tuple(id_t id, Multiset mset)
                 auto diff = other_mset.msetdiff(mset);
                 diff.insert(id);
 
-                worklist.emplace_back(diff);
+                worklist.push_back(std::move(diff));
             }
         }
 
@@ -102,15 +102,25 @@ void RelationAC::add_tuple(id_t id, Multiset mset)
         {
             if (mset.includes(other_mset))
             {
+                auto diff = mset.msetdiff(other_mset);
+                diff.insert(other_id);
+
+                worklist.push_back(std::move(diff));
             }
         }
     }
 
     auto tid = static_cast<uint32_t>(nterms++);
-    if (!data->contains(id))
-        data->emplace(id, HashMap<id_t, Multiset>{{tid, mset}});
-    else
-        (*data)[id].emplace(tid, mset);
+    if (!data->contains(id)) data->emplace(id, HashMap<id_t, Multiset>{});
+
+    auto map = data->at(id);
+    for (auto submset : worklist)
+    {
+        auto tid = static_cast<uint32_t>(nterms++);
+        map.insert({tid, submset});
+    }
+
+    map.emplace(tid, mset);
 }
 
 void RelationAC::add_tuple(const Vec<id_t>& tuple)

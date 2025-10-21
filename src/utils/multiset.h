@@ -75,6 +75,7 @@ class Multiset
     [[nodiscard]] bool operator==(const Multiset& other) const
     {
         if (this->size() != other.size()) return false;
+        if (this->data.size() != other.data.size()) return false;
 
         for (const auto& [value, count] : this->data)
             if (other.count(value) != count) return false;
