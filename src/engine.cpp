@@ -56,7 +56,7 @@ void Engine::prepare(const Query& query)
     for (const auto& constraint : query.constraints)
     {
         uint32_t permutation = constraint.permutation;
-        auto index = db.get_index(constraint.operator_symbol, permutation);
+        auto index = db.get_index(constraint.symbol, permutation);
 
         indices[constraint] = std::make_shared<AbstractIndex>(index);
 

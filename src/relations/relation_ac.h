@@ -12,11 +12,13 @@ class RelationAC
   private:
     // eclass-id < term-id < mset
     std::shared_ptr<HashMap<id_t, HashMap<id_t, Multiset>>> data;
+    size_t nterms;
     Symbol symbol;
 
   public:
     RelationAC(Symbol symbol)
         : data(std::make_shared<HashMap<id_t, HashMap<id_t, Multiset>>>())
+        , nterms(0)
         , symbol(symbol)
     {
     }
@@ -28,23 +30,11 @@ class RelationAC
 
     size_t size() const
     {
-        return data->size();
+        return nterms;
     }
 
-    void add_tuple(const Vec<id_t>& tuple)
-    {
-        // TODO: test set inclusion and create new subterm
-
-        id_t eclass = tuple.back();
-        id_t term = static_cast<id_t>(size());
-
-        Vec<id_t> copy = tuple;
-        copy.pop_back();
-
-        if (!data->contains(eclass)) data->emplace(eclass, HashMap<id_t, Multiset>());
-
-        (*data)[eclass].emplace(term, std::move(copy));
-    }
+    void add_tuple(const Vec<id_t>& tuple);
+    void add_tuple(id_t id, Multiset mset);
 
     /**
      * @brief Create an empty multiset index for this AC relation

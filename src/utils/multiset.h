@@ -7,6 +7,7 @@
 
 #include "../id.h"
 #include "../utils/vec.h"
+#include "utils/hash.h"
 
 class MultisetSupport;
 
@@ -23,14 +24,32 @@ class Multiset
     }
 
     // Binary search to find position of id
-    auto find_pos(id_t id)
+    auto find_pos(id_t id) noexcept
     {
         return std::lower_bound(data.begin(), data.end(), id, cmp);
     }
 
-    auto find_pos(id_t id) const
+    auto find_pos(id_t id) const noexcept
     {
         return std::lower_bound(data.begin(), data.end(), id, cmp);
+    }
+
+    void construct(Vec<id_t>::const_iterator begin, Vec<id_t>::const_iterator end)
+    {
+        data.reserve(end - begin);
+
+        for (; begin < end; ++begin)
+        {
+            auto id = *begin;
+            auto it = find_pos(id);
+
+            if (it != data.end() && it->first == id)
+                ++it->second;
+            else
+                data.insert(it, {id, 1});
+        }
+
+        data.shrink_to_fit();
     }
 
     friend class MultisetSupport;
@@ -44,43 +63,65 @@ class Multiset
     Multiset(const Vec<id_t>& vec)
         : data()
     {
-        data.reserve(vec.size());
-
-        for (id_t id : vec)
-        {
-            auto it = find_pos(id);
-
-            if (it != data.end() && it->first == id)
-                ++it->second;
-            else
-                data.insert(it, {id, 1});
-        }
+        construct(vec.cbegin(), vec.cend());
     }
 
-    bool operator==(Multiset const& other) const
+    Multiset(Vec<id_t>::const_iterator begin, Vec<id_t>::const_iterator end)
+        : data()
+    {
+        construct(begin, end);
+    }
+
+    [[nodiscard]] bool operator==(const Multiset& other) const
     {
         if (this->size() != other.size()) return false;
 
-        for (auto [value, count] : this->data)
+        for (const auto& [value, count] : this->data)
             if (other.count(value) != count) return false;
 
-        for (auto [value, count] : other.data)
+        for (const auto& [value, count] : other.data)
             if (this->count(value) != count) return false;
 
         return true;
     }
 
-    void insert(id_t id)
+    [[nodiscard]] bool includes(const Multiset& other) const
+    {
+        for (const auto& [value, count] : this->data)
+            if (other.count(value) < count) return false;
+
+        return true;
+    }
+
+    [[nodiscard]] Multiset msetdiff(const Multiset& other) const
+    {
+        Multiset diff;
+
+        for (const auto& [value, count] : data)
+        {
+            uint32_t delta = count - other.count(value);
+            if (__builtin_expect(delta > 0, true)) diff.insert(value, delta);
+        }
+
+        return diff;
+    }
+
+    void insert(id_t id, uint32_t count)
     {
         auto it = find_pos(id);
         if (it != data.end() && it->first == id)
         {
-            it->second++;
+            it->second += count;
         }
         else
         {
-            data.insert(it, {id, 1});
+            data.insert(it, {id, count});
         }
+    }
+
+    void insert(id_t id)
+    {
+        insert(id, 1);
     }
 
     void remove(id_t id)
@@ -98,8 +139,7 @@ class Multiset
         return it != data.end() && it->first == id && it->second > 0;
     }
 
-    // Get count of element
-    uint32_t count(id_t id) const
+    [[nodiscard]] uint32_t count(id_t id) const
     {
         auto it = find_pos(id);
         return (it != data.end() && it->first == id) ? it->second : 0;
@@ -116,7 +156,7 @@ class Multiset
         return data.size();
     }
 
-    bool empty() const
+    [[nodiscard]] bool empty() const
     {
         return data.empty();
     }
@@ -139,7 +179,7 @@ class Multiset
 
         std::sort(data.begin(), data.end(), [](const auto& lhs, const auto& rhs) { return lhs.first < rhs.first; });
 
-        // Merge entries with same id
+        // merge entries with same id
         if (data.empty()) return;
 
         size_t write_idx = 0;
@@ -161,18 +201,19 @@ class Multiset
             }
         }
 
-        // Resize to remove merged entries
         data.resize(write_idx + 1);
     }
 
-    size_t hash() const
+    uint64_t hash() const noexcept
     {
-        size_t h = 0;
-        for (const auto& [id, count] : data)
+        uint64_t h = SEED;
+
+        for (const auto& [a, b] : data)
         {
-            size_t pair_hash = std::hash<id_t>{}(id) ^ (std::hash<uint32_t>{}(count) << 1);
-            h ^= pair_hash + 0x9e3779b9 + (h << 6) + (h >> 2);
+            h = eqsat::mix64(h, a);
+            h = eqsat::mix64(h, b);
         }
+
         return h;
     }
 };

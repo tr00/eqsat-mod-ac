@@ -6,6 +6,7 @@
 #include "id.h"
 #include "symbol_table.h"
 #include "theory.h"
+#include "utils/hash.h"
 
 /**
  * @brief Variable type for query variables
@@ -25,7 +26,7 @@ class Constraint
 {
   public:
     /** @brief The operator symbol for this constraint */
-    Symbol operator_symbol;
+    Symbol symbol;
 
     uint32_t permutation;
 
@@ -42,7 +43,7 @@ class Constraint
 
     bool operator==(const Constraint& other) const
     {
-        return operator_symbol == other.operator_symbol && variables == other.variables;
+        return symbol == other.symbol && variables == other.variables;
     }
 };
 
@@ -129,14 +130,13 @@ struct hash<Constraint>
 {
     size_t operator()(const Constraint& constraint) const
     {
-        size_t h1 = std::hash<Symbol>{}(constraint.operator_symbol);
-        size_t h2 = 0;
+        uint64_t h1 = SEED;
+        uint64_t h2 = eqsat::hash64(constraint.symbol);
 
         for (const auto& var : constraint.variables)
-        {
-            h2 ^= std::hash<var_t>{}(var) + 0x9e3779b9 + (h2 << 6) + (h2 >> 2);
-        }
-        return h1 ^ (h2 << 1);
+            h1 = eqsat::mix64(h1, var);
+
+        return eqsat::mix64(h1, h2);
     }
 };
 } // namespace std

@@ -8,6 +8,7 @@
 #include "symbol_table.h"
 #include "theory.h"
 #include "union_find.h"
+#include "utils/hash.h"
 
 class ENode
 {
@@ -38,15 +39,14 @@ struct hash<ENode>
 {
     size_t operator()(const ENode& node) const
     {
-        size_t h1 = std::hash<Symbol>{}(node.op);
-        size_t h2 = 0;
+        uint64_t h1 = SEED;
+        uint64_t h2 = eqsat::hash64(node.op);
 
         auto children = node.children;
         for (const auto& child : children)
-        {
-            h2 ^= std::hash<id_t>{}(child) + 0x9e3779b9 + (h2 << 6) + (h2 >> 2);
-        }
-        return h1 ^ (h2 << 1);
+            h1 = eqsat::mix64(h1, child);
+
+        return eqsat::mix64(h1, h2);
     }
 };
 } // namespace std

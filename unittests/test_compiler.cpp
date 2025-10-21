@@ -15,7 +15,7 @@ TEST_CASE("Simple expression compilation", "[pattern_compiler]")
 
     // Should have one constraint: f(; 0) where 0 is the e-class ID (LAST position)
     REQUIRE(query.constraints.size() == 1);
-    REQUIRE(query.constraints[0].operator_symbol == f);
+    REQUIRE(query.constraints[0].symbol == f);
     REQUIRE(query.constraints[0].variables.size() == 1);
     REQUIRE(query.constraints[0].variables[0] == 0); // ID is last (and only) element
 
@@ -41,17 +41,17 @@ TEST_CASE("Nested expression compilation", "[pattern_compiler]")
     REQUIRE(query.constraints.size() == 3);
 
     // First constraint: f(; 1) - f's ID is 1
-    REQUIRE(query.constraints[0].operator_symbol == f);
+    REQUIRE(query.constraints[0].symbol == f);
     REQUIRE(query.constraints[0].variables.size() == 1);
     REQUIRE(query.constraints[0].variables[0] == 1);
 
     // Second constraint: h(; 2) - h's ID is 2
-    REQUIRE(query.constraints[1].operator_symbol == h);
+    REQUIRE(query.constraints[1].symbol == h);
     REQUIRE(query.constraints[1].variables.size() == 1);
     REQUIRE(query.constraints[1].variables[0] == 2);
 
     // Third constraint: g(1, 2; 0) - children IDs first, then g's ID last
-    REQUIRE(query.constraints[2].operator_symbol == g);
+    REQUIRE(query.constraints[2].symbol == g);
     REQUIRE(query.constraints[2].variables.size() == 3);
     REQUIRE(query.constraints[2].variables[0] == 1); // f (first child)
     REQUIRE(query.constraints[2].variables[1] == 2); // h (second child)
@@ -79,14 +79,14 @@ TEST_CASE("Deeply nested expression compilation", "[pattern_compiler]")
     REQUIRE(query.constraints.size() == 2);
 
     // mul(2, 3; 1) - x, y as args, then mul's ID last
-    REQUIRE(query.constraints[0].operator_symbol == mul);
+    REQUIRE(query.constraints[0].symbol == mul);
     REQUIRE(query.constraints[0].variables.size() == 3);
     REQUIRE(query.constraints[0].variables[0] == 2); // x (first variable)
     REQUIRE(query.constraints[0].variables[1] == 3); // y (second variable)
     REQUIRE(query.constraints[0].variables[2] == 1); // mul's ID (parent < children in pre-order)
 
     // add(1, 4; 0) - mul_id and z as args, then add's ID last
-    REQUIRE(query.constraints[1].operator_symbol == add);
+    REQUIRE(query.constraints[1].symbol == add);
     REQUIRE(query.constraints[1].variables.size() == 3);
     REQUIRE(query.constraints[1].variables[0] == 1); // mul_id (first arg)
     REQUIRE(query.constraints[1].variables[1] == 4); // z (third variable)
@@ -116,13 +116,13 @@ TEST_CASE("Multiple patterns compilation", "[pattern_compiler]")
 
     // First query: f(0)
     REQUIRE(kernels[0].first.constraints.size() == 1);
-    REQUIRE(kernels[0].first.constraints[0].operator_symbol == f);
+    REQUIRE(kernels[0].first.constraints[0].symbol == f);
     REQUIRE(kernels[0].first.head.size() == 1);
     REQUIRE(kernels[0].first.head[0] == 0);
 
     // Second query: g(0) - note that variable IDs reset for each pattern
     REQUIRE(kernels[1].first.constraints.size() == 1);
-    REQUIRE(kernels[1].first.constraints[0].operator_symbol == g);
+    REQUIRE(kernels[1].first.constraints[0].symbol == g);
     REQUIRE(kernels[1].first.head.size() == 1);
     REQUIRE(kernels[1].first.head[0] == 0);
 }

@@ -4,7 +4,7 @@
 #include "query.h"
 
 Constraint::Constraint(Symbol op, const Vec<var_t>& vars)
-    : operator_symbol(op)
+    : symbol(op)
     , variables(vars)
 {
     // Compute permutation: map from current positions to sorted positions
@@ -88,7 +88,7 @@ std::string Query::to_string(const SymbolTable& symbols) const
     result += "  Constraints:\n";
     for (const auto& constraint : constraints)
     {
-        result += "    " + symbols.get_string(constraint.operator_symbol) + "(";
+        result += "    " + symbols.get_string(constraint.symbol) + "(";
         for (size_t i = 0; i < constraint.variables.size(); ++i)
         {
             if (i > 0) result += ", ";
@@ -113,7 +113,7 @@ Vec<std::pair<Symbol, uint32_t>> Query::get_required_indices() const
 
     for (const auto& constraint : constraints)
     {
-        required.push_back({constraint.operator_symbol, constraint.permutation});
+        required.push_back({constraint.symbol, constraint.permutation});
     }
 
     return required;
