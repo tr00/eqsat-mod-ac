@@ -25,7 +25,7 @@ EGraph::EGraph(const Theory& theory)
     // compile rewrite rule patterns to queries
     if (!theory.rewrite_rules.empty())
     {
-        Compiler compiler;
+        Compiler compiler(theory);
 
         auto kernels = compiler.compile_many(theory.rewrite_rules);
 
@@ -101,7 +101,7 @@ id_t EGraph::unify(id_t a, id_t b)
 {
     id_t id = uf.unify(a, b);
 
-    worklist.push_back(id);
+    std::cout << "unifying(" << a << ", " << b << ")\n";
 
     return id;
 }
@@ -183,7 +183,15 @@ void EGraph::saturate(std::size_t max_iters)
         }
 
         db.clear_indices();
+        rebuild();
 
         std::cout << "iteration: " << iter << "  eclasses: " << uf.size() << "  enodes: " << enodes << std::endl;
     }
+}
+
+void EGraph::dump_to_file() const
+{
+    const std::string filename = "egraph_dump.txt";
+    db.dump_to_file(filename, theory.symbols);
+    std::cout << "E-graph dumped to: " << filename << std::endl;
 }

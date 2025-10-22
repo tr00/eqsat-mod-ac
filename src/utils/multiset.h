@@ -53,6 +53,7 @@ class Multiset
     }
 
     friend class MultisetSupport;
+    friend class RelationAC;
 
   public:
     Multiset()

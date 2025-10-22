@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cassert>
+#include <fstream>
 #include <functional>
 
 #include "id.h"
@@ -75,4 +76,12 @@ class RowStore
      * @return true if any unifications were performed, false otherwise
      */
     bool rebuild(std::function<id_t(id_t)> canonicalize, std::function<id_t(id_t, id_t)> unify);
+
+    /**
+     * @brief Dump the relation contents to a file
+     *
+     * @param out Output file stream
+     * @param symbols Symbol table for resolving operator names
+     */
+    void dump(std::ofstream& out, const SymbolTable& symbols) const;
 };

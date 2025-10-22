@@ -50,3 +50,4 @@ build/
 compile_commands.json
 TODO.md
 CLAUDE.md
+egraph_dump.txt

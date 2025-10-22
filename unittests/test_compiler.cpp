@@ -7,9 +7,9 @@ TEST_CASE("Simple expression compilation", "[pattern_compiler]")
 {
     // Create a simple expression: f()
     Theory theory;
-    Symbol f = theory.intern("f");
+    auto f = theory.add_operator("f", 0);
 
-    Compiler compiler;
+    Compiler compiler(theory);
     RewriteRule rule = theory.add_rewrite_rule("test_rule", "(f)", "(f)");
     auto [query, subst] = compiler.compile(rule);
 
@@ -28,11 +28,11 @@ TEST_CASE("Nested expression compilation", "[pattern_compiler]")
 {
     // Create expression: g(f(), h())
     Theory theory;
-    Symbol f = theory.intern("f");
-    Symbol g = theory.intern("g");
-    Symbol h = theory.intern("h");
+    auto f = theory.add_operator("f", 0);
+    auto g = theory.add_operator("g", 2);
+    auto h = theory.add_operator("h", 0);
 
-    Compiler compiler;
+    Compiler compiler(theory);
     RewriteRule rule = theory.add_rewrite_rule("test_rule", "(g (f) (h))", "(g (f) (h))");
     auto [query, subst] = compiler.compile(rule);
 
@@ -66,10 +66,10 @@ TEST_CASE("Deeply nested expression compilation", "[pattern_compiler]")
 {
     // Create expression: add(mul(x, y), z) where x, y, z are variables
     Theory theory;
-    Symbol add = theory.intern("add");
-    Symbol mul = theory.intern("mul");
+    auto add = theory.add_operator("add", 2);
+    auto mul = theory.add_operator("mul", 2);
 
-    Compiler compiler;
+    Compiler compiler(theory);
     RewriteRule rule = theory.add_rewrite_rule("test_rule", "(add (mul ?x ?y) ?z)", "(add (mul ?x ?y) ?z)");
     auto [query, subst] = compiler.compile(rule);
 
@@ -109,7 +109,7 @@ TEST_CASE("Multiple patterns compilation", "[pattern_compiler]")
     RewriteRule rule2 = theory.add_rewrite_rule("rule2", "(g)", "(g)");
     Vec<RewriteRule> patterns = {rule1, rule2};
 
-    Compiler compiler;
+    Compiler compiler(theory);
     auto kernels = compiler.compile_many(patterns);
 
     REQUIRE(kernels.size() == 2);

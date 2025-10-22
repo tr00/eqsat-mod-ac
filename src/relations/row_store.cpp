@@ -102,3 +102,25 @@ bool RowStore::rebuild(std::function<id_t(id_t)> canonicalize, std::function<id_
 
     return did_something;
 }
+
+void RowStore::dump(std::ofstream& out, const SymbolTable& symbols) const
+{
+    out << "---- " << symbols.get_string(symbol) << "(" << arity - 1 << ") with " << size() << " tuples ----"
+        << std::endl;
+
+    const id_t *base = data.data();
+    for (size_t i = 0; i < size(); ++i)
+    {
+        const id_t *tuple = base + i * arity;
+        auto id = tuple[arity - 1];
+        out << "eclass-id: " << id;
+        if (arity > 1) out << "  args: ";
+        for (size_t j = 0; j < arity - 1; ++j)
+        {
+            out << tuple[j];
+            if (j < arity - 2) out << ", ";
+        }
+        out << std::endl;
+    }
+    out << std::endl;
+}

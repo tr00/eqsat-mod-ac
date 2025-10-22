@@ -59,8 +59,6 @@ class EGraph
     UnionFind uf;
     HashMap<ENode, id_t> memo;
 
-    Vec<id_t> worklist; // really needed?
-
     Vec<Query> queries;
     Vec<Subst> substs;
     Vec<std::pair<Symbol, uint32_t>> required_indices;
@@ -93,4 +91,6 @@ class EGraph
     bool rebuild();
 
     void saturate(size_t max_iters);
+
+    void dump_to_file() const;
 };

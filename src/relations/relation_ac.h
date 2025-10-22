@@ -4,6 +4,7 @@
 #include "indices/abstract_index.h"
 #include "symbol_table.h"
 #include "utils/multiset.h"
+#include <fstream>
 #include <functional>
 #include <memory>
 
@@ -53,4 +54,12 @@ class RelationAC
     }
 
     bool rebuild(std::function<id_t(id_t)> canonicalize, std::function<id_t(id_t, id_t)> unify);
+
+    /**
+     * @brief Dump the relation contents to a file
+     *
+     * @param out Output file stream
+     * @param symbols Symbol table for resolving operator names
+     */
+    void dump(std::ofstream& out, const SymbolTable& symbols) const;
 };

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstddef>
+#include <fstream>
 
 #include "indices/abstract_index.h"
 #include "relations/relation_ac.h"
@@ -172,6 +173,19 @@ class AbstractRelation
             return row_store.rebuild(canonicalize, unify);
         case RELATION_AC:
             return ac_rel.rebuild(canonicalize, unify);
+        }
+
+        __builtin_unreachable();
+    }
+
+    void dump(std::ofstream& out, const SymbolTable& symbols) const
+    {
+        switch (kind)
+        {
+        case ROW_STORE:
+            return row_store.dump(out, symbols);
+        case RELATION_AC:
+            return ac_rel.dump(out, symbols);
         }
 
         __builtin_unreachable();

@@ -9,7 +9,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wpedantic -Werror")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wpedantic -Werror -g")
 
 # Prefer mold linker if available, otherwise use system default
 find_program(MOLD_LINKER mold)
@@ -99,24 +99,32 @@ add_executable(systemtests
 target_include_directories(systemtests PRIVATE src)
 target_link_libraries(systemtests PRIVATE eqsat Catch2::Catch2WithMain)
 
-# Create demo executable
+## DEMO DEMO DEMO DEMO DEMO
+
 add_executable(demo demo.cpp)
 target_include_directories(demo PRIVATE src)
 target_link_libraries(demo PRIVATE eqsat)
 
-# Enable testing
+add_executable(groups1 workloads/groups/groups1.cpp)
+target_include_directories(groups1 PRIVATE src)
+target_link_libraries(groups1 PRIVATE eqsat)
+
+add_executable(groups2 workloads/groups/groups2.cpp)
+target_include_directories(groups2 PRIVATE src)
+target_link_libraries(groups2 PRIVATE eqsat)
+
+## TESTING TESTING TESTING
+
 enable_testing()
 add_test(NAME unit_tests COMMAND unittests)
 add_test(NAME system_tests COMMAND systemtests)
 
-# Add custom target for easy testing
 add_custom_target(runtest
     COMMAND ${CMAKE_CTEST_COMMAND} --output-on-failure --progress
     DEPENDS unittests systemtests
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
 )
 
-# Add separate targets for unit and system tests
 add_custom_target(rununit
     COMMAND ${CMAKE_CTEST_COMMAND} -R unit_tests --output-on-failure --progress
     DEPENDS unittests

@@ -33,7 +33,7 @@ TEST_CASE("EGraph can handle rewrite rules with pattern compilation", "[egraph][
         REQUIRE(theory.rewrite_rules.size() == 2);
 
         // Test pattern compilation
-        Compiler compiler;
+        Compiler compiler(theory);
 
         // Compile the left-hand side of the first rule
         auto [identity_query, identity_subst] = compiler.compile(theory.rewrite_rules[0]);
@@ -81,7 +81,7 @@ TEST_CASE("EGraph can handle rewrite rules with pattern compilation", "[egraph][
                                      theory.rewrite_rules[theory.rewrite_rules.size() - 1]};
 
         // Compile all patterns
-        Compiler compiler;
+        Compiler compiler(theory);
         auto kernels = compiler.compile_many(patterns);
 
         REQUIRE(kernels.size() == 3);

@@ -15,8 +15,9 @@ HashMap<var_t, int> create_consecutive_index_map(const Vec<var_t>& unique_indice
     return index_map;
 }
 
-Compiler::Compiler()
-    : next_id(0)
+Compiler::Compiler(const Theory& theory)
+    : theory(theory)
+    , next_id(0)
 {
 }
 
@@ -37,7 +38,17 @@ var_t Compiler::compile_rec(const std::shared_ptr<Expr>& expr, HashMap<Symbol, v
     {
         Vec<var_t> constraint_vars;
 
-        var_t id = next_id++;
+        bool is_ac = (theory.get_arity(expr->symbol) == AC);
+
+        var_t eclass_id = next_id++;
+
+        if (is_ac)
+        {
+            var_t term_id = next_id++;
+
+            constraint_vars.push_back(eclass_id);
+            constraint_vars.push_back(term_id);
+        }
 
         for (const auto& child : expr->children)
         {
@@ -45,11 +56,11 @@ var_t Compiler::compile_rec(const std::shared_ptr<Expr>& expr, HashMap<Symbol, v
             constraint_vars.push_back(child_var);
         }
 
-        constraint_vars.push_back(id);
+        if (!is_ac) constraint_vars.push_back(eclass_id);
 
         query.add_constraint(expr->symbol, constraint_vars);
 
-        return id;
+        return eclass_id;
     }
 }
 

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cassert>
+#include <fstream>
 #include <stdexcept>
 
 #include "id.h"
@@ -211,4 +212,12 @@ class Database
      * @note For AC relations, rebuild is a no-op
      */
     bool rebuild(std::function<id_t(id_t)> canonicalize, std::function<id_t(id_t, id_t)> unify);
+
+    /**
+     * @brief Dump all relations to a file
+     *
+     * @param filename The path to the output file
+     * @param symbols Symbol table for resolving operator names
+     */
+    void dump_to_file(const std::string& filename, const SymbolTable& symbols) const;
 };

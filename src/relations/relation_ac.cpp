@@ -28,26 +28,20 @@ bool RelationAC::rebuild(std::function<id_t(id_t)> canonicalize, std::function<i
 {
     HashMap<const Multiset *, id_t, MultisetPtrHash, MultisetPtrEqual> cache;
 
-    bool changed = false;
-
     for (auto& [eclass, map] : *data)
     {
         for (auto& [term, mset] : map)
         {
-            // Canonicalize the multiset
+            // update all multisets
             mset.map(canonicalize);
 
-            // Check if we've seen this multiset before
+            // check if we've seen this multiset before
+            // because if so then they are eq via congruence
             auto it = cache.find(&mset);
             if (it != cache.end())
             {
-                // Found an equivalent multiset - unify their eclasses
                 id_t other_eclass = it->second;
-                if (eclass != other_eclass)
-                {
-                    unify(eclass, other_eclass);
-                    changed = true;
-                }
+                if (eclass != other_eclass) unify(eclass, other_eclass);
             }
             else
             {
@@ -56,9 +50,42 @@ bool RelationAC::rebuild(std::function<id_t(id_t)> canonicalize, std::function<i
         }
     }
 
+    // the keys might have also changed
+    Vec<id_t> changed_keys;
+    for (const auto& [id, _] : *data)
+        if (canonicalize(id) != id) changed_keys.push_back(id);
+
+    for (auto oldkey : changed_keys)
+    {
+        auto newkey = canonicalize(oldkey);
+
+        if (!data->contains(newkey))
+        {
+            auto kv = data->extract(oldkey);
+            assert(kv.has_value());
+            kv->first = newkey;
+            data->insert(std::move(kv.value()));
+        }
+        else
+        {
+            // if newkey already has a few terms
+            // we append the terms from the old map
+
+            auto& oldmap = data->at(oldkey);
+            auto& newmap = data->at(newkey);
+
+            newmap.reserve(oldmap.size());
+
+            for (auto kv : oldmap)
+                newmap.insert(kv);
+
+            data->erase(oldkey);
+        }
+    }
+
     // TODO: remove duplicate entries after unification
 
-    return changed;
+    return true;
 }
 
 void RelationAC::add_tuple(id_t id, Multiset mset)
@@ -88,7 +115,7 @@ void RelationAC::add_tuple(id_t id, Multiset mset)
         }
 
         // add subterms to term bank
-        for (auto submset : worklist)
+        for (const auto& submset : worklist)
         {
             auto tid = static_cast<uint32_t>(nterms++);
             map.insert({tid, submset});
@@ -113,8 +140,8 @@ void RelationAC::add_tuple(id_t id, Multiset mset)
     auto tid = static_cast<uint32_t>(nterms++);
     if (!data->contains(id)) data->emplace(id, HashMap<id_t, Multiset>{});
 
-    auto map = data->at(id);
-    for (auto submset : worklist)
+    auto& map = data->at(id);
+    for (const auto& submset : worklist)
     {
         auto tid = static_cast<uint32_t>(nterms++);
         map.insert({tid, submset});
@@ -154,3 +181,29 @@ void RelationAC::add_tuple(const Vec<id_t>& tuple)
 //
 // z: { x, d }
 // z: { y, c, d }
+
+void RelationAC::dump(std::ofstream& out, const SymbolTable& symbols) const
+{
+    out << "---- " << symbols.get_string(symbol) << "(AC) with " << size() << " terms ----" << std::endl;
+
+    for (const auto& [eclass, map] : *data)
+    {
+        for (const auto& [term_id, mset] : map)
+        {
+            out << "eclass-id: " << eclass << "  term-id:" << term_id << "  mset: {";
+
+            bool first = true;
+            for (const auto& [id, count] : mset.data)
+            {
+                if (!first) out << ", ";
+                first = false;
+
+                out << id;
+                if (count > 1) out << "^" << count;
+            }
+
+            out << "}" << std::endl;
+        }
+    }
+    out << std::endl;
+}
