@@ -3,53 +3,12 @@
 #include <memory>
 
 #include "database.h"
+#include "enode.h"
 #include "id.h"
 #include "query.h"
 #include "symbol_table.h"
 #include "theory.h"
 #include "union_find.h"
-#include "utils/hash.h"
-
-class ENode
-{
-  public:
-    const Symbol op;
-    const Vec<id_t> children;
-
-    ENode(Symbol op, Vec<id_t> children)
-        : op(op)
-        , children(children)
-    {
-    }
-
-    ENode& operator=(const ENode&) = delete;
-    ENode(const ENode&) = default;
-    ENode(ENode&&) = default;
-
-    bool operator==(const ENode& other) const
-    {
-        return op == other.op && children == other.children;
-    }
-};
-
-namespace std
-{
-template <>
-struct hash<ENode>
-{
-    size_t operator()(const ENode& node) const
-    {
-        uint64_t h1 = SEED;
-        uint64_t h2 = eqsat::hash64(node.op);
-
-        auto children = node.children;
-        for (const auto& child : children)
-            h1 = eqsat::mix64(h1, child);
-
-        return eqsat::mix64(h1, h2);
-    }
-};
-} // namespace std
 
 class EGraph
 {
@@ -79,11 +38,23 @@ class EGraph
     id_t add_enode(ENode enode);
     id_t add_enode(Symbol symbol, Vec<id_t> children);
 
+    std::optional<id_t> lookup(ENode enode) const;
+
     id_t unify(id_t a, id_t b);
 
-    bool is_equiv(id_t a, id_t b)
+    bool is_equiv(id_t a, id_t b) const
     {
         return uf.same(a, b);
+    }
+
+    id_t canonicalize(id_t id)
+    {
+        return uf.find_root(id);
+    }
+
+    id_t canonicalize(id_t id) const
+    {
+        return uf.find_root(id);
     }
 
     void apply_matches(const Vec<id_t>& matches, Subst& subst);

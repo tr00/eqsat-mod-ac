@@ -97,6 +97,12 @@ id_t EGraph::add_enode(ENode enode)
     return id;
 }
 
+std::optional<id_t> EGraph::lookup(ENode enode) const
+{
+    auto it = memo.find(enode);
+    return it == memo.end() ? std::nullopt : std::optional<id_t>(it->second);
+}
+
 id_t EGraph::unify(id_t a, id_t b)
 {
     id_t id = uf.unify(a, b);

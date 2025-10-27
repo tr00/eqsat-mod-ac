@@ -1,6 +1,7 @@
 #include <functional>
 
 #include "gch/small_vector.hpp"
+#include "handle.h"
 #include "id.h"
 #include "relation_ac.h"
 #include "utils/multiset.h"
@@ -24,7 +25,7 @@ struct MultisetPtrEqual
 };
 } // namespace
 
-bool RelationAC::rebuild(std::function<id_t(id_t)> canonicalize, std::function<id_t(id_t, id_t)> unify)
+bool RelationAC::rebuild(Handle egraph)
 {
     HashMap<const Multiset *, id_t, MultisetPtrHash, MultisetPtrEqual> cache;
 
@@ -33,7 +34,7 @@ bool RelationAC::rebuild(std::function<id_t(id_t)> canonicalize, std::function<i
         for (auto& [term, mset] : map)
         {
             // update all multisets
-            mset.map(canonicalize);
+            mset.map([egraph](id_t x) { return egraph.canonicalize(x); });
 
             // check if we've seen this multiset before
             // because if so then they are eq via congruence
@@ -41,7 +42,7 @@ bool RelationAC::rebuild(std::function<id_t(id_t)> canonicalize, std::function<i
             if (it != cache.end())
             {
                 id_t other_eclass = it->second;
-                if (eclass != other_eclass) unify(eclass, other_eclass);
+                if (eclass != other_eclass) egraph.unify(eclass, other_eclass);
             }
             else
             {
@@ -53,11 +54,11 @@ bool RelationAC::rebuild(std::function<id_t(id_t)> canonicalize, std::function<i
     // the keys might have also changed
     Vec<id_t> changed_keys;
     for (const auto& [id, _] : *data)
-        if (canonicalize(id) != id) changed_keys.push_back(id);
+        if (egraph.canonicalize(id) != id) changed_keys.push_back(id);
 
     for (auto oldkey : changed_keys)
     {
-        auto newkey = canonicalize(oldkey);
+        auto newkey = egraph.canonicalize(oldkey);
 
         if (!data->contains(newkey))
         {

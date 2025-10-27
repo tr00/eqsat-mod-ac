@@ -4,6 +4,7 @@
 #include <fstream>
 #include <functional>
 
+#include "handle.h"
 #include "id.h"
 #include "indices/abstract_index.h"
 #include "symbol_table.h"
@@ -75,7 +76,7 @@ class RowStore
      * @param unify_callback Function to call when two IDs need to be unified
      * @return true if any unifications were performed, false otherwise
      */
-    bool rebuild(std::function<id_t(id_t)> canonicalize, std::function<id_t(id_t, id_t)> unify);
+    bool rebuild(Handle handle);
 
     /**
      * @brief Dump the relation contents to a file

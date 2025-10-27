@@ -1,5 +1,6 @@
 #pragma once
 
+#include "enode.h"
 #include "indices/multiset_index.h"
 #include "trie_index.h"
 
@@ -199,6 +200,25 @@ class AbstractIndex
             mst.unselect();
             break;
         }
+    }
+
+    ENode make_enode()
+    {
+        switch (kind)
+        {
+        case NONE:
+            assert(0 && "Cannot unselect on NONE index");
+            break;
+        case TRIE:
+            // TODO:
+            // trie.make_enode();
+            break;
+        case MSET:
+            mst.make_enode();
+            break;
+        }
+
+        __builtin_unreachable();
     }
 
     void reset()

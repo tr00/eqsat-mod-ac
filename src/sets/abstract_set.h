@@ -187,4 +187,4 @@ class AbstractSet
     }
 };
 
-void intersect_many(SortedVecSet& output, const Vec<AbstractSet>& sets);
+size_t intersect_many(SortedVecSet& output, const Vec<AbstractSet>& sets);

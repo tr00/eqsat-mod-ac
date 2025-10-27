@@ -4,27 +4,24 @@
 
 // TODO: partially sorting.
 
-void intersect_many(SortedVecSet& output, const Vec<AbstractSet>& sets)
+size_t intersect_many(SortedVecSet& output, const Vec<AbstractSet>& sets)
 {
     output.clear();
 
     if (sets.empty())
     {
-        return;
+        return 0;
     }
 
     if (sets.size() == 1)
     {
-        // Copy the single set into the output buffer
         sets[0].for_each([&output](id_t id) { output.insert(id); });
-        return;
+        return output.size();
     }
 
-    // Find the smallest set to start with (optimization)
-    auto smallest_it =
-        std::min_element(sets.begin(), sets.end(), [](const auto& a, const auto& b) { return a.size() < b.size(); });
+    auto cmp = [](const auto& a, const auto& b) { return a.size() < b.size(); };
+    auto smallest_it = std::min_element(sets.begin(), sets.end(), cmp);
 
-    // Iterate through the smallest set and check if each element exists in all other sets
     smallest_it->for_each([&](id_t id) {
         bool in_all_sets = true;
         for (const auto& set : sets)
@@ -35,9 +32,8 @@ void intersect_many(SortedVecSet& output, const Vec<AbstractSet>& sets)
                 break;
             }
         }
-        if (in_all_sets)
-        {
-            output.insert(id);
-        }
+        if (in_all_sets) output.insert(id);
     });
+
+    return output.size();
 }

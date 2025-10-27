@@ -3,6 +3,7 @@
 #include <cstddef>
 #include <fstream>
 
+#include "handle.h"
 #include "indices/abstract_index.h"
 #include "relations/relation_ac.h"
 #include "row_store.h"
@@ -165,14 +166,14 @@ class AbstractRelation
         __builtin_unreachable();
     }
 
-    bool rebuild(std::function<id_t(id_t)> canonicalize, std::function<id_t(id_t, id_t)> unify)
+    bool rebuild(Handle handle)
     {
         switch (kind)
         {
         case ROW_STORE:
-            return row_store.rebuild(canonicalize, unify);
+            return row_store.rebuild(handle);
         case RELATION_AC:
-            return ac_rel.rebuild(canonicalize, unify);
+            return ac_rel.rebuild(handle);
         }
 
         __builtin_unreachable();

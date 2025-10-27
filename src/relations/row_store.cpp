@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <cstdlib>
 
+#include "handle.h"
 #include "indices/abstract_index.h"
 #include "indices/trie_index.h"
 #include "permutation.h"
@@ -60,10 +61,10 @@ static int tuple_compare(const void *a, const void *b, void *context)
     return 0; // Equal
 }
 
-bool RowStore::rebuild(std::function<id_t(id_t)> canonicalize, std::function<id_t(id_t, id_t)> unify)
+bool RowStore::rebuild(Handle handle)
 {
     for (auto& id : data)
-        id = canonicalize(id);
+        id = handle.canonicalize(id);
 
     if (arity <= 1) return false; // Nothing to rebuild if only ID column
 
@@ -92,7 +93,7 @@ bool RowStore::rebuild(std::function<id_t(id_t)> canonicalize, std::function<id_
         if (id1 == id2) continue;
 
         // unify and update ids
-        id_t newid = unify(id1, id2);
+        id_t newid = handle.unify(id1, id2);
 
         tuple1[arity - 1] = newid;
         tuple2[arity - 1] = newid;

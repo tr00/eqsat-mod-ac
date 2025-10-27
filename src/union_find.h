@@ -33,7 +33,15 @@ class UnionFind
         return _find_root_ph(x);
     }
 
-    inline bool same(id_t a, id_t b) noexcept
+    inline id_t find_root(id_t x) const noexcept
+    {
+        while (vec[x] != x)
+            x = vec[x];
+
+        return x;
+    }
+
+    inline bool same(id_t a, id_t b) const noexcept
     {
         return find_root(a) == find_root(b);
     }

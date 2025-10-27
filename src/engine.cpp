@@ -21,28 +21,39 @@
 
 void State::prepare()
 {
-    candidate = candidates.begin();
+    it = candidates.begin();
 }
 
 bool State::empty() const
 {
-    return candidate == candidates.end();
+    return it == candidates.end();
 }
 
 id_t State::next()
 {
-    return *candidate++;
+    return *it++;
 }
 
-size_t State::intersect()
+size_t Engine::intersect(State& state)
 {
-    Vec<AbstractSet> buffer;
+    if (state.fds.empty())
+    {
+        Vec<AbstractSet> buffer;
 
-    for (auto& index : indices)
-        buffer.push_back(index->project());
+        for (const auto& index : state.indices)
+            buffer.push_back(index->project());
 
-    intersect_many(candidates, buffer);
-    return candidates.size();
+        return intersect_many(state.candidates, buffer);
+    }
+    else
+    {
+        for (auto& index : state.fds)
+        {
+            auto enode = index->make_enode();
+            // TODO: ephemeral enodes
+            egraph.lookup(enode);
+        }
+    }
 }
 
 void Engine::prepare(const Query& query)
@@ -97,6 +108,35 @@ void Engine::prepare(const Query& query)
         index->reset();
 }
 
+void Engine::execute_rec(Vec<id_t>& results, size_t level)
+{
+    if (level >= states.size())
+    {
+        for (var_t var : head)
+            results.push_back(var);
+
+        return;
+    }
+
+    auto& state = states[level];
+
+    // projection & intersection
+    intersect(state);
+
+    for (auto cand : state.candidates)
+    {
+        for (auto index : state.indices)
+            index->select(cand);
+
+        execute_rec(results, level + 1);
+
+        for (auto index : state.indices)
+            index->unselect();
+    }
+
+    return;
+}
+
 Vec<id_t> Engine::execute()
 {
     Vec<id_t> results;
@@ -107,7 +147,7 @@ Vec<id_t> Engine::execute()
 DEEPER:
     if (state == states.end()) goto YIELD;
 
-    if (state->intersect() == 0) goto BACKTRACK;
+    if (intersect(*state) == 0) goto BACKTRACK;
 
     state->prepare();
 
@@ -144,7 +184,7 @@ BACKTRACK:
 YIELD:
 
     for (var_t var : head)
-        results.push_back(*(states[var].candidate - 1));
+        results.push_back(*(states[var].it - 1));
 
     goto BACKTRACK;
 }
