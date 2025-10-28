@@ -68,12 +68,13 @@
  * # Query Head Construction
  *
  * The query head determines which variables are returned by query execution:
- * 1. Root variable (ID 0) is **always first** in the head
- * 2. Pattern variables (?x, ?y, etc.) follow in order of appearance
+ * 1. Pattern variables (?x, ?y, etc.) are added in order of appearance during traversal
+ * 2. Root variable (LHS expression result) is **always last** in the head
  *
  * Example: `add(mul(?x, ?y), ?z)`
  * ```
- * Head: [0, 2, 3, 4]  // root, x, y, z
+ * Head: [2, 3, 4, 0]  // x, y, z, root
+ * Variable IDs: x=2, y=3, z=4, add=0 (root expression)
  * ```
  *
  * After compilation, a consecutive index map is created to renormalize variable
@@ -113,10 +114,10 @@
  *
  * # Invariants
  *
- * 1. **Variable Ordering**: Parent IDs < children IDs (pre-order traversal)
+ * 1. **Variable Ordering**: Parent IDs > children IDs (post-order traversal)
  * 2. **Constraint Format**: op(args...; eclass_id) with ID last
  * 3. **AC Format**: op(eclass_id, term_id, args...)
- * 4. **Root in Head**: Variable 0 always first in query head
+ * 4. **Root in Head**: Root variable always last in query head
  * 5. **Fresh Variables**: Each compilation starts with next_id = 0
  *
  * # Usage Example

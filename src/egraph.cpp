@@ -140,7 +140,7 @@ void EGraph::apply_match(const Vec<id_t>& match, Subst& subst)
         return this->add_enode(sym, std::move(children));
     };
 
-    id_t lhs_id = match[0];
+    id_t lhs_id = match.back(); // root
     id_t rhs_id = subst.instantiate(callback, match);
 
     unify(lhs_id, rhs_id);
