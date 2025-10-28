@@ -12,23 +12,23 @@
  *
  * The compilation process consists of:
  * 1. **Pattern Analysis**: Traverse the pattern expression tree
- * 2. **Variable Assignment**: Assign unique variable IDs using pre-order traversal
+ * 2. **Variable Assignment**: Assign unique variable IDs using post-order traversal
  * 3. **Constraint Generation**: Create database constraints from expression structure
  * 4. **Query Construction**: Build conjunctive query with proper variable ordering
  * 5. **Substitution Template**: Create template for RHS instantiation
  *
  * # Variable ID Assignment (Critical Invariant)
  *
- * Variables are assigned IDs in **pre-order traversal** of the expression tree:
- * - **Parent variable ID < children variable IDs** (always)
- * - Root expression receives ID 0
+ * Variables are assigned IDs in **post-order traversal** of the expression tree:
+ * - **Children variable IDs < parent variable ID** (always)
+ * - Root expression receives the highest ID
  * - Pattern variables (?x, ?y, etc.) get IDs when first encountered
  * - Each operator application gets an ID representing its e-class
  *
  * Example: `add(mul(?x, ?y), ?z)`
  * ```
- * Pre-order: add(0) → mul(1) → ?x(2) → ?y(3) → ?z(4)
- * IDs: add=0, mul=1, x=2, y=3, z=4
+ * Post-order: ?x(0) → ?y(1) → mul(2) → ?z(3) → add(4)
+ * IDs: x=0, y=1, mul=2, z=3, add=4
  * ```
  *
  * This invariant is **critical** for:

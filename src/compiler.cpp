@@ -38,15 +38,11 @@ var_t Compiler::compile_rec(const std::shared_ptr<Expr>& expr, HashMap<Symbol, v
     {
         Vec<var_t> constraint_vars;
 
-        bool is_ac = (theory.get_arity(expr->symbol) == AC);
-
-        var_t eclass_id = next_id++;
-
-        if (is_ac)
+        // if the current expr is AC we want to insert the term id
+        // into the constraint with term-id < children... < eclass-id
+        if (theory.get_arity(expr->symbol) == AC)
         {
             var_t term_id = next_id++;
-
-            constraint_vars.push_back(eclass_id);
             constraint_vars.push_back(term_id);
         }
 
@@ -56,7 +52,8 @@ var_t Compiler::compile_rec(const std::shared_ptr<Expr>& expr, HashMap<Symbol, v
             constraint_vars.push_back(child_var);
         }
 
-        if (!is_ac) constraint_vars.push_back(eclass_id);
+        var_t eclass_id = next_id++;
+        constraint_vars.push_back(eclass_id);
 
         query.add_constraint(expr->symbol, constraint_vars);
 
@@ -76,10 +73,10 @@ std::pair<Query, Subst> Compiler::compile(RewriteRule rule)
     Query query(rule.name);
 
     // Add the root variable to the head
-    query.add_head_var(0);
 
     // Compile the pattern recursively
-    compile_rec(rule.lhs, env, query);
+    var_t root = compile_rec(rule.lhs, env, query);
+    query.add_head_var(root);
 
     HashMap<Symbol, int> env2;
     auto transl = create_consecutive_index_map(query.head);
