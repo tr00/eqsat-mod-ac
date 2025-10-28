@@ -153,19 +153,6 @@ class AbstractRelation
         __builtin_unreachable();
     }
 
-    AbstractIndex create_index()
-    {
-        switch (kind)
-        {
-        case ROW_STORE:
-            return row_store.create_index();
-        case RELATION_AC:
-            return ac_rel.create_index();
-        }
-
-        __builtin_unreachable();
-    }
-
     bool rebuild(Handle handle)
     {
         switch (kind)

@@ -19,13 +19,17 @@ struct State
     // The id is then uniquely determined by memo[(x, y)].
     //
     // If this state corresponds to id, we can call
-    // lookup on the indices rather than select.
+    // lookup on this index rather than project/select.
     // To perform lookup we reuse the egraphs memo table.
-    Vec<std::shared_ptr<AbstractIndex>> fds;
+    //
+    // Note that with the current API of compiling pattern expressions,
+    // at most one FD can be inferred per variable.
+    std::shared_ptr<AbstractIndex> fd = nullptr;
 
     void prepare();
     bool empty() const;
     id_t next();
+    id_t current() const;
 };
 
 class Engine
@@ -50,5 +54,7 @@ class Engine
     size_t intersect(State& state);
 
     Vec<id_t> execute();
+
+    void execute(Vec<id_t>& buffer, const Query& query);
     void execute_rec(Vec<id_t>& results, size_t level);
 };

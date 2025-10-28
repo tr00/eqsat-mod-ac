@@ -74,10 +74,10 @@ TEST_CASE("Database index operations", "[database]")
         REQUIRE_FALSE(db.has_index(mul_sym, 0));
 
         // Create indices with different permutations
-        db.create_index(add_sym, 0); // Identity permutation [0,1,2]
-        db.create_index(add_sym, 2); // Permutation [1,0,2]
-        db.create_index(mul_sym, 0); // Identity permutation [0,1]
-        db.create_index(mul_sym, 1); // Permutation [1,0]
+        db.populate_index(add_sym, 0); // Identity permutation [0,1,2]
+        db.populate_index(add_sym, 2); // Permutation [1,0,2]
+        db.populate_index(mul_sym, 0); // Identity permutation [0,1]
+        db.populate_index(mul_sym, 1); // Permutation [1,0]
 
         // Verify indices exist
         REQUIRE(db.has_index(add_sym, 0));
@@ -109,13 +109,10 @@ TEST_CASE("Database index operations", "[database]")
         db.add_tuple(add_sym, {400, 500, 600}); // Tuple 1
         db.add_tuple(add_sym, {700, 800, 900}); // Tuple 2
 
-        // Create indices with different permutations
-        db.create_index(add_sym, 0); // Permutation [0,1,2]: (100,200,300), (400,500,600), (700,800,900)
-        db.create_index(add_sym, 4); // Permutation [2,0,1]: (300,100,200), (600,400,500), (900,700,800)
-        db.create_index(add_sym, 5); // Permutation [2,1,0]: (300,200,100), (600,500,400), (900,800,700)
-
-        // Build all indices
-        db.populate_indices();
+        // Create and populate indices with different permutations
+        db.populate_index(add_sym, 0); // Permutation [0,1,2]: (100,200,300), (400,500,600), (700,800,900)
+        db.populate_index(add_sym, 4); // Permutation [2,0,1]: (300,100,200), (600,400,500), (900,700,800)
+        db.populate_index(add_sym, 5); // Permutation [2,1,0]: (300,200,100), (600,500,400), (900,800,700)
 
         // Verify indices still exist after building
         REQUIRE(db.has_index(add_sym, 0));
@@ -144,14 +141,11 @@ TEST_CASE("Database index operations", "[database]")
         db.add_tuple(mul_sym, {100, 200, 300});
         db.add_tuple(mul_sym, {400, 500, 600});
 
-        // Create indices for both relations
-        db.create_index(add_sym, 0); // Identity for add
-        db.create_index(add_sym, 1); // Swap for add
-        db.create_index(mul_sym, 0); // Identity for mul
-        db.create_index(mul_sym, 2); // [1,0,2] for mul
-
-        // Build all indices
-        db.populate_indices();
+        // Create and populate indices for both relations
+        db.populate_index(add_sym, 0); // Identity for add
+        db.populate_index(add_sym, 1); // Swap for add
+        db.populate_index(mul_sym, 0); // Identity for mul
+        db.populate_index(mul_sym, 2); // [1,0,2] for mul
 
         // Verify all indices exist
         REQUIRE(db.has_index(add_sym, 0));
@@ -169,14 +163,11 @@ TEST_CASE("Database index operations", "[database]")
         db.add_tuple(add_sym, {1, 2});
         db.add_tuple(mul_sym, {3, 4});
 
-        // Create several indices
-        db.create_index(add_sym, 0);
-        db.create_index(add_sym, 1);
-        db.create_index(mul_sym, 0);
-        db.create_index(mul_sym, 1);
-
-        // Build indices
-        db.populate_indices();
+        // Create and populate several indices
+        db.populate_index(add_sym, 0);
+        db.populate_index(add_sym, 1);
+        db.populate_index(mul_sym, 0);
+        db.populate_index(mul_sym, 1);
 
         // Verify indices exist
         REQUIRE(db.has_index(add_sym, 0));
@@ -209,15 +200,11 @@ TEST_CASE("Database index operations", "[database]")
 
     SECTION("Edge cases and error conditions")
     {
-        // Test building indices without relations
-        db.populate_indices(); // Should not crash
-
         // Create relation and add index
         db.create_relation(add_sym, 2);
-        db.create_index(add_sym, 0);
 
-        // Build indices on empty relation
-        db.populate_indices(); // Should not crash
+        // Build index on empty relation
+        db.populate_index(add_sym, 0); // Should not crash
 
         REQUIRE(db.has_index(add_sym, 0));
 
@@ -234,16 +221,12 @@ TEST_CASE("Database index operations", "[database]")
         db.create_relation(add_sym, 2);
         db.add_tuple(add_sym, {1, 2});
 
-        // Create index
-        db.create_index(add_sym, 0);
+        // Create and populate index
+        db.populate_index(add_sym, 0);
         REQUIRE(db.has_index(add_sym, 0));
 
         // Replace with same key
-        db.create_index(add_sym, 0);
-        REQUIRE(db.has_index(add_sym, 0));
-
-        // Should still work after building
-        db.populate_indices();
+        db.populate_index(add_sym, 0);
         REQUIRE(db.has_index(add_sym, 0));
     }
 }
@@ -275,11 +258,11 @@ TEST_CASE("Database AC relation operations", "[database][ac]")
         db.create_relation_ac(ac_mul_sym);
         db.add_tuple(ac_mul_sym, {10, 20, 30});
 
-        // Create index with various permutation values
+        // Create and populate index with various permutation values
         // All should normalize to permutation 0 for AC relations
-        db.create_index(ac_mul_sym, 5);   // Should normalize to 0
-        db.create_index(ac_mul_sym, 100); // Should replace previous (same key)
-        db.create_index(ac_mul_sym, 0);   // Explicit 0
+        db.populate_index(ac_mul_sym, 5);   // Should normalize to 0
+        db.populate_index(ac_mul_sym, 100); // Should replace previous (same key)
+        db.populate_index(ac_mul_sym, 0);   // Explicit 0
 
         // After normalization, only ONE index should exist (at permutation 0)
         REQUIRE(db.has_index(ac_mul_sym, 0));   // Direct check
@@ -302,11 +285,8 @@ TEST_CASE("Database AC relation operations", "[database][ac]")
         db.add_tuple(ac_mul_sym, {4, 5, 6});
         db.add_tuple(ac_mul_sym, {7, 8, 9});
 
-        // Create index (any permutation should work)
-        db.create_index(ac_mul_sym, 42);
-
-        // Build indices
-        db.populate_indices(); // Should not crash
+        // Create and populate index (any permutation should work)
+        db.populate_index(ac_mul_sym, 42); // Should not crash
 
         // Index should still exist after building
         REQUIRE(db.has_index(ac_mul_sym, 0));
@@ -328,13 +308,10 @@ TEST_CASE("Database AC relation operations", "[database][ac]")
         db.add_tuple(ac_mul_sym, {1, 2, 3});
         db.add_tuple(regular_add, {10, 20, 30});
 
-        // Create indices
-        db.create_index(ac_mul_sym, 5);  // AC - will normalize to 0
-        db.create_index(regular_add, 0); // Regular - stays 0
-        db.create_index(regular_add, 2); // Regular - stays 2
-
-        // Build all indices
-        db.populate_indices();
+        // Create and populate indices
+        db.populate_index(ac_mul_sym, 5);  // AC - will normalize to 0
+        db.populate_index(regular_add, 0); // Regular - stays 0
+        db.populate_index(regular_add, 2); // Regular - stays 2
 
         // AC relation: any permutation maps to 0
         REQUIRE(db.has_index(ac_mul_sym, 0));
@@ -356,11 +333,9 @@ TEST_CASE("Database AC relation operations", "[database][ac]")
         db.add_tuple(ac_mul_sym, {1, 2});
         db.add_tuple(ac_add_sym, {3, 4});
 
-        // Create indices for both AC relations
-        db.create_index(ac_mul_sym, 10);
-        db.create_index(ac_add_sym, 20);
-
-        db.populate_indices();
+        // Create and populate indices for both AC relations
+        db.populate_index(ac_mul_sym, 10);
+        db.populate_index(ac_add_sym, 20);
 
         // Both should be accessible with any permutation
         REQUIRE(db.has_index(ac_mul_sym, 0));
@@ -374,8 +349,7 @@ TEST_CASE("Database AC relation operations", "[database][ac]")
         db.create_relation_ac(ac_mul_sym);
         db.add_tuple(ac_mul_sym, {1, 2, 3});
 
-        db.create_index(ac_mul_sym, 5);
-        db.populate_indices();
+        db.populate_index(ac_mul_sym, 5);
 
         REQUIRE(db.has_index(ac_mul_sym, 0));
         REQUIRE(db.has_index(ac_mul_sym, 5));

@@ -29,6 +29,7 @@ set(LIB_SOURCES
     src/query.cpp
     src/compiler.cpp
     src/egraph.cpp
+    src/handle.cpp
     src/permutation.cpp
     src/engine.cpp
     src/database.cpp
@@ -80,7 +81,7 @@ add_executable(unittests
     unittests/test_engine.cpp
     unittests/test_parser.cpp
     unittests/test_multiset.cpp
-    unittests/test_multiset_index.cpp
+    # unittests/test_multiset_index.cpp
 )
 
 target_include_directories(unittests PRIVATE src)

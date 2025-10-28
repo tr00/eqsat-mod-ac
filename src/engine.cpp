@@ -5,20 +5,6 @@
 #include "query.h"
 #include "sets/abstract_set.h"
 
-//                            ▲
-// descend into   │           │ ascend out / backtrack
-//                │           │
-//                ▼
-//               ┌─────────────┐
-//               │             │
-//               │    State    │
-//               │             │
-//               └─────────────┘
-//                            ▲
-//                │           │ ascend into
-//  descend out   │           │
-//                ▼
-
 void State::prepare()
 {
     it = candidates.begin();
@@ -34,26 +20,34 @@ id_t State::next()
     return *it++;
 }
 
+id_t State::current() const
+{
+    return *(it - 1);
+}
+
 size_t Engine::intersect(State& state)
 {
-    if (state.fds.empty())
-    {
-        Vec<AbstractSet> buffer;
+    Vec<AbstractSet> sets;
 
-        for (const auto& index : state.indices)
-            buffer.push_back(index->project());
-
-        return intersect_many(state.candidates, buffer);
-    }
-    else
+    if (state.fd != nullptr)
     {
-        for (auto& index : state.fds)
+        auto enode = state.fd->make_enode();
+        auto id = egraph.lookup(enode);
+
+        // TODO: ephemeral enodes
+        if (!id.has_value())
         {
-            auto enode = index->make_enode();
-            // TODO: ephemeral enodes
-            egraph.lookup(enode);
+            state.candidates.clear();
+            return 0;
         }
+
+        sets.emplace_back(AbstractSet(SingletonSet(id.value())));
     }
+
+    for (const auto& index : state.indices)
+        sets.push_back(index->project());
+
+    return intersect_many(state.candidates, sets);
 }
 
 void Engine::prepare(const Query& query)
@@ -108,12 +102,19 @@ void Engine::prepare(const Query& query)
         index->reset();
 }
 
+void Engine::execute(Vec<id_t>& results, const Query& query)
+{
+    prepare(query);
+
+    execute_rec(results, 0);
+}
+
 void Engine::execute_rec(Vec<id_t>& results, size_t level)
 {
     if (level >= states.size())
     {
         for (var_t var : head)
-            results.push_back(var);
+            results.push_back(states[var].current());
 
         return;
     }
@@ -123,8 +124,11 @@ void Engine::execute_rec(Vec<id_t>& results, size_t level)
     // projection & intersection
     intersect(state);
 
-    for (auto cand : state.candidates)
+    state.prepare();
+    while (!state.empty())
     {
+        id_t cand = state.next();
+
         for (auto index : state.indices)
             index->select(cand);
 
@@ -184,7 +188,7 @@ BACKTRACK:
 YIELD:
 
     for (var_t var : head)
-        results.push_back(*(states[var].it - 1));
+        results.push_back(states[var].current());
 
     goto BACKTRACK;
 }

@@ -1,7 +1,9 @@
 #pragma once
 
-#include "../id.h"
 #include <algorithm>
+
+#include "../id.h"
+#include "utils/vec.h"
 
 class SortedIterSet
 {

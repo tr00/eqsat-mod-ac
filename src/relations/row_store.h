@@ -2,7 +2,6 @@
 
 #include <cassert>
 #include <fstream>
-#include <functional>
 
 #include "handle.h"
 #include "id.h"
@@ -57,14 +56,6 @@ class RowStore
     }
 
     AbstractIndex populate_index(uint32_t vo);
-
-    /**
-     * @brief Create an empty trie index for this relation
-     *
-     * @param perm The permutation index for field ordering
-     * @return An empty AbstractIndex containing a TrieIndex
-     */
-    AbstractIndex create_index();
 
     /**
      * @brief Rebuild the relation by detecting and unifying duplicate entries

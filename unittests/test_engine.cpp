@@ -1,7 +1,9 @@
 #include <catch2/catch_test_macros.hpp>
 
 #include "database.h"
+#include "egraph.h"
 #include "engine.h"
+#include "handle.h"
 #include "query.h"
 #include "theory.h"
 
@@ -24,8 +26,10 @@ TEST_CASE("Engine with single state - simple query", "[engine]")
     db.add_tuple(add, Vec<id_t>{1, 3, 12});
 
     // Build index for the relation
-    db.create_index(add, 0); // identity permutation
-    db.populate_indices();
+    db.populate_index(add, 0); // identity permutation
+
+    // Create EGraph to get handle
+    EGraph egraph(theory);
 
     SECTION("Query for all results - single constraint")
     {
@@ -36,7 +40,7 @@ TEST_CASE("Engine with single state - simple query", "[engine]")
         query.add_head_var(1); // y
         query.add_head_var(2); // z
 
-        Engine engine(db);
+        Engine engine(db, Handle(egraph));
         engine.prepare(query);
         Vec<id_t> results = engine.execute();
 
@@ -70,7 +74,7 @@ TEST_CASE("Engine with single state - simple query", "[engine]")
     //     query.add_head_var(0); // x
     //     query.add_head_var(1); // y
 
-    //     Engine engine(db);
+    //     Engine engine(db, Handle(egraph));
     //     engine.prepare(query);
     //     Vec<id_t> results = engine.execute();
 
@@ -90,7 +94,7 @@ TEST_CASE("Engine with single state - simple query", "[engine]")
         query.add_head_var(1);
         query.add_head_var(2);
 
-        Engine engine(db);
+        Engine engine(db, Handle(egraph));
         engine.prepare(query);
         Vec<id_t> results = engine.execute();
 
@@ -108,8 +112,9 @@ TEST_CASE("Engine with single state - empty database", "[engine]")
     db.create_relation(mul, 3);
 
     // Build index but don't add any tuples
-    db.create_index(mul, 0);
-    db.populate_indices();
+    db.populate_index(mul, 0);
+
+    EGraph egraph(theory);
 
     Query query(theory.intern("empty_query"));
     query.add_constraint(mul, Vec<var_t>{0, 1, 2});
@@ -117,7 +122,7 @@ TEST_CASE("Engine with single state - empty database", "[engine]")
     query.add_head_var(1);
     query.add_head_var(2);
 
-    Engine engine(db);
+    Engine engine(db, Handle(egraph));
     engine.prepare(query);
     Vec<id_t> results = engine.execute();
 
@@ -136,15 +141,16 @@ TEST_CASE("Engine with single state - single tuple", "[engine]")
     // Add single tuple: f(5; 10) means f(5) is in e-class 10
     db.add_tuple(f, Vec<id_t>{5, 10});
 
-    db.create_index(f, 0);
-    db.populate_indices();
+    db.populate_index(f, 0);
+
+    EGraph egraph(theory);
 
     Query query(theory.intern("single_tuple_query"));
     query.add_constraint(f, Vec<var_t>{0, 1});
     query.add_head_var(0);
     query.add_head_var(1);
 
-    Engine engine(db);
+    Engine engine(db, Handle(egraph));
     engine.prepare(query);
     Vec<id_t> results = engine.execute();
 
@@ -167,8 +173,9 @@ TEST_CASE("Engine state intersection", "[engine]")
     db.add_tuple(g, Vec<id_t>{1, 4, 5});
     db.add_tuple(g, Vec<id_t>{2, 3, 6});
 
-    db.create_index(g, 0);
-    db.populate_indices();
+    db.populate_index(g, 0);
+
+    EGraph egraph(theory);
 
     Query query(theory.intern("intersection_query"));
     query.add_constraint(g, Vec<var_t>{0, 1, 2});
@@ -176,7 +183,7 @@ TEST_CASE("Engine state intersection", "[engine]")
     query.add_head_var(1);
     query.add_head_var(2);
 
-    Engine engine(db);
+    Engine engine(db, Handle(egraph));
     engine.prepare(query);
     Vec<id_t> results = engine.execute();
 
@@ -220,9 +227,10 @@ TEST_CASE("Engine multi-state join - two constraints", "[engine][multi-state]")
     db.add_tuple(mul, Vec<id_t>{10, 7, 22});
 
     // Create indices for identity permutation
-    db.create_index(add, 0);
-    db.create_index(mul, 0);
-    db.populate_indices();
+    db.populate_index(add, 0);
+    db.populate_index(mul, 0);
+
+    EGraph egraph(theory);
 
     SECTION("Join on shared variable")
     {
@@ -237,7 +245,7 @@ TEST_CASE("Engine multi-state join - two constraints", "[engine][multi-state]")
         query.add_head_var(3);
         query.add_head_var(4);
 
-        Engine engine(db);
+        Engine engine(db, Handle(egraph));
         engine.prepare(query);
         Vec<id_t> results = engine.execute();
 
@@ -298,10 +306,11 @@ TEST_CASE("Engine multi-state join - three constraints", "[engine][multi-state]"
     db.add_tuple(h, Vec<id_t>{31, 41});
     db.add_tuple(h, Vec<id_t>{33, 43});
 
-    db.create_index(f, 0);
-    db.create_index(g, 0);
-    db.create_index(h, 0);
-    db.populate_indices();
+    db.populate_index(f, 0);
+    db.populate_index(g, 0);
+    db.populate_index(h, 0);
+
+    EGraph egraph(theory);
 
     SECTION("Three-way join: f(x; y), g(y, z; w), h(w; r)")
     {
@@ -316,7 +325,7 @@ TEST_CASE("Engine multi-state join - three constraints", "[engine][multi-state]"
         query.add_head_var(3);
         query.add_head_var(4);
 
-        Engine engine(db);
+        Engine engine(db, Handle(egraph));
         engine.prepare(query);
         Vec<id_t> results = engine.execute();
 
@@ -362,9 +371,10 @@ TEST_CASE("Engine multi-state - variable appears in multiple constraints", "[eng
     db.add_tuple(p, Vec<id_t>{3, 4});
     db.add_tuple(p, Vec<id_t>{3, 1});
 
-    db.create_index(p, 0);
-    db.create_index(p, 1);
-    db.populate_indices();
+    db.populate_index(p, 0);
+    db.populate_index(p, 1);
+
+    EGraph egraph(theory);
 
     // TRIANGLE QUERY: (x, y) (y, z) (z, x)
 
@@ -376,7 +386,7 @@ TEST_CASE("Engine multi-state - variable appears in multiple constraints", "[eng
     query.add_head_var(1);
     query.add_head_var(2);
 
-    Engine engine(db);
+    Engine engine(db, Handle(egraph));
     engine.prepare(query);
     Vec<id_t> results = engine.execute();
 
@@ -417,9 +427,10 @@ TEST_CASE("Engine multi-state - empty intersection with backtracking", "[engine]
     // b: b(99, 5; 20) - no matching IDs with 'a' outputs
     db.add_tuple(b, Vec<id_t>{99, 5, 20});
 
-    db.create_index(a, 0);
-    db.create_index(b, 0);
-    db.populate_indices();
+    db.populate_index(a, 0);
+    db.populate_index(b, 0);
+
+    EGraph egraph(theory);
 
     SECTION("No matches due to disjoint e-class IDs")
     {
@@ -430,7 +441,7 @@ TEST_CASE("Engine multi-state - empty intersection with backtracking", "[engine]
         query.add_constraint(b, Vec<var_t>{2, 3, 4});
         query.add_head_var(0);
 
-        Engine engine(db);
+        Engine engine(db, Handle(egraph));
         engine.prepare(query);
         Vec<id_t> results = engine.execute();
 
@@ -451,9 +462,10 @@ TEST_CASE("Engine multi-state - shared variable at different positions", "[engin
     db.add_tuple(op, Vec<id_t>{2, 1, 11});
     db.add_tuple(op, Vec<id_t>{3, 2, 12});
 
-    db.create_index(op, 0);
-    db.create_index(op, 2);
-    db.populate_indices();
+    db.populate_index(op, 0);
+    db.populate_index(op, 2);
+
+    EGraph egraph(theory);
 
     SECTION("Variable x appears as first arg in first constraint, second arg in second")
     {
@@ -466,7 +478,7 @@ TEST_CASE("Engine multi-state - shared variable at different positions", "[engin
         query.add_head_var(1);                         // y
         query.add_head_var(3);                         // w
 
-        Engine engine(db);
+        Engine engine(db, Handle(egraph));
         engine.prepare(query);
         Vec<id_t> results = engine.execute();
 
@@ -511,14 +523,14 @@ TEST_CASE("Engine with non-identity permutations", "[engine][multi-state][permut
     db.add_tuple(mul, Vec<id_t>{100, 30, 203});
 
     // Create multiple indices with different permutations
-    db.create_index(add, 0); // [0, 1, 2]
-    db.create_index(add, 2); // [1, 0, 2]
+    db.populate_index(add, 0); // [0, 1, 2]
+    db.populate_index(add, 2); // [1, 0, 2]
 
-    db.create_index(mul, 0); // [0, 1, 2]
-    db.create_index(mul, 2); // [1, 0, 2]
-    db.create_index(mul, 4); // [2, 0, 1]
+    db.populate_index(mul, 0); // [0, 1, 2]
+    db.populate_index(mul, 2); // [1, 0, 2]
+    db.populate_index(mul, 4); // [2, 0, 1]
 
-    db.populate_indices();
+    EGraph egraph(theory);
 
     SECTION("Query using identity permutation on 'add'")
     {
@@ -533,7 +545,7 @@ TEST_CASE("Engine with non-identity permutations", "[engine][multi-state][permut
         query.add_head_var(3);
         query.add_head_var(4);
 
-        Engine engine(db);
+        Engine engine(db, Handle(egraph));
         engine.prepare(query);
         Vec<id_t> results = engine.execute();
 
@@ -580,7 +592,7 @@ TEST_CASE("Engine with non-identity permutations", "[engine][multi-state][permut
         query.add_head_var(3);
         query.add_head_var(4);
 
-        Engine engine(db);
+        Engine engine(db, Handle(egraph));
         engine.prepare(query);
         Vec<id_t> results = engine.execute();
 
@@ -636,13 +648,13 @@ TEST_CASE("Engine", "[engine]")
     query.add_head_var(2);
     query.add_head_var(0);
 
-    db.create_index(inv, 0);
-    db.create_index(mul, 2); // [1, 0, 2]
+    db.populate_index(inv, 0);
+    db.populate_index(mul, 2); // [1, 0, 2]
+
+    EGraph egraph(theory);
 
     SECTION("SUCCESS")
     {
-        Engine engine(db);
-
         db.add_tuple(inv, Vec<id_t>{15, 101});
         db.add_tuple(inv, Vec<id_t>{16, 102});
         db.add_tuple(inv, Vec<id_t>{17, 103});
@@ -650,7 +662,11 @@ TEST_CASE("Engine", "[engine]")
         db.add_tuple(mul, Vec<id_t>{101, 17, 201});
         db.add_tuple(mul, Vec<id_t>{102, 16, 202});
 
-        db.populate_indices();
+        // Rebuild indices after adding new data
+        db.populate_index(inv, 0);
+        db.populate_index(mul, 2);
+
+        Engine engine(db, Handle(egraph));
 
         engine.prepare(query);
         auto results = engine.execute();

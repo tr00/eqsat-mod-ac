@@ -4,6 +4,7 @@
 #include "handle.h"
 #include "id.h"
 #include "relation_ac.h"
+#include "utils/hashmap.h"
 #include "utils/multiset.h"
 
 namespace
@@ -29,62 +30,37 @@ bool RelationAC::rebuild(Handle egraph)
 {
     HashMap<const Multiset *, id_t, MultisetPtrHash, MultisetPtrEqual> cache;
 
-    for (auto& [eclass, map] : *data)
+    // canonicalize all elements in the multisets
+    for (auto& [term, mset] : *data)
     {
-        for (auto& [term, mset] : map)
+        mset.map([egraph](id_t x) { return egraph.canonicalize(x); });
+
+        // check if we've seen this multiset before
+        // because if so, then they are equal via congruence
+        id_t id = ids[term];
+        auto it = cache.find(&mset);
+        if (it != cache.end())
         {
-            // update all multisets
-            mset.map([egraph](id_t x) { return egraph.canonicalize(x); });
+            id_t other_id = it->second;
+            if (id != other_id) egraph.unify(id, other_id);
 
-            // check if we've seen this multiset before
-            // because if so then they are eq via congruence
-            auto it = cache.find(&mset);
-            if (it != cache.end())
-            {
-                id_t other_eclass = it->second;
-                if (eclass != other_eclass) egraph.unify(eclass, other_eclass);
-            }
-            else
-            {
-                cache.emplace(&mset, eclass);
-            }
-        }
-    }
-
-    // the keys might have also changed
-    Vec<id_t> changed_keys;
-    for (const auto& [id, _] : *data)
-        if (egraph.canonicalize(id) != id) changed_keys.push_back(id);
-
-    for (auto oldkey : changed_keys)
-    {
-        auto newkey = egraph.canonicalize(oldkey);
-
-        if (!data->contains(newkey))
-        {
-            auto kv = data->extract(oldkey);
-            assert(kv.has_value());
-            kv->first = newkey;
-            data->insert(std::move(kv.value()));
+            // TODO: we are currently storing the same term twice
+            // but with different term-ids
         }
         else
         {
-            // if newkey already has a few terms
-            // we append the terms from the old map
-
-            auto& oldmap = data->at(oldkey);
-            auto& newmap = data->at(newkey);
-
-            newmap.reserve(oldmap.size());
-
-            for (auto kv : oldmap)
-                newmap.insert(kv);
-
-            data->erase(oldkey);
+            cache.emplace(&mset, id);
         }
     }
 
-    // TODO: remove duplicate entries after unification
+    // canonicalize the eclass-ids of the terms
+    for (size_t i = 0; i < ids.size(); ++i)
+    {
+        auto oldid = ids[i];
+        auto newid = egraph.canonicalize(oldid);
+
+        if (newid != oldid) ids[i] = newid;
+    }
 
     return true;
 }
@@ -92,63 +68,52 @@ bool RelationAC::rebuild(Handle egraph)
 void RelationAC::add_tuple(id_t id, Multiset mset)
 {
     // is the new term included in any other existing term?
-    Vec<Multiset> worklist;
-    for (auto& [other_id, map] : *data)
+    Vec<std::pair<id_t, Multiset>> worklist;
+    for (auto& [other_term, other_mset] : *data)
     {
         worklist.clear();
 
-        for (const auto& [_, other_mset] : map)
+        if (other_mset.includes(mset))
         {
-            if (other_mset.includes(mset))
-            {
-                // Consider trying to add the term id1: { a, b }
-                // while the term id0: { a, b, c, d } already exists.
-                //
-                // Then we create a new subterm id2: { id1, c, d }
-                // which combines the id of the new term
-                // with the multiset difference old \ new.
+            // Consider trying to add the term id1: { a, b }
+            // while the term id0: { a, b, c, d } already exists.
+            //
+            // Then we create a new subterm id2: { id1, c, d }
+            // which combines the id of the new term
+            // with the multiset difference old \ new.
 
-                auto diff = other_mset.msetdiff(mset);
-                diff.insert(id);
+            auto diff = other_mset.msetdiff(mset);
+            diff.insert(id);
+            auto other_id = ids[other_term];
 
-                worklist.push_back(std::move(diff));
-            }
-        }
-
-        // add subterms to term bank
-        for (const auto& submset : worklist)
-        {
-            auto tid = static_cast<uint32_t>(nterms++);
-            map.insert({tid, submset});
+            worklist.push_back({other_id, std::move(diff)});
         }
     }
 
     // is any existing term included in the new term?
-    for (auto& [other_id, map] : *data)
+    for (auto& [other_term, other_mset] : *data)
     {
-        for (const auto& [_, other_mset] : map)
+        if (mset.includes(other_mset))
         {
-            if (mset.includes(other_mset))
-            {
-                auto diff = mset.msetdiff(other_mset);
-                diff.insert(other_id);
+            auto other_id = ids[other_term];
+            auto diff = mset.msetdiff(other_mset);
+            diff.insert(other_id);
 
-                worklist.push_back(std::move(diff));
-            }
+            worklist.push_back({id, std::move(diff)});
         }
     }
 
-    auto tid = static_cast<uint32_t>(nterms++);
-    if (!data->contains(id)) data->emplace(id, HashMap<id_t, Multiset>{});
-
-    auto& map = data->at(id);
-    for (const auto& submset : worklist)
+    // add subterms to term bank
+    for (const auto& [eclass, submset] : worklist)
     {
-        auto tid = static_cast<uint32_t>(nterms++);
-        map.insert({tid, submset});
+        auto term_id = static_cast<uint32_t>(size());
+        ids.push_back(eclass);
+        data->emplace(term_id, submset);
     }
 
-    map.emplace(tid, mset);
+    auto term_id = static_cast<uint32_t>(size());
+    ids.push_back(id);
+    data->insert({term_id, mset});
 }
 
 void RelationAC::add_tuple(const Vec<id_t>& tuple)
@@ -187,24 +152,23 @@ void RelationAC::dump(std::ofstream& out, const SymbolTable& symbols) const
 {
     out << "---- " << symbols.get_string(symbol) << "(AC) with " << size() << " terms ----" << std::endl;
 
-    for (const auto& [eclass, map] : *data)
+    for (const auto& [term, mset] : *data)
     {
-        for (const auto& [term_id, mset] : map)
+        auto eclass = ids[term];
+
+        out << "eclass-id: " << eclass << "  term-id:" << term << "  mset: {";
+
+        bool first = true;
+        for (const auto& [id, count] : mset.data)
         {
-            out << "eclass-id: " << eclass << "  term-id:" << term_id << "  mset: {";
+            if (!first) out << ", ";
+            first = false;
 
-            bool first = true;
-            for (const auto& [id, count] : mset.data)
-            {
-                if (!first) out << ", ";
-                first = false;
-
-                out << id;
-                if (count > 1) out << "^" << count;
-            }
-
-            out << "}" << std::endl;
+            out << id;
+            if (count > 1) out << "^" << count;
         }
+
+        out << "}" << std::endl;
     }
     out << std::endl;
 }

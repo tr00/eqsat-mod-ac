@@ -6,15 +6,18 @@
 #include "../id.h"
 #include "sets/hashmap_wrapper.h"
 #include "sets/multiset_support.h"
+#include "sets/singleton_set.h"
 #include "sorted_iter_set.h"
 #include "sorted_vec_set.h"
 
 enum SetKind
 {
+    EMPTY,
     SORTED_VEC,
     SORTED_ITER,
     MSET_SUPPORT,
     HMAP_WRAPPER,
+    SINGLETON,
 };
 
 class AbstractSet
@@ -26,9 +29,14 @@ class AbstractSet
         SortedIterSet sorted_iter;
         MultisetSupport mset_support;
         WrappedHashMapSet hmap_wrapper;
+        SingletonSet singleton;
     };
 
   public:
+    AbstractSet()
+        : kind(EMPTY)
+    {
+    }
     explicit AbstractSet(SortedVecSet s)
         : kind(SORTED_VEC)
         , sorted_vec(std::move(s))
@@ -49,11 +57,18 @@ class AbstractSet
         , hmap_wrapper(std::move(s))
     {
     }
+    explicit AbstractSet(SingletonSet s)
+        : kind(SINGLETON)
+        , singleton(std::move(s))
+    {
+    }
 
     ~AbstractSet()
     {
         switch (kind)
         {
+        case EMPTY:
+            break;
         case SORTED_VEC:
             sorted_vec.~SortedVecSet();
             break;
@@ -66,6 +81,9 @@ class AbstractSet
         case HMAP_WRAPPER:
             hmap_wrapper.~WrappedHashMapSet();
             break;
+        case SINGLETON:
+            singleton.~SingletonSet();
+            break;
         }
     }
 
@@ -77,6 +95,8 @@ class AbstractSet
     {
         switch (kind)
         {
+        case EMPTY:
+            break;
         case SORTED_VEC:
             new (&sorted_vec) SortedVecSet(std::move(other.sorted_vec));
             break;
@@ -89,6 +109,9 @@ class AbstractSet
         case HMAP_WRAPPER:
             new (&hmap_wrapper) WrappedHashMapSet(std::move(other.hmap_wrapper));
             break;
+        case SINGLETON:
+            new (&singleton) SingletonSet(std::move(other.singleton));
+            break;
         }
     }
 
@@ -99,6 +122,8 @@ class AbstractSet
             // Destroy current object
             switch (kind)
             {
+            case EMPTY:
+                break;
             case SORTED_VEC:
                 sorted_vec.~SortedVecSet();
                 break;
@@ -111,11 +136,16 @@ class AbstractSet
             case HMAP_WRAPPER:
                 hmap_wrapper.~WrappedHashMapSet();
                 break;
+            case SINGLETON:
+                singleton.~SingletonSet();
+                break;
             }
             // Move construct new object
             kind = other.kind;
             switch (kind)
             {
+            case EMPTY:
+                break;
             case SORTED_VEC:
                 new (&sorted_vec) SortedVecSet(std::move(other.sorted_vec));
                 break;
@@ -128,6 +158,9 @@ class AbstractSet
             case HMAP_WRAPPER:
                 new (&hmap_wrapper) WrappedHashMapSet(std::move(other.hmap_wrapper));
                 break;
+            case SINGLETON:
+                new (&singleton) SingletonSet(std::move(other.singleton));
+                break;
             }
         }
         return *this;
@@ -137,6 +170,8 @@ class AbstractSet
     {
         switch (kind)
         {
+        case EMPTY:
+            return false;
         case SORTED_VEC:
             return sorted_vec.contains(id);
         case SORTED_ITER:
@@ -145,6 +180,8 @@ class AbstractSet
             return mset_support.contains(id);
         case HMAP_WRAPPER:
             return hmap_wrapper.contains(id);
+        case SINGLETON:
+            return singleton.contains(id);
         }
         assert(0);
     }
@@ -153,6 +190,8 @@ class AbstractSet
     {
         switch (kind)
         {
+        case EMPTY:
+            return 0;
         case SORTED_VEC:
             return sorted_vec.size();
         case SORTED_ITER:
@@ -161,6 +200,8 @@ class AbstractSet
             return mset_support.size();
         case HMAP_WRAPPER:
             return hmap_wrapper.size();
+        case SINGLETON:
+            return singleton.size();
         }
         assert(0);
     }
@@ -174,6 +215,8 @@ class AbstractSet
     {
         switch (kind)
         {
+        case EMPTY:
+            return;
         case SORTED_VEC:
             return sorted_vec.for_each(f);
         case SORTED_ITER:
@@ -182,6 +225,8 @@ class AbstractSet
             return mset_support.for_each(f);
         case HMAP_WRAPPER:
             return hmap_wrapper.for_each(f);
+        case SINGLETON:
+            return singleton.for_each(f);
         }
         assert(0);
     }

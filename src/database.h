@@ -1,7 +1,6 @@
 #pragma once
 
 #include <cassert>
-#include <fstream>
 #include <stdexcept>
 
 #include "id.h"
@@ -14,7 +13,7 @@
 /**
  * @brief Key for indexing relations by operator symbol and permutation
  *
- * Used as a composite key to uniquely identify trie indices in the database.
+ * Used as a composite key to uniquely identify indices in the database.
  * Each index is specific to both an operator symbol and a particular permutation
  * of the tuple fields, enabling efficient query processing with different
  * field orderings.
@@ -22,27 +21,118 @@
 using IndexKey = std::pair<Symbol, uint32_t>;
 
 /**
- * @brief A database containing relations and their associated indices
+ * @brief Database for equality saturation with support for both standard and AC operators
  *
- * The Database class manages a collection of named relations and their trie-based
- * indices for efficient query processing. Each relation stores tuples for a specific
- * operator symbol, and indices provide fast lookup capabilities with different
- * tuple field orderings via permutations.
+ * # Overview
  *
- * The database supports:
- * - Creating and managing relations with different arities
- * - Adding tuples to relations
- * - Creating trie indices for efficient querying
- * - Multiple indices per relation with different field permutations
+ * The Database manages relations and indices for efficient conjunctive query execution
+ * in an equality saturation framework. It supports two types of operators:
+ * - **Standard operators**: Use ordered tuple storage (RowStore) and trie indices
+ * - **AC operators**: Use multiset-based storage (RelationAC) and multiset indices
  *
- * Example usage:
+ * # Architecture
+ *
+ * The database consists of three main components:
+ *
+ * 1. **Relations**: Store tuples representing terms in the e-graph
+ *    - Each relation is identified by an operator symbol
+ *    - Relations can be standard (RowStore) or AC (RelationAC)
+ *    - Type-erased via AbstractRelation for uniform interface
+ *
+ * 2. **Indices**: Enable efficient query evaluation via select/project operations
+ *    - Standard operators: TrieIndex with support for multiple permutations
+ *    - AC operators: MultisetIndex (permutation-invariant, always normalized to 0)
+ *    - Type-erased via AbstractIndex for uniform traversal interface
+ *
+ * 3. **Index Keys**: (Symbol, permutation) pairs for index lookup
+ *    - Permutation encoded as lexicographic index using factorial number system
+ *    - For AC operators, permutation is always 0 (commutative matching)
+ *
+ * # Data Model
+ *
+ * **Tuple Format**: Relations store tuples as `op(arg1, arg2, ..., argN; eclass_id)`
+ * where the **last column is always the e-class identifier**. This is a critical invariant.
+ *
+ * Examples:
+ * - `add(1, 2; 10)` means `add(1, 2)` belongs to e-class 10
+ * - `mul(5, 3; 20)` means `mul(5, 3)` belongs to e-class 20
+ * - For AC operators: `mul_ac({1, 2}; 30)` where {1, 2} is a multiset
+ *
+ * # Permutations
+ *
+ * Standard relations support multiple indices with different attribute orderings (permutations).
+ * Permutations are encoded as integers using the factorial number system:
+ *
+ * For arity 3: [0,1,2]=0, [0,2,1]=1, [1,0,2]=2, [1,2,0]=3, [2,0,1]=4, [2,1,0]=5
+ *
+ * The e-class ID column participates in permutation for efficient query planning.
+ *
+ * # AC Operator Handling
+ *
+ * AC (Associative-Commutative) operators require special treatment:
+ * - Arguments stored as **multisets** rather than ordered tuples
+ * - Only one index per AC relation (permutation always normalized to 0)
+ * - Pattern matching is order-independent: `mul(x, 2)` matches both `mul(2, x)` and `mul(x, 2)`
+ * - `has_index()` and `get_index()` normalize any permutation to 0 for AC relations
+ *
+ * # Interface
+ *
+ * ## Relation Management
+ * - `create_relation(symbol, arity)`: Create standard relation
+ * - `create_relation_ac(symbol)`: Create AC relation
+ * - `add_tuple(symbol, tuple)`: Insert tuple into relation
+ * - `has_relation(symbol)`: Check relation existence
+ *
+ * ## Index Management
+ * - `populate_index(symbol, perm)`: Create and populate index (atomic operation)
+ * - `has_index(symbol, perm)`: Check if index exists
+ * - `get_index(symbol, perm)`: Retrieve index copy for traversal
+ * - `clear_indices()`: Remove all indices (relations preserved)
+ *
+ * ## Rebuild
+ * - `rebuild(handle)`: Detect and unify equivalent terms across all relations
+ *   - Scans for tuples with same arguments but different e-class IDs
+ *   - Calls handle's unify to merge e-classes
+ *   - Returns true if any unifications occurred
+ *
+ * # Usage Example
+ *
  * ```cpp
+ * Theory theory;
+ * Symbol add = theory.add_operator("add", 2);
+ * Symbol mul = theory.add_operator("mul", AC); // AC operator
+ *
  * Database db;
- * db.add_relation(add_symbol, 2);           // Create binary relation for addition
- * db.add_tuple(add_symbol, {1, 2});         // Add tuple (1, 2)
- * db.add_index(add_symbol, 0);              // Create identity permutation index
- * db.build_indices();                       // Populate indices with data
+ * db.create_relation(add, 3);      // Binary op: add(arg1, arg2; eclass_id)
+ * db.create_relation_ac(mul);      // AC op: mul({args...}; eclass_id)
+ *
+ * // Add terms
+ * db.add_tuple(add, {1, 2, 10});   // add(1,2) in e-class 10
+ * db.add_tuple(mul, {1, 2, 20});   // mul(1,2) in e-class 20
+ *
+ * // Create indices for query execution
+ * db.populate_index(add, 0);       // Identity permutation [0,1,2]
+ * db.populate_index(add, 2);       // Swapped permutation [1,0,2]
+ * db.populate_index(mul, 0);       // AC: any permutation → 0
+ *
+ * // Check indices
+ * assert(db.has_index(add, 0));
+ * assert(db.has_index(add, 2));
+ * assert(db.has_index(mul, 999));  // Any permutation works for AC
+ *
+ * // Get index for traversal
+ * AbstractIndex idx = db.get_index(add, 0);
  * ```
+ *
+ * # Implementation Notes
+ *
+ * - Relations are stored in a HashMap keyed by Symbol
+ * - Indices are stored in a HashMap keyed by IndexKey (Symbol, permutation)
+ * - `get_index()` returns a **copy** to allow independent simultaneous traversals
+ *   - Underlying data is shared via shared_ptr (cheap copy)
+ *   - Only traversal state (history stack) is duplicated
+ * - `populate_index()` is atomic: creates and populates in one call
+ * - AC relations always normalize permutation to 0 in all operations
  */
 class Database
 {
@@ -115,33 +205,6 @@ class Database
     }
 
     /**
-     * @brief Create an empty index for a relation with specific permutation
-     *
-     * Delegates to the relation to create the appropriate index type:
-     * - RowStore creates a TrieIndex
-     * - RelationAC creates a MultisetIndex (ignores permutation)
-     *
-     * The index will be populated when populate_indices() is called.
-     *
-     * @param name The operator symbol for the relation to index
-     * @param perm The lexicographic permutation index for field ordering
-     *
-     * @note If an index with the same key already exists, it will be replaced
-     * @note For AC relations, permutation is always normalized to 0
-     */
-    void create_index(Symbol name, uint32_t perm)
-    {
-        if (get_relation(name)->get_kind() == RELATION_AC) perm = 0;
-
-        IndexKey key{name, perm};
-
-        auto *relation = get_relation(name);
-        assert(relation != nullptr && "Relation not found");
-
-        indices[key] = relation->create_index();
-    }
-
-    /**
      * @brief Retrieve a copy of a trie index for querying
      *
      * @param operator_symbol The operator symbol for the relation
@@ -187,15 +250,29 @@ class Database
     void clear_indices();
 
     /**
-     * @brief Populate all indices with data from their corresponding relations
+     * @brief Create and populate an index for a relation with specific permutation
      *
-     * Iterates through all created indices and populates them with tuples
-     * from their associated relations, applying the appropriate field
-     * permutations as specified by the permutation_id.
+     * Delegates to the relation to create and populate the appropriate index type:
+     * - RowStore creates a TrieIndex with permuted data
+     * - RelationAC creates a MultisetIndex (ignores permutation)
      *
-     * @note Must be called after creating indices and adding tuples to relations
+     * @param name The operator symbol for the relation to index
+     * @param perm The lexicographic permutation index for field ordering
+     *
+     * @note If an index with the same key already exists, it will be replaced
+     * @note For AC relations, permutation is always normalized to 0
      */
-    void populate_indices();
+    void populate_index(Symbol name, uint32_t perm)
+    {
+        if (get_relation(name)->get_kind() == RELATION_AC) perm = 0;
+
+        IndexKey key{name, perm};
+
+        auto *relation = get_relation(name);
+        assert(relation != nullptr && "Relation not found");
+
+        indices[key] = relation->populate_index(perm);
+    }
 
     /**
      * @brief Rebuild all relations by detecting and unifying duplicate entries
@@ -211,7 +288,7 @@ class Database
      *
      * @note For AC relations, rebuild is a no-op
      */
-    bool rebuild(std::function<id_t(id_t)> canonicalize, std::function<id_t(id_t, id_t)> unify);
+    bool rebuild(Handle handle);
 
     /**
      * @brief Dump all relations to a file

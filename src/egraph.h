@@ -4,6 +4,7 @@
 
 #include "database.h"
 #include "enode.h"
+#include "handle.h"
 #include "id.h"
 #include "query.h"
 #include "symbol_table.h"
@@ -23,6 +24,11 @@ class EGraph
     Vec<std::pair<Symbol, uint32_t>> required_indices;
 
     int enodes = 0;
+
+    Handle handle()
+    {
+        return Handle(*this);
+    }
 
   public:
     EGraph(const Theory& theory);

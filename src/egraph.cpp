@@ -8,6 +8,7 @@
 #include "egraph.h"
 #include "engine.h"
 #include "id.h"
+#include "utils/hashmap.h"
 
 EGraph::EGraph(const Theory& theory)
     : theory(theory)
@@ -35,19 +36,21 @@ EGraph::EGraph(const Theory& theory)
             substs.push_back(subst);
         }
 
-        // create required indices for compiled queries
+        // collect required indices for compiled queries
+        HashSet<std::pair<Symbol, uint32_t>> index_set;
         for (const auto& query : queries)
         {
             auto required = query.get_required_indices();
-            for (const auto& [op_symbol, perm] : required)
+            for (auto& [op, perm] : required)
             {
-                if (!db.has_index(op_symbol, perm))
-                {
-                    db.create_index(op_symbol, perm);
-                    required_indices.push_back({op_symbol, perm});
-                }
+                if (theory.get_arity(op) == AC) perm = 0;
+                index_set.insert({op, perm});
             }
         }
+
+        required_indices.reserve(index_set.size());
+        for (auto tuple : index_set)
+            required_indices.push_back(tuple);
     }
 }
 
@@ -145,15 +148,12 @@ void EGraph::apply_match(const Vec<id_t>& match, Subst& subst)
 
 bool EGraph::rebuild()
 {
-    auto canonicalize = [this](id_t id) -> id_t { return uf.find_root(id); };
-    auto unify = [this](id_t a, id_t b) -> id_t { return uf.unify(a, b); };
-
-    return db.rebuild(canonicalize, unify);
+    return db.rebuild(handle());
 }
 
 void EGraph::saturate(std::size_t max_iters)
 {
-    Engine engine(db);
+    Engine engine(db, handle());
     HashMap<Symbol, Vec<id_t>> matches;
 
     for (const auto& query : queries)
@@ -162,30 +162,23 @@ void EGraph::saturate(std::size_t max_iters)
     for (std::size_t iter = 0; iter < max_iters; ++iter)
     {
         for (const auto& [op_symbol, perm] : required_indices)
-            db.create_index(op_symbol, perm);
+            db.populate_index(op_symbol, perm);
 
-        db.populate_indices();
-
+        // ematching
         for (const auto& query : queries)
-        {
-            engine.prepare(query);
-            matches[query.name] = engine.execute();
-        }
+            engine.execute(matches[query.name], query);
 
         for (const auto& [name, match_vec] : matches)
         {
-            // Skip empty match vectors (no matches found)
             if (match_vec.empty()) continue;
 
             // find substitution with the same name
-            for (size_t i = 0; i < substs.size(); ++i)
-            {
-                if (substs[i].name == name)
-                {
-                    apply_matches(match_vec, substs[i]);
-                    break;
-                }
-            }
+            const auto name2 = name;
+            auto cmp = [name2](const auto& subst) { return subst.name == name2; };
+            auto it = std::find_if(substs.begin(), substs.end(), cmp);
+            assert(it != substs.end());
+
+            apply_matches(match_vec, *it);
         }
 
         db.clear_indices();

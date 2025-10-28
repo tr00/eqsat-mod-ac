@@ -1,26 +1,26 @@
 #pragma once
 
+#include <fstream>
+#include <memory>
+
 #include "handle.h"
 #include "id.h"
 #include "indices/abstract_index.h"
 #include "symbol_table.h"
 #include "utils/multiset.h"
-#include <fstream>
-#include <functional>
-#include <memory>
 
 class RelationAC
 {
   private:
     // eclass-id < term-id < mset
-    std::shared_ptr<HashMap<id_t, HashMap<id_t, Multiset>>> data;
-    size_t nterms;
+    std::shared_ptr<HashMap<id_t, Multiset>> data;
+    Vec<id_t> ids;
     Symbol symbol;
 
   public:
     RelationAC(Symbol symbol)
-        : data(std::make_shared<HashMap<id_t, HashMap<id_t, Multiset>>>())
-        , nterms(0)
+        : data(std::make_shared<HashMap<id_t, Multiset>>())
+        , ids()
         , symbol(symbol)
     {
     }
@@ -32,26 +32,15 @@ class RelationAC
 
     size_t size() const
     {
-        return nterms;
+        return ids.size();
     }
 
     void add_tuple(const Vec<id_t>& tuple);
     void add_tuple(id_t id, Multiset mset);
 
-    /**
-     * @brief Create an empty multiset index for this AC relation
-     *
-     * @return An empty AbstractIndex containing a MultisetIndex
-     * @note Permutation parameter is ignored for AC relations
-     */
-    AbstractIndex create_index()
-    {
-        return AbstractIndex(MultisetIndex(data));
-    }
-
     AbstractIndex populate_index()
     {
-        return AbstractIndex(MultisetIndex(data));
+        return AbstractIndex(MultisetIndex(symbol, data));
     }
 
     bool rebuild(Handle handle);
