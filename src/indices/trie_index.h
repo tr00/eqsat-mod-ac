@@ -3,7 +3,9 @@
 #include <memory>
 
 #include "../sets/abstract_set.h"
+#include "enode.h"
 #include "id.h"
+#include "symbol_table.h"
 
 class TrieNode
 {
@@ -24,10 +26,14 @@ class TrieIndex
     TrieNode *current_node;
     Vec<TrieNode *> parent_stack;
     std::shared_ptr<TrieNode> root;
+    Symbol symbol;
+    Vec<id_t> history;
 
   public:
-    TrieIndex(std::shared_ptr<TrieNode> root)
+    TrieIndex(Symbol symbol, std::shared_ptr<TrieNode> root)
         : root(root)
+        , symbol(symbol)
+        , history()
     {
         reset();
     }
@@ -37,6 +43,8 @@ class TrieIndex
         : current_node(other.current_node)
         , parent_stack(other.parent_stack)
         , root(other.root)
+        , symbol(other.symbol)
+        , history(other.history)
     {
     }
 
@@ -45,6 +53,8 @@ class TrieIndex
         root = other.root;
         current_node = other.current_node;
         parent_stack = other.parent_stack;
+        history = other.history;
+        symbol = other.symbol;
         return *this;
     }
 
@@ -52,4 +62,5 @@ class TrieIndex
     void select(id_t key);
     void unselect();
     AbstractSet project() const;
+    ENode make_enode() const;
 };

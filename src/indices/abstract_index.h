@@ -207,15 +207,12 @@ class AbstractIndex
         switch (kind)
         {
         case NONE:
-            assert(0 && "Cannot unselect on NONE index");
+            assert(0 && "Cannot make_enode on NONE index");
             break;
         case TRIE:
-            // TODO:
-            // trie.make_enode();
-            break;
+            return trie.make_enode();
         case MSET:
-            mst.make_enode();
-            break;
+            return mst.make_enode();
         }
 
         __builtin_unreachable();

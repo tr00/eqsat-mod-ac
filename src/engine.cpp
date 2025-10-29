@@ -92,7 +92,17 @@ void Engine::prepare(const Query& query)
             const Constraint& constraint = constraint_ref.get();
             auto index_it = indices.find(constraint);
             assert(index_it != indices.end());
-            state.indices.push_back(index_it->second); // Shares the index via shared_ptr
+
+            // In the back is always the id.
+            // We need fd optimization for those.
+            if (var == constraint.variables.back())
+            {
+                state.fd = index_it->second;
+            }
+            else
+            {
+                state.indices.push_back(index_it->second);
+            }
         }
         states.push_back(std::move(state));
     }

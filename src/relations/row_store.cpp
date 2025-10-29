@@ -28,7 +28,7 @@ AbstractIndex RowStore::populate_index(uint32_t vo)
         trie->insert_path(buffer);
     }
 
-    return AbstractIndex(TrieIndex(trie));
+    return AbstractIndex(TrieIndex(symbol, trie));
 }
 
 // Comparison context for qsort

@@ -2,6 +2,9 @@
 
 #include "indices/trie_index.h"
 
+// Dummy symbol for testing
+constexpr Symbol DUMMY_SYMBOL = 0;
+
 TEST_CASE("TrieNode basic operations", "[trie_node]")
 {
     TrieNode node;
@@ -148,7 +151,7 @@ TEST_CASE("TrieIndex navigation", "[trie_index]")
 
     SECTION("Basic select operation")
     {
-        TrieIndex index(root);
+        TrieIndex index(DUMMY_SYMBOL, root);
 
         // REQUIRE_THROWS( index.select(5) );
         index.select(10);
@@ -157,7 +160,7 @@ TEST_CASE("TrieIndex navigation", "[trie_index]")
 
     SECTION("Project after select")
     {
-        TrieIndex index(root);
+        TrieIndex index(DUMMY_SYMBOL, root);
 
         // Initially at root
         AbstractSet keys = index.project();
@@ -176,7 +179,7 @@ TEST_CASE("TrieIndex navigation", "[trie_index]")
 
     SECTION("Select and backtrack")
     {
-        TrieIndex index(root);
+        TrieIndex index(DUMMY_SYMBOL, root);
 
         // Navigate down
         index.select(10);
@@ -193,7 +196,7 @@ TEST_CASE("TrieIndex navigation", "[trie_index]")
 
     SECTION("Multiple select operations")
     {
-        TrieIndex index(root);
+        TrieIndex index(DUMMY_SYMBOL, root);
 
         index.select(10);
         index.select(20);
@@ -216,7 +219,7 @@ TEST_CASE("TrieIndex edge cases", "[trie_index]")
     SECTION("Empty node trie")
     {
         auto root = std::make_shared<TrieNode>();
-        TrieIndex index(root);
+        TrieIndex index(DUMMY_SYMBOL, root);
 
         AbstractSet keys = index.project();
         REQUIRE(keys.empty());
@@ -228,7 +231,7 @@ TEST_CASE("TrieIndex edge cases", "[trie_index]")
         root->insert_path({10});
         root->insert_path({20});
 
-        TrieIndex index(root);
+        TrieIndex index(DUMMY_SYMBOL, root);
         AbstractSet keys = index.project();
         REQUIRE(keys.size() == 2);
         REQUIRE(keys.contains(10));
@@ -286,8 +289,8 @@ TEST_CASE("TrieIndex simultaneous traversal", "[trie_index]")
     SECTION("Two independent copies can traverse simultaneously")
     {
         // Create two copies of the index
-        TrieIndex index1(root);
-        TrieIndex index2(root);
+        TrieIndex index1(DUMMY_SYMBOL, root);
+        TrieIndex index2(DUMMY_SYMBOL, root);
 
         // Both should start at root and see the same keys
         AbstractSet keys1 = index1.project();
@@ -334,7 +337,7 @@ TEST_CASE("TrieIndex simultaneous traversal", "[trie_index]")
 
     SECTION("Copy constructor creates independent traversal state")
     {
-        TrieIndex index1(root);
+        TrieIndex index1(DUMMY_SYMBOL, root);
         index1.select(1);
 
         // Create copy while index1 is at position {1, *}
@@ -378,7 +381,7 @@ TEST_CASE("TrieIndex simultaneous traversal", "[trie_index]")
 
     SECTION("Underlying data is shared, not duplicated")
     {
-        TrieIndex index1(root);
+        TrieIndex index1(DUMMY_SYMBOL, root);
         TrieIndex index2 = index1;
 
         // Verify they share the same root by checking that modifications

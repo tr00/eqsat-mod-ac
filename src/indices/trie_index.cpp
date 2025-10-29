@@ -49,6 +49,7 @@ void TrieIndex::reset()
 {
     current_node = root.get();
     parent_stack.clear();
+    history.clear();
 }
 
 void TrieIndex::select(id_t key)
@@ -58,17 +59,25 @@ void TrieIndex::select(id_t key)
 
     parent_stack.push_back(current_node);
     current_node = current_node->children[index].get();
+    history.push_back(key);
 }
 
 void TrieIndex::unselect()
 {
     assert(!parent_stack.empty());
+    assert(!history.empty());
 
     current_node = parent_stack.back();
     parent_stack.pop_back();
+    history.pop_back();
 }
 
 AbstractSet TrieIndex::project() const
 {
     return AbstractSet(SortedIterSet(current_node->keys));
+}
+
+ENode TrieIndex::make_enode() const
+{
+    return ENode(symbol, history);
 }

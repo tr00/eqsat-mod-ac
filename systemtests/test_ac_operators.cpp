@@ -11,51 +11,47 @@ TEST_CASE("AC operators support commutative pattern matching", "[egraph][ac][pat
 {
     Theory theory;
 
-    auto a = theory.add_operator("a", 0);
-    auto b = theory.add_operator("b", 0);
-
+    auto var = theory.add_operator("var", 0);
+    auto one = theory.add_operator("one", 0);
     auto mul = theory.add_operator("mul", AC);
 
-    // Rewrite rule: mul(?x, b) -> ?x
-    // With AC, this should match both mul(x, b) and mul(b, x)
-    theory.add_rewrite_rule("mul_identity", "(mul ?x (b))", "?x");
+    // Rewrite rule: mul(?x, one) -> ?x
+    theory.add_rewrite_rule("identity", "(mul ?x (one))", "?x");
 
     EGraph egraph(theory);
 
-    SECTION("AC pattern matches forward order mul(a, b)")
+    SECTION("AC pattern matches forward order mul(a, one)")
     {
-        auto a_expr = Expr::make_operator(a);
-        auto b_expr = Expr::make_operator(b);
-        auto mul_expr = Expr::make_operator(mul, {a_expr, b_expr});
+        auto var_expr = Expr::make_operator(var);
+        auto one_expr = Expr::make_operator(one);
+        auto mul_expr = Expr::make_operator(mul, {var_expr, one_expr});
 
-        id_t a_id = egraph.add_expr(a_expr);
+        id_t var_id = egraph.add_expr(var_expr);
         id_t mul_id = egraph.add_expr(mul_expr);
 
-        REQUIRE(egraph.is_equiv(a_id, mul_id) == false);
+        REQUIRE(egraph.is_equiv(var_id, mul_id) == false);
 
         egraph.saturate(1);
 
-        // With AC: Pattern (mul ?x (b)) should match mul(a, b)
-        // binding ?x to a, thus making a ≡ mul(a, b)
-        REQUIRE(egraph.is_equiv(a_id, mul_id) == true);
+        REQUIRE(egraph.is_equiv(var_id, mul_id) == true);
     }
 
     SECTION("AC pattern matches reverse order mul(b, a)")
     {
-        auto a_expr = Expr::make_operator(a);
-        auto b_expr = Expr::make_operator(b);
-        auto mul_expr = Expr::make_operator(mul, {b_expr, a_expr}); // Reversed!
+        auto var_expr = Expr::make_operator(var);
+        auto one_expr = Expr::make_operator(one);
+        auto mul_expr = Expr::make_operator(mul, {one_expr, var_expr}); // Reversed!
 
-        id_t a_id = egraph.add_expr(a_expr);
+        id_t var_id = egraph.add_expr(var_expr);
         id_t mul_id = egraph.add_expr(mul_expr);
 
-        REQUIRE(egraph.is_equiv(a_id, mul_id) == false);
+        REQUIRE(egraph.is_equiv(var_id, mul_id) == false);
 
         egraph.saturate(1);
 
         // With AC: Pattern (mul ?x (b)) should ALSO match mul(b, a)
         // binding ?x to a, thus making a ≡ mul(b, a)
-        REQUIRE(egraph.is_equiv(a_id, mul_id) == true);
+        REQUIRE(egraph.is_equiv(var_id, mul_id) == true);
     }
 }
 
