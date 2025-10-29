@@ -39,6 +39,8 @@ class Engine
     Vec<var_t> head;
     const Database& db;
     const Handle egraph;
+    uint32_t ephemeral_counter = 0;
+    HashMap<id_t, ENode> ephemeral_map;
 
   public:
     Engine(const Database& db, const Handle handle)
@@ -57,4 +59,9 @@ class Engine
 
     void execute(Vec<id_t>& buffer, const Query& query);
     void execute_rec(Vec<id_t>& results, size_t level);
+
+    const HashMap<id_t, ENode>& get_ephemeral_map() const
+    {
+        return ephemeral_map;
+    }
 };

@@ -63,8 +63,8 @@ class EGraph
         return uf.find_root(id);
     }
 
-    void apply_matches(const Vec<id_t>& matches, Subst& subst);
-    void apply_match(const Vec<id_t>& match, Subst& subst);
+    void apply_matches(const Vec<id_t>& matches, Subst& subst, const HashMap<id_t, ENode>& ephemeral_map);
+    void apply_match(const Vec<id_t>& match, Subst& subst, const HashMap<id_t, ENode>& ephemeral_map);
     bool rebuild();
 
     void saturate(size_t max_iters);

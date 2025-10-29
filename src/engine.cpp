@@ -1,4 +1,5 @@
 #include <functional>
+#include <iostream>
 
 #include "engine.h"
 #include "id.h"
@@ -34,11 +35,12 @@ size_t Engine::intersect(State& state)
         auto enode = state.fd->make_enode();
         auto id = egraph.lookup(enode);
 
-        // TODO: ephemeral enodes
         if (!id.has_value())
         {
-            state.candidates.clear();
-            return 0;
+            // Create ephemeral ID with MSB set
+            id_t ephemeral_id = ephemeral_counter++ | 0x80000000;
+            ephemeral_map.emplace(ephemeral_id, std::move(enode));
+            id = ephemeral_id;
         }
 
         sets.emplace_back(AbstractSet(SingletonSet(id.value())));
@@ -56,6 +58,10 @@ void Engine::prepare(const Query& query)
 
     HashMap<Constraint, std::shared_ptr<AbstractIndex>> indices;
     HashMap<var_t, Vec<ConstraintRef>> constraints;
+
+    // Reset ephemeral state
+    // ephemeral_counter = 0;
+    // ephemeral_map.clear();
 
     // load indices
     for (const auto& constraint : query.constraints)

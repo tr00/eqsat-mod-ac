@@ -101,8 +101,12 @@ class Multiset
 
         for (const auto& [value, count] : data)
         {
-            uint32_t delta = count - other.count(value);
-            if (__builtin_expect(delta > 0, true)) diff.insert(value, delta);
+            uint32_t other_count = other.count(value);
+            if (count > other_count)
+            {
+                diff.insert(value, count - other_count);
+            }
+            // Skip if count <= other_count (would underflow)
         }
 
         return diff;

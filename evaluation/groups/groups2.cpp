@@ -25,7 +25,8 @@ int main()
     auto var_id = egraph.add_expr(var_expr);
     auto mul_id = egraph.add_expr(mul_expr);
 
-    egraph.saturate(5);
+    egraph.saturate(2);
+    egraph.rebuild();
 
     // auto one_id = egraph.add_expr(Expr::make_operator(one));
 

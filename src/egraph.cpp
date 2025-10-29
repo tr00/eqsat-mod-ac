@@ -115,7 +115,7 @@ id_t EGraph::unify(id_t a, id_t b)
     return id;
 }
 
-void EGraph::apply_matches(const Vec<id_t>& matches, Subst& subst)
+void EGraph::apply_matches(const Vec<id_t>& matches, Subst& subst, const HashMap<id_t, ENode>& ephemeral_map)
 {
     size_t head_size = subst.head_size;
 
@@ -130,18 +130,32 @@ void EGraph::apply_matches(const Vec<id_t>& matches, Subst& subst)
         for (size_t k = 0; k < head_size; ++k)
             match[k] = matches[j * head_size + k];
 
-        apply_match(match, subst);
+        apply_match(match, subst, ephemeral_map);
     }
 }
 
-void EGraph::apply_match(const Vec<id_t>& match, Subst& subst)
+void EGraph::apply_match(const Vec<id_t>& match, Subst& subst, const HashMap<id_t, ENode>& ephemeral_map)
 {
+    // Materialize ephemeral IDs in the match vector
+    Vec<id_t> materialized_match = match;
+    for (id_t& id : materialized_match)
+    {
+        // Check if ID is ephemeral (MSB set)
+        if (id & 0x80000000)
+        {
+            auto it = ephemeral_map.find(id);
+            assert(it != ephemeral_map.end());
+            // Materialize: add the enode to get real ID
+            id = add_enode(it->second);
+        }
+    }
+
     auto callback = [this](Symbol sym, Vec<id_t> children) -> id_t {
         return this->add_enode(sym, std::move(children));
     };
 
-    id_t lhs_id = match.back(); // root
-    id_t rhs_id = subst.instantiate(callback, match);
+    id_t lhs_id = materialized_match.back(); // root
+    id_t rhs_id = subst.instantiate(callback, materialized_match);
 
     unify(lhs_id, rhs_id);
 }
@@ -178,7 +192,7 @@ void EGraph::saturate(std::size_t max_iters)
             auto it = std::find_if(substs.begin(), substs.end(), cmp);
             assert(it != substs.end());
 
-            apply_matches(match_vec, *it);
+            apply_matches(match_vec, *it, engine.get_ephemeral_map());
         }
 
         db.clear_indices();
