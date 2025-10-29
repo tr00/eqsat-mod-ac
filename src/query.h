@@ -41,6 +41,15 @@ class Constraint
      */
     Constraint(Symbol op, const Vec<var_t>& vars);
 
+    /**
+     * @brief Construct a new constraint with explicit permutation
+     *
+     * @param op The operator symbol
+     * @param vars Vector of variables for this constraint
+     * @param perm Explicit permutation value
+     */
+    Constraint(Symbol op, const Vec<var_t>& vars, uint32_t perm);
+
     bool operator==(const Constraint& other) const
     {
         return symbol == other.symbol && variables == other.variables;

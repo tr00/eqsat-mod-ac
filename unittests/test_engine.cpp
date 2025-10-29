@@ -35,7 +35,7 @@ TEST_CASE("Engine with single state - simple query", "[engine]")
     {
         // Query: add(0, 1, 2) - find all (x, y, z) where add(x, y, z)
         Query query(theory.intern("test_query"));
-        query.add_constraint(add, Vec<var_t>{0, 1, 2});
+        query.add_constraint(Constraint(add, Vec<var_t>{0, 1, 2}));
         query.add_head_var(0); // x
         query.add_head_var(1); // y
         query.add_head_var(2); // z
@@ -89,7 +89,7 @@ TEST_CASE("Engine with single state - simple query", "[engine]")
 
         // Query: find all (x, y, z) where add(x, y; z)
         Query query(theory.intern("test_query3"));
-        query.add_constraint(add, Vec<var_t>{0, 1, 2});
+        query.add_constraint(Constraint(add, Vec<var_t>{0, 1, 2}));
         query.add_head_var(0);
         query.add_head_var(1);
         query.add_head_var(2);
@@ -117,7 +117,7 @@ TEST_CASE("Engine with single state - empty database", "[engine]")
     EGraph egraph(theory);
 
     Query query(theory.intern("empty_query"));
-    query.add_constraint(mul, Vec<var_t>{0, 1, 2});
+    query.add_constraint(Constraint(mul, Vec<var_t>{0, 1, 2}));
     query.add_head_var(0);
     query.add_head_var(1);
     query.add_head_var(2);
@@ -146,7 +146,7 @@ TEST_CASE("Engine with single state - single tuple", "[engine]")
     EGraph egraph(theory);
 
     Query query(theory.intern("single_tuple_query"));
-    query.add_constraint(f, Vec<var_t>{0, 1});
+    query.add_constraint(Constraint(f, Vec<var_t>{0, 1}));
     query.add_head_var(0);
     query.add_head_var(1);
 
@@ -178,7 +178,7 @@ TEST_CASE("Engine state intersection", "[engine]")
     EGraph egraph(theory);
 
     Query query(theory.intern("intersection_query"));
-    query.add_constraint(g, Vec<var_t>{0, 1, 2});
+    query.add_constraint(Constraint(g, Vec<var_t>{0, 1, 2}));
     query.add_head_var(0);
     query.add_head_var(1);
     query.add_head_var(2);
@@ -237,8 +237,8 @@ TEST_CASE("Engine multi-state join - two constraints", "[engine][multi-state]")
         // Query: add(x, y; z), mul(z, w; r)
         // Find all (x, y, z, w, r) where add(x,y) produces z and mul(z,w) produces r
         Query query(theory.intern("join_query"));
-        query.add_constraint(add, Vec<var_t>{0, 1, 2}); // x=0, y=1, z=2
-        query.add_constraint(mul, Vec<var_t>{2, 3, 4}); // z=2, w=3, r=4
+        query.add_constraint(Constraint(add, Vec<var_t>{0, 1, 2})); // x=0, y=1, z=2
+        query.add_constraint(Constraint(mul, Vec<var_t>{2, 3, 4})); // z=2, w=3, r=4
         query.add_head_var(0);
         query.add_head_var(1);
         query.add_head_var(2);
@@ -316,9 +316,9 @@ TEST_CASE("Engine multi-state join - three constraints", "[engine][multi-state]"
     {
         // Query chains: x -> y (via f) -> w (via g with z) -> r (via h)
         Query query(theory.intern("three_join"));
-        query.add_constraint(f, Vec<var_t>{0, 1});    // x=0, y=1
-        query.add_constraint(g, Vec<var_t>{1, 2, 3}); // y=1, z=2, w=3
-        query.add_constraint(h, Vec<var_t>{3, 4});    // w=3, r=4
+        query.add_constraint(Constraint(f, Vec<var_t>{0, 1}));    // x=0, y=1
+        query.add_constraint(Constraint(g, Vec<var_t>{1, 2, 3})); // y=1, z=2, w=3
+        query.add_constraint(Constraint(h, Vec<var_t>{3, 4}));    // w=3, r=4
         query.add_head_var(0);
         query.add_head_var(1);
         query.add_head_var(2);
@@ -379,9 +379,9 @@ TEST_CASE("Engine multi-state - variable appears in multiple constraints", "[eng
     // TRIANGLE QUERY: (x, y) (y, z) (z, x)
 
     Query query(theory.intern("triangle"));
-    query.add_constraint(p, Vec<var_t>{0, 1});
-    query.add_constraint(p, Vec<var_t>{1, 2});
-    query.add_constraint(p, Vec<var_t>{2, 0});
+    query.add_constraint(Constraint(p, Vec<var_t>{0, 1}));
+    query.add_constraint(Constraint(p, Vec<var_t>{1, 2}));
+    query.add_constraint(Constraint(p, Vec<var_t>{2, 0}));
     query.add_head_var(0);
     query.add_head_var(1);
     query.add_head_var(2);
@@ -437,8 +437,8 @@ TEST_CASE("Engine multi-state - empty intersection with backtracking", "[engine]
         // Query: a(x, y; z), b(z, w; r)
         // No z from 'a' matches first arg of 'b'
         Query query(theory.intern("no_match"));
-        query.add_constraint(a, Vec<var_t>{0, 1, 2});
-        query.add_constraint(b, Vec<var_t>{2, 3, 4});
+        query.add_constraint(Constraint(a, Vec<var_t>{0, 1, 2}));
+        query.add_constraint(Constraint(b, Vec<var_t>{2, 3, 4}));
         query.add_head_var(0);
 
         Engine engine(db, Handle(egraph));
@@ -472,11 +472,11 @@ TEST_CASE("Engine multi-state - shared variable at different positions", "[engin
         // Query: op(x, y; z1), op(w, x; z2)
         // x connects position 0 of first to position 1 of second
         Query query(theory.intern("cross_pos"));
-        query.add_constraint(op, Vec<var_t>{0, 1, 2}); // x=0, y=1, z1=2
-        query.add_constraint(op, Vec<var_t>{3, 0, 4}); // w=3, x=0, z2=4
-        query.add_head_var(0);                         // x
-        query.add_head_var(1);                         // y
-        query.add_head_var(3);                         // w
+        query.add_constraint(Constraint(op, Vec<var_t>{0, 1, 2})); // x=0, y=1, z1=2
+        query.add_constraint(Constraint(op, Vec<var_t>{3, 0, 4})); // w=3, x=0, z2=4
+        query.add_head_var(0);                                     // x
+        query.add_head_var(1);                                     // y
+        query.add_head_var(3);                                     // w
 
         Engine engine(db, Handle(egraph));
         engine.prepare(query);
@@ -537,8 +537,8 @@ TEST_CASE("Engine with non-identity permutations", "[engine][multi-state][permut
         // Query: add(x, y; z), mul(z, w; r)
         // Both constraints use identity permutation (permutation 0)
         Query query(theory.intern("identity_perm"));
-        query.add_constraint(add, Vec<var_t>{0, 1, 2}); // Uses permutation 0
-        query.add_constraint(mul, Vec<var_t>{2, 3, 4}); // Uses permutation 0
+        query.add_constraint(Constraint(add, Vec<var_t>{0, 1, 2})); // Uses permutation 0
+        query.add_constraint(Constraint(mul, Vec<var_t>{2, 3, 4})); // Uses permutation 0
         query.add_head_var(0);
         query.add_head_var(1);
         query.add_head_var(2);
@@ -584,8 +584,8 @@ TEST_CASE("Engine with non-identity permutations", "[engine][multi-state][permut
         // Query: add(y, x; z), mul(z, w; r)
         // First constraint uses permutation 2 (swaps first two args)
         Query query(theory.intern("swapped_perm"));
-        query.add_constraint(add, Vec<var_t>{1, 0, 2}); // Swapped: y, x instead of x, y
-        query.add_constraint(mul, Vec<var_t>{2, 3, 4});
+        query.add_constraint(Constraint(add, Vec<var_t>{1, 0, 2})); // Swapped: y, x instead of x, y
+        query.add_constraint(Constraint(mul, Vec<var_t>{2, 3, 4}));
         query.add_head_var(0);
         query.add_head_var(1);
         query.add_head_var(2);
@@ -643,8 +643,8 @@ TEST_CASE("Engine", "[engine]")
     // Q(r, a) := mul(t, a; r), inv(a; t)
 
     Query query(theory.intern("inverse"));
-    query.add_constraint(mul, Vec<id_t>{1, 0, 2});
-    query.add_constraint(inv, Vec<id_t>{0, 1});
+    query.add_constraint(Constraint(mul, Vec<id_t>{1, 0, 2}));
+    query.add_constraint(Constraint(inv, Vec<id_t>{0, 1}));
     query.add_head_var(2);
     query.add_head_var(0);
 

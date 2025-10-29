@@ -93,9 +93,7 @@ void Engine::prepare(const Query& query)
             auto index_it = indices.find(constraint);
             assert(index_it != indices.end());
 
-            // In the back is always the id.
-            // We need fd optimization for those.
-            if (var == constraint.variables.back())
+            if (var == constraint.variables.back() && constraint.permutation == static_cast<uint32_t>(AC))
             {
                 state.fd = index_it->second;
             }

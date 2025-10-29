@@ -218,7 +218,7 @@ class Database
      */
     AbstractIndex get_index(Symbol name, uint32_t perm) const
     {
-        if (get_relation(name)->get_kind() == RELATION_AC) perm = 0;
+        if (get_relation(name)->get_kind() == RELATION_AC) perm = static_cast<uint32_t>(-1);
 
         IndexKey key(name, perm);
         auto it = indices.find(key);
@@ -235,7 +235,7 @@ class Database
      */
     bool has_index(Symbol name, uint32_t perm) const
     {
-        if (get_relation(name)->get_kind() == RELATION_AC) perm = 0;
+        if (get_relation(name)->get_kind() == RELATION_AC) perm = static_cast<uint32_t>(-1);
 
         IndexKey key(name, perm);
         return indices.find(key) != indices.end();
@@ -264,7 +264,7 @@ class Database
      */
     void populate_index(Symbol name, uint32_t perm)
     {
-        if (get_relation(name)->get_kind() == RELATION_AC) perm = 0;
+        if (get_relation(name)->get_kind() == RELATION_AC) perm = static_cast<uint32_t>(-1);
 
         IndexKey key{name, perm};
 

@@ -55,7 +55,16 @@ var_t Compiler::compile_rec(const std::shared_ptr<Expr>& expr, HashMap<Symbol, v
         var_t eclass_id = next_id++;
         constraint_vars.push_back(eclass_id);
 
-        query.add_constraint(expr->symbol, constraint_vars);
+        // For AC constraints, use explicit permutation value to mark them
+        // This prevents FD optimization with TrieIndex for AC operators
+        if (theory.get_arity(expr->symbol) == AC)
+        {
+            query.add_constraint(Constraint(expr->symbol, constraint_vars, static_cast<uint32_t>(AC)));
+        }
+        else
+        {
+            query.add_constraint(Constraint(expr->symbol, constraint_vars));
+        }
 
         return eclass_id;
     }

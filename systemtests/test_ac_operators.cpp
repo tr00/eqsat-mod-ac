@@ -352,7 +352,7 @@ TEST_CASE("AC operators support more complex pattern matching", "[egraph][ac][pa
     // free variable
     auto var = theory.add_operator("var", 0);
 
-    theory.add_operator("one", 0);
+    auto one = theory.add_operator("one", 0);
     auto inv = theory.add_operator("inv", 1);
     auto mul = theory.add_operator("mul", AC);
 
@@ -360,6 +360,30 @@ TEST_CASE("AC operators support more complex pattern matching", "[egraph][ac][pa
     theory.add_rewrite_rule("inverse", "(mul ?x (inv ?x))", "(one)");
 
     EGraph egraph(theory);
+
+    SECTION("Inverse rule: mul(?x, inv(?x)) -> one should match")
+    {
+        // Test just the inverse rule in isolation
+        auto a_expr = Expr::make_operator(var);
+        auto inv_a_expr = Expr::make_operator(inv, {a_expr});
+        auto mul_expr = Expr::make_operator(mul, {a_expr, inv_a_expr});
+        auto one_expr = Expr::make_operator(one);
+
+        egraph.add_expr(a_expr);
+        egraph.add_expr(inv_a_expr);
+        auto mul_id = egraph.add_expr(mul_expr);
+
+        // Before saturation, mul(a, inv(a)) should not be equivalent to one
+        // (one doesn't even exist yet)
+
+        egraph.saturate(2);
+
+        // After applying inverse rule, one should be created
+        auto one_id = egraph.add_expr(one_expr);
+
+        // mul(a, inv(a)) should now be equivalent to one
+        REQUIRE(egraph.is_equiv(mul_id, one_id) == true);
+    }
 
     SECTION("AC pattern match should create new enode")
     {

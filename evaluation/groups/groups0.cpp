@@ -30,4 +30,6 @@ int main()
     std::cout << "result: " << (res ? "true" : "false") << std::endl;
 
     egraph.dump_to_file();
+
+    // (+ ?x (- ?x)) in? (+ a a (-a))
 }

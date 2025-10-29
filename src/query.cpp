@@ -32,6 +32,13 @@ Constraint::Constraint(Symbol op, const Vec<var_t>& vars)
     permutation = permutation_to_index(perm);
 }
 
+Constraint::Constraint(Symbol op, const Vec<var_t>& vars, uint32_t perm)
+    : symbol(op)
+    , permutation(perm)
+    , variables(vars)
+{
+}
+
 Query::Query(Symbol name)
     : name(name)
 {
@@ -47,12 +54,7 @@ Query::Query(Symbol name, const Vec<Constraint>& constraints, const Vec<var_t>& 
 void Query::add_constraint(const Constraint& constraint)
 {
     constraints.push_back(constraint);
-}
-
-void Query::add_constraint(Symbol op, const Vec<var_t>& vars)
-{
-    constraints.emplace_back(op, vars);
-    var_t maxvar = *std::max_element(vars.begin(), vars.end());
+    var_t maxvar = *std::max_element(constraint.variables.begin(), constraint.variables.end());
     nvars = std::max(nvars, maxvar + 1);
 }
 
