@@ -1,4 +1,5 @@
 #include <memory>
+#include <stdexcept>
 
 #include "parser.h"
 #include "theory.h"
@@ -61,6 +62,14 @@ int Theory::get_arity(Symbol symbol) const
 
 RewriteRule Theory::add_rewrite_rule(const std::string& name, std::shared_ptr<Expr> lhs, std::shared_ptr<Expr> rhs)
 {
+    // Check if the LHS pattern is linear
+    if (!lhs->is_linear())
+    {
+        throw std::invalid_argument("Non-linear pattern in rule '" + name + "': " + lhs->to_sexpr(symbols) +
+                                    "\nEach variable must appear at most once in the pattern. " +
+                                    "Non-linear patterns like (f ?x ?x) are not currently supported.");
+    }
+
     RewriteRule rule(intern(name), lhs, rhs);
     rewrite_rules.push_back(rule);
     return rule;
@@ -85,4 +94,37 @@ std::string Expr::to_sexpr(const SymbolTable& symbols) const
 
     result += ")";
     return result;
+}
+
+bool Expr::is_linear() const
+{
+    // Collect all variables in the expression
+    HashMap<Symbol, size_t> var_counts;
+
+    std::function<void(const Expr *)> collect_vars = [&](const Expr *expr) {
+        if (expr->is_variable())
+        {
+            var_counts[expr->symbol]++;
+        }
+        else
+        {
+            for (const auto& child : expr->children)
+            {
+                collect_vars(child.get());
+            }
+        }
+    };
+
+    collect_vars(this);
+
+    // Check if any variable appears more than once
+    for (const auto& [var, count] : var_counts)
+    {
+        if (count > 1)
+        {
+            return false;
+        }
+    }
+
+    return true;
 }

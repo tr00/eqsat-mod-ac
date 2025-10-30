@@ -69,10 +69,9 @@ void RelationAC::add_tuple(id_t id, Multiset mset)
 {
     // is the new term included in any other existing term?
     Vec<std::pair<id_t, Multiset>> worklist;
+
     for (auto& [other_term, other_mset] : *data)
     {
-        worklist.clear();
-
         if (other_mset.includes(mset))
         {
             // Consider trying to add the term id1: { a, b }
@@ -83,10 +82,13 @@ void RelationAC::add_tuple(id_t id, Multiset mset)
             // with the multiset difference old \ new.
 
             auto diff = other_mset.msetdiff(mset);
-            diff.insert(id);
-            auto other_id = ids[other_term];
+            if (!diff.empty()) // Only create subterm if difference is non-empty
+            {
+                diff.insert(id);
+                auto other_id = ids[other_term];
 
-            worklist.push_back({other_id, std::move(diff)});
+                worklist.push_back({other_id, std::move(diff)});
+            }
         }
     }
 
@@ -97,9 +99,12 @@ void RelationAC::add_tuple(id_t id, Multiset mset)
         {
             auto other_id = ids[other_term];
             auto diff = mset.msetdiff(other_mset);
-            diff.insert(other_id);
+            if (!diff.empty()) // Only create subterm if difference is non-empty
+            {
+                diff.insert(other_id);
 
-            worklist.push_back({id, std::move(diff)});
+                worklist.push_back({id, std::move(diff)});
+            }
         }
     }
 

@@ -89,8 +89,10 @@ class Multiset
 
     [[nodiscard]] bool includes(const Multiset& other) const
     {
-        for (const auto& [value, count] : this->data)
-            if (other.count(value) < count) return false;
+        // Check if this multiset includes other as a subset
+        // i.e., for every element in other, this has at least as many
+        for (const auto& [value, count] : other.data)
+            if (this->count(value) < count) return false;
 
         return true;
     }

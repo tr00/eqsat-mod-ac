@@ -98,6 +98,16 @@ class Expr
      */
     std::string to_sexpr(const SymbolTable& symbols) const;
 
+    /**
+     * @brief Check if the expression is a linear pattern
+     *
+     * A pattern is linear if each variable appears at most once.
+     * Non-linear patterns like (f ?x ?x) are not currently supported.
+     *
+     * @return true if the pattern is linear, false otherwise
+     */
+    bool is_linear() const;
+
   private:
     /**
      * @brief Private constructor for creating expressions.

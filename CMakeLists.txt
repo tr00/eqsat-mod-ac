@@ -82,6 +82,7 @@ add_executable(unittests
     unittests/test_parser.cpp
     unittests/test_multiset.cpp
     unittests/test_multiset_index.cpp
+    unittests/test_ephemeral_ids.cpp
 )
 
 target_include_directories(unittests PRIVATE src)
@@ -95,6 +96,7 @@ add_executable(systemtests
     systemtests/test_database.cpp
     systemtests/test_multiplicative_identity.cpp
     systemtests/test_ac_operators.cpp
+    systemtests/test_ac_advanced.cpp
 )
 
 target_include_directories(systemtests PRIVATE src)
@@ -109,12 +111,15 @@ target_link_libraries(demo PRIVATE eqsat)
 add_executable(groups0 evaluation/groups/groups0.cpp)
 add_executable(groups1 evaluation/groups/groups1.cpp)
 add_executable(groups2 evaluation/groups/groups2.cpp)
+add_executable(idempotence evaluation/idempotence.cpp)
 target_include_directories(groups0 PRIVATE src)
 target_include_directories(groups1 PRIVATE src)
 target_include_directories(groups2 PRIVATE src)
+target_include_directories(idempotence PRIVATE src)
 target_link_libraries(groups0 PRIVATE eqsat)
 target_link_libraries(groups1 PRIVATE eqsat)
 target_link_libraries(groups2 PRIVATE eqsat)
+target_link_libraries(idempotence PRIVATE eqsat)
 
 ## TESTING TESTING TESTING
 
