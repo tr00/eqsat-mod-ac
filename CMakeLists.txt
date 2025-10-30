@@ -112,14 +112,17 @@ add_executable(groups0 evaluation/groups/groups0.cpp)
 add_executable(groups1 evaluation/groups/groups1.cpp)
 add_executable(groups2 evaluation/groups/groups2.cpp)
 add_executable(idempotence evaluation/idempotence.cpp)
+add_executable(boolean_algebra evaluation/boolean_algebra/boolean_algebra.cpp)
 target_include_directories(groups0 PRIVATE src)
 target_include_directories(groups1 PRIVATE src)
 target_include_directories(groups2 PRIVATE src)
 target_include_directories(idempotence PRIVATE src)
+target_include_directories(boolean_algebra PRIVATE src)
 target_link_libraries(groups0 PRIVATE eqsat)
 target_link_libraries(groups1 PRIVATE eqsat)
 target_link_libraries(groups2 PRIVATE eqsat)
 target_link_libraries(idempotence PRIVATE eqsat)
+target_link_libraries(boolean_algebra PRIVATE eqsat)
 
 ## TESTING TESTING TESTING
 

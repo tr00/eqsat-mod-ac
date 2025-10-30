@@ -73,14 +73,20 @@ id_t EGraph::add_expr(std::shared_ptr<Expr> expr)
 
 id_t EGraph::add_enode(Symbol symbol, Vec<id_t> children)
 {
-    if (theory.get_arity(symbol) == AC) std::sort(children.begin(), children.end());
-
     ENode enode(symbol, std::move(children));
     return add_enode(std::move(enode));
 }
 
 id_t EGraph::add_enode(ENode enode)
 {
+    for (auto& child : enode.children)
+        child = canonicalize(child);
+
+    if (theory.get_arity(enode.op) == AC)
+    {
+        std::sort(enode.children.begin(), enode.children.end());
+    }
+
     // lookup if enode already exists
     auto it = memo.find(enode);
     if (it != memo.end()) return it->second;
@@ -110,7 +116,7 @@ id_t EGraph::unify(id_t a, id_t b)
 {
     id_t id = uf.unify(a, b);
 
-    std::cout << "unifying(" << a << ", " << b << ")\n";
+    // std::cout << "unifying(" << a << ", " << b << ")\n";
 
     return id;
 }

@@ -242,12 +242,20 @@ TEST_CASE("AC operators with complex partial matching scenarios", "[egraph][ac][
     auto mul = theory.add_operator("mul", AC);
     auto one = theory.add_operator("one", 0);
 
-    SECTION("Non-linear patterns are rejected")
+    SECTION("Nested variable occurrences are LINEAR")
     {
-        // These rules use non-linear patterns and should be rejected
-        REQUIRE_THROWS_AS(theory.add_rewrite_rule("inverse", "(mul ?x (inv ?x))", "(one)"), std::invalid_argument);
+        // These patterns are LINEAR because variables don't repeat as direct children
+        // (mul ?x (inv ?x)) - ?x appears once as direct child, second is inside inv
+        theory.add_rewrite_rule("inverse", "(mul ?x (inv ?x))", "(one)");
 
-        REQUIRE_THROWS_AS(theory.add_rewrite_rule("sqr_expand", "(sqr ?x)", "(mul ?x ?x)"), std::invalid_argument);
+        // (sqr ?x) -> (mul ?x ?x) - RHS being non-linear is fine, only LHS matters
+        theory.add_rewrite_rule("sqr_expand", "(sqr ?x)", "(mul ?x ?x)");
+    }
+
+    SECTION("Non-linear LHS patterns are rejected")
+    {
+        // This would be non-linear: (mul ?x ?x) - ?x appears twice as direct children
+        REQUIRE_THROWS_AS(theory.add_rewrite_rule("square", "(mul ?x ?x)", "(sqr ?x)"), std::invalid_argument);
     }
 
     SECTION("Linear identity pattern works")
@@ -480,14 +488,11 @@ TEST_CASE("AC operators saturation with cyclic rewrites", "[egraph][ac][saturati
     theory.add_operator("f", 1);
     theory.add_operator("g", 1);
 
-    SECTION("Non-linear patterns are rejected")
+    SECTION("Nested variable occurrences are LINEAR")
     {
-        // Both of these rules use non-linear patterns
-        REQUIRE_THROWS_AS(theory.add_rewrite_rule("f_to_g", "(mul ?x (f ?x))", "(mul ?x (g ?x))"),
-                          std::invalid_argument);
-
-        REQUIRE_THROWS_AS(theory.add_rewrite_rule("extract_f", "(mul (f ?x) (g ?x))", "(mul ?x ?x)"),
-                          std::invalid_argument);
+        // These patterns are LINEAR - variables appear in nested subterms
+        theory.add_rewrite_rule("f_to_g", "(mul ?x (f ?x))", "(mul ?x (g ?x))");
+        theory.add_rewrite_rule("extract_f", "(mul (f ?x) (g ?x))", "(mul ?x ?x)");
     }
 }
 

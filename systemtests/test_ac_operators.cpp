@@ -343,14 +343,11 @@ TEST_CASE("AC operators support more complex pattern matching", "[egraph][ac][pa
     theory.add_operator("inv", 1); // inv declared but not used in these tests
     auto mul = theory.add_operator("mul", AC);
 
-    SECTION("Non-linear patterns are rejected")
+    SECTION("Inverse pattern is LINEAR (nested occurrence)")
     {
-        // The inverse rule (mul ?x (inv ?x)) is non-linear because ?x appears twice
-        REQUIRE_THROWS_AS(theory.add_rewrite_rule("inverse", "(mul ?x (inv ?x))", "(one)"), std::invalid_argument);
-    }
-
-    SECTION("Identity rule works (linear pattern)")
-    {
+        // The inverse rule (mul ?x (inv ?x)) is LINEAR because ?x only appears once
+        // as a direct child of mul - the second ?x is nested inside inv
+        theory.add_rewrite_rule("inverse", "(mul ?x (inv ?x))", "(one)");
         theory.add_rewrite_rule("identity", "(mul ?x (one))", "?x");
         EGraph egraph(theory);
 

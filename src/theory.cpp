@@ -98,33 +98,46 @@ std::string Expr::to_sexpr(const SymbolTable& symbols) const
 
 bool Expr::is_linear() const
 {
-    // Collect all variables in the expression
-    HashMap<Symbol, size_t> var_counts;
+    // A pattern is non-linear if the same variable appears multiple times
+    // as a DIRECT child of any operator.
+    //
+    // Example: (mul ?x ?x) is non-linear because ?x appears twice as direct children
+    // Example: (mul ?x (inv ?x)) is LINEAR because the second ?x is nested in inv
+    //
+    // We need to check each operator node and see if any variable appears more than once
+    // among its direct children.
 
-    std::function<void(const Expr *)> collect_vars = [&](const Expr *expr) {
+    std::function<bool(const Expr *)> check_linear = [&](const Expr *expr) -> bool {
         if (expr->is_variable())
         {
-            var_counts[expr->symbol]++;
+            return true; // A single variable is always linear
         }
-        else
+
+        // Check direct children for duplicate variables
+        HashMap<Symbol, size_t> direct_child_vars;
+        for (const auto& child : expr->children)
         {
-            for (const auto& child : expr->children)
+            if (child->is_variable())
             {
-                collect_vars(child.get());
+                direct_child_vars[child->symbol]++;
+                if (direct_child_vars[child->symbol] > 1)
+                {
+                    return false; // Same variable appears twice as direct child
+                }
             }
         }
+
+        // Recursively check all children
+        for (const auto& child : expr->children)
+        {
+            if (!check_linear(child.get()))
+            {
+                return false;
+            }
+        }
+
+        return true;
     };
 
-    collect_vars(this);
-
-    // Check if any variable appears more than once
-    for (const auto& [var, count] : var_counts)
-    {
-        if (count > 1)
-        {
-            return false;
-        }
-    }
-
-    return true;
+    return check_linear(this);
 }

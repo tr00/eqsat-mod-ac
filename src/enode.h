@@ -7,8 +7,8 @@
 
 struct ENode
 {
-    const Symbol op;
-    const Vec<id_t> children;
+    Symbol op;
+    Vec<id_t> children;
 
     ENode(Symbol op, Vec<id_t> children)
         : op(op)
