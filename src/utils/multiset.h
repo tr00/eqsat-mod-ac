@@ -17,6 +17,7 @@ class Multiset
     // vector of (id, count)
     // ids should be unique and sorted
     Vec<std::pair<id_t, uint32_t>> data;
+    size_t nelements;
 
     static bool cmp(const std::pair<id_t, uint32_t>& pair, id_t val)
     {
@@ -58,17 +59,20 @@ class Multiset
   public:
     Multiset()
         : data()
+        , nelements(0)
     {
     }
 
     Multiset(const Vec<id_t>& vec)
         : data()
+        , nelements(vec.size())
     {
         construct(vec.cbegin(), vec.cend());
     }
 
     Multiset(Vec<id_t>::const_iterator begin, Vec<id_t>::const_iterator end)
         : data()
+        , nelements(end - begin)
     {
         construct(begin, end);
     }
@@ -125,6 +129,8 @@ class Multiset
         {
             data.insert(it, {id, count});
         }
+
+        nelements += count;
     }
 
     void insert(id_t id)
@@ -138,6 +144,7 @@ class Multiset
         if (it != data.end() && it->first == id && it->second > 0)
         {
             it->second--;
+            nelements--;
         }
     }
 
@@ -156,12 +163,12 @@ class Multiset
     void clear()
     {
         data.clear();
+        nelements = 0;
     }
 
-    // Note: this is an overestimate of the support!
     size_t size() const
     {
-        return data.size();
+        return nelements;
     }
 
     [[nodiscard]] bool empty() const
@@ -223,5 +230,17 @@ class Multiset
         }
 
         return h;
+    }
+
+    [[nodiscard]] Vec<id_t> collect() const
+    {
+        Vec<id_t> vec;
+        vec.reserve(nelements);
+
+        for (const auto& [value, count] : data)
+            for (uint32_t i = 0; i < count; ++i)
+                vec.push_back(value);
+
+        return vec;
     }
 };
