@@ -159,6 +159,17 @@ class Theory
     }
 
     Symbol add_operator(Symbol symbol, int arity);
+
+    /**
+     * @brief Add an opaque operator with the given arity.
+     * @param arity The arity of the operator (use AC for associative-commutative)
+     * @return Symbol identifier for the opaque operator
+     *
+     * Opaque operators have unique IDs but return "<opaque>" when converted to string.
+     * Useful for representing generated or anonymous operators.
+     */
+    Symbol add_opaque_operator(int arity);
+
     bool has_operator(Symbol symbol) const;
     int get_arity(Symbol symbol) const;
 

@@ -18,7 +18,7 @@ EGraph::EGraph(const Theory& theory)
     for (const auto& [symbol, arity] : theory.operators)
     {
         if (arity == AC)
-            db.create_relation_ac(symbol);
+            db.create_relation_ac(symbol, handle());
         else
             db.create_relation(symbol, arity + 1); // +1 for the id
     }
@@ -108,6 +108,14 @@ id_t EGraph::add_enode(ENode enode)
 
 std::optional<id_t> EGraph::lookup(ENode enode) const
 {
+    for (auto& id : enode.children)
+        id = canonicalize(id);
+
+    if (theory.get_arity(enode.op) == AC)
+    {
+        std::sort(enode.children.begin(), enode.children.end());
+    }
+
     auto it = memo.find(enode);
     return it == memo.end() ? std::nullopt : std::optional<id_t>(it->second);
 }
@@ -116,7 +124,7 @@ id_t EGraph::unify(id_t a, id_t b)
 {
     id_t id = uf.unify(a, b);
 
-    // std::cout << "unifying(" << a << ", " << b << ")\n";
+    std::cout << "unifying(" << a << ", " << b << ")\n";
 
     return id;
 }
@@ -168,6 +176,9 @@ void EGraph::apply_match(const Vec<id_t>& match, Subst& subst, const HashMap<id_
 
 bool EGraph::rebuild()
 {
+    for (auto& [_, id] : memo)
+        id = canonicalize(id);
+
     return db.rebuild(handle());
 }
 

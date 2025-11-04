@@ -30,6 +30,8 @@ class EGraph
         return Handle(*this);
     }
 
+    friend class Handle;
+
   public:
     EGraph(const Theory& theory);
     ~EGraph() = default;

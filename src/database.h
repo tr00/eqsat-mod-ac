@@ -170,9 +170,9 @@ class Database
         relations.emplace(name, AbstractRelation(RowStore(name, arity)));
     }
 
-    void create_relation_ac(Symbol name)
+    void create_relation_ac(Symbol name, Handle handle)
     {
-        relations.emplace(name, AbstractRelation(RelationAC(name)));
+        relations.emplace(name, AbstractRelation(RelationAC(name, handle)));
     }
 
     /**

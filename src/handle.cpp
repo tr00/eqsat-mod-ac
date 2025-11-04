@@ -1,5 +1,6 @@
 #include "handle.h"
 #include "egraph.h"
+#include <algorithm>
 
 [[nodiscard]] std::optional<id_t> Handle::lookup(ENode enode) const
 {
@@ -24,4 +25,14 @@ id_t Handle::unify(id_t a, id_t b)
 id_t Handle::add_enode(ENode enode)
 {
     return egraph.add_enode(std::move(enode));
+}
+
+void Handle::add_enode_to_memo(id_t id, ENode enode)
+{
+    if (egraph.theory.get_arity(enode.op) == AC)
+    {
+        std::sort(enode.children.begin(), enode.children.end());
+    }
+
+    egraph.memo.emplace(std::move(enode), id);
 }

@@ -2,6 +2,8 @@
 
 #include "symbol_table.h"
 
+static const std::string opaque = "<opaque>";
+
 Symbol SymbolTable::intern(const std::string& str)
 {
     auto it = map.find(str);
@@ -15,12 +17,17 @@ Symbol SymbolTable::intern(const std::string& str)
     return symbol;
 }
 
+Symbol SymbolTable::create_opaque()
+{
+    return next_id++;
+}
+
 const std::string& SymbolTable::get_string(Symbol symbol) const
 {
     for (auto const& [key, val] : map)
         if (val == symbol) return key;
 
-    assert(0);
+    return opaque;
 }
 
 bool SymbolTable::has_symbol(Symbol symbol) const
@@ -30,5 +37,5 @@ bool SymbolTable::has_symbol(Symbol symbol) const
 
 size_t SymbolTable::size() const
 {
-    return map.size();
+    return next_id;
 }

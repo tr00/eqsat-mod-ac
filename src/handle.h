@@ -23,4 +23,5 @@ class Handle
     id_t unify(id_t, id_t);
 
     id_t add_enode(ENode enode);
+    void add_enode_to_memo(id_t id, ENode enode);
 };

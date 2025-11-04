@@ -1,4 +1,5 @@
 #include "database.h"
+#include "egraph.h"
 #include "symbol_table.h"
 #include <catch2/catch_test_macros.hpp>
 

@@ -45,6 +45,13 @@ Symbol Theory::add_operator(Symbol symbol, int arity)
     return symbol;
 }
 
+Symbol Theory::add_opaque_operator(int arity)
+{
+    Symbol symbol = symbols.create_opaque();
+    operators[symbol] = arity;
+    return symbol;
+}
+
 bool Theory::has_operator(Symbol symbol) const
 {
     return operators.find(symbol) != operators.end();

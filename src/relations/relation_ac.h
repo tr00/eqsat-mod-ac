@@ -16,12 +16,14 @@ class RelationAC
     std::shared_ptr<HashMap<id_t, Multiset>> data;
     Vec<id_t> ids;
     Symbol symbol;
+    Handle egraph;
 
   public:
-    RelationAC(Symbol symbol)
+    RelationAC(Symbol symbol, Handle egraph)
         : data(std::make_shared<HashMap<id_t, Multiset>>())
         , ids()
         , symbol(symbol)
+        , egraph(egraph)
     {
     }
 

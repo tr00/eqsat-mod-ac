@@ -1,5 +1,7 @@
 #include <functional>
+#include <iostream>
 
+#include "enode.h"
 #include "gch/small_vector.hpp"
 #include "handle.h"
 #include "id.h"
@@ -29,8 +31,9 @@ struct MultisetPtrEqual
 bool RelationAC::rebuild(Handle egraph)
 {
     HashMap<const Multiset *, id_t, MultisetPtrHash, MultisetPtrEqual> cache;
+    Vec<id_t> terms_to_keep;
 
-    // canonicalize all elements in the multisets
+    // canonicalize all elements in the multisets and detect duplicates
     for (auto& [term, mset] : *data)
     {
         mset.map([egraph](id_t x) { return egraph.canonicalize(x); });
@@ -41,35 +44,44 @@ bool RelationAC::rebuild(Handle egraph)
         auto it = cache.find(&mset);
         if (it != cache.end())
         {
+            // Duplicate found - unify and skip this term
             id_t other_id = it->second;
             if (id != other_id) egraph.unify(id, other_id);
-
-            // TODO: we are currently storing the same term twice
-            // but with different term-ids
+            // Don't add to terms_to_keep
         }
         else
         {
+            // First occurrence - keep this term
             cache.emplace(&mset, id);
+            terms_to_keep.push_back(term);
         }
     }
 
-    // canonicalize the eclass-ids of the terms
-    for (size_t i = 0; i < ids.size(); ++i)
-    {
-        auto oldid = ids[i];
-        auto newid = egraph.canonicalize(oldid);
+    // Rebuild with only unique terms and canonicalized eclass-ids
+    auto new_data = std::make_shared<HashMap<id_t, Multiset>>();
+    Vec<id_t> new_ids;
 
-        if (newid != oldid) ids[i] = newid;
+    for (id_t old_term : terms_to_keep)
+    {
+        id_t new_term = static_cast<id_t>(new_ids.size());
+        id_t eclass_id = egraph.canonicalize(ids[old_term]);
+
+        new_data->emplace(new_term, std::move((*data)[old_term]));
+        new_ids.push_back(eclass_id);
     }
+
+    // Replace old structures with compacted ones
+    data = new_data;
+    ids = std::move(new_ids);
 
     return true;
 }
 
 void RelationAC::add_tuple(id_t id, Multiset mset)
 {
-    // is the new term included in any other existing term?
     Vec<std::pair<id_t, Multiset>> worklist;
 
+    // is the new term included in any other existing term?
     for (auto& [other_term, other_mset] : *data)
     {
         if (other_mset.includes(mset))
@@ -82,13 +94,11 @@ void RelationAC::add_tuple(id_t id, Multiset mset)
             // with the multiset difference old \ new.
 
             auto diff = other_mset.msetdiff(mset);
-            if (!diff.empty()) // Only create subterm if difference is non-empty
-            {
-                diff.insert(id);
-                auto other_id = ids[other_term];
+            if (diff.empty()) continue;
+            diff.insert(id);
+            auto other_id = ids[other_term];
 
-                worklist.push_back({other_id, std::move(diff)});
-            }
+            worklist.push_back({other_id, std::move(diff)});
         }
     }
 
@@ -99,12 +109,10 @@ void RelationAC::add_tuple(id_t id, Multiset mset)
         {
             auto other_id = ids[other_term];
             auto diff = mset.msetdiff(other_mset);
-            if (!diff.empty()) // Only create subterm if difference is non-empty
-            {
-                diff.insert(other_id);
+            if (diff.empty()) continue;
+            diff.insert(other_id);
 
-                worklist.push_back({id, std::move(diff)});
-            }
+            worklist.push_back({id, std::move(diff)});
         }
     }
 
@@ -114,6 +122,9 @@ void RelationAC::add_tuple(id_t id, Multiset mset)
         auto term_id = static_cast<uint32_t>(size());
         ids.push_back(eclass);
         data->emplace(term_id, submset);
+
+        ENode enode{symbol, submset.collect()};
+        egraph.add_enode_to_memo(eclass, enode);
     }
 
     auto term_id = static_cast<uint32_t>(size());
