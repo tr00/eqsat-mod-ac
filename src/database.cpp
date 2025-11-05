@@ -21,23 +21,11 @@ bool Database::rebuild(Handle handle)
     return did_something;
 }
 
-void Database::dump_to_file(const std::string& filename, const SymbolTable& symbols) const
+void Database::dump_to_file(std::ofstream& out, const SymbolTable& symbols) const
 {
-    std::ofstream out(filename);
-    if (!out.is_open())
-    {
-        throw std::runtime_error("Failed to open file for writing: " + filename);
-    }
 
-    out << "========================================" << std::endl;
-    out << "DATABASE DUMP" << std::endl;
-    out << "========================================" << std::endl;
-    out << std::endl;
+    out << "====<< Database >>====\n\n";
 
     for (const auto& [name, relation] : relations)
-    {
         relation.dump(out, symbols);
-    }
-
-    out.close();
 }

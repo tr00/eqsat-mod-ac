@@ -48,8 +48,10 @@ static int tuple_compare(const void *a, const void *b, void *context)
     // Compare first (arity - 1) elements
     for (size_t i = 0; i < ctx->arity - 1; ++i)
     {
-        if (tuple1[i] < tuple2[i]) return -1;
-        if (tuple1[i] > tuple2[i]) return 1;
+        if (tuple1[i] < tuple2[i])
+            return -1;
+        if (tuple1[i] > tuple2[i])
+            return 1;
     }
     return 0; // Equal
 }
@@ -59,10 +61,12 @@ bool RowStore::rebuild(Handle handle)
     for (auto& id : data)
         id = handle.canonicalize(id);
 
-    if (arity <= 1) return false; // Nothing to rebuild if only ID column
+    if (arity <= 1)
+        return false; // Nothing to rebuild if only ID column
 
     const size_t num_tuples = size();
-    if (num_tuples <= 1) return false; // Nothing to compare
+    if (num_tuples <= 1)
+        return false; // Nothing to compare
 
     bool did_something = false;
 
@@ -78,12 +82,14 @@ bool RowStore::rebuild(Handle handle)
 
         // check if first (arity - 1) elements are identical
         for (size_t j = 0; j < arity - 1; ++j)
-            if (tuple1[j] != tuple2[j]) continue;
+            if (tuple1[j] != tuple2[j])
+                continue;
 
         id_t id1 = tuple1[arity - 1];
         id_t id2 = tuple2[arity - 1];
 
-        if (id1 == id2) continue;
+        if (id1 == id2)
+            continue;
 
         // unify and update ids
         id_t newid = handle.unify(id1, id2);
@@ -99,8 +105,7 @@ bool RowStore::rebuild(Handle handle)
 
 void RowStore::dump(std::ofstream& out, const SymbolTable& symbols) const
 {
-    out << "---- " << symbols.get_string(symbol) << "(" << arity - 1 << ") with " << size() << " tuples ----"
-        << std::endl;
+    out << "---- " << symbols.get_string(symbol) << "(" << arity - 1 << ") with " << size() << " tuples ----\n";
 
     const id_t *base = data.data();
     for (size_t i = 0; i < size(); ++i)
@@ -108,11 +113,13 @@ void RowStore::dump(std::ofstream& out, const SymbolTable& symbols) const
         const id_t *tuple = base + i * arity;
         auto id = tuple[arity - 1];
         out << "eclass-id: " << id;
-        if (arity > 1) out << "  args: ";
+        if (arity > 1)
+            out << "  args: ";
         for (size_t j = 0; j < arity - 1; ++j)
         {
             out << tuple[j];
-            if (j < arity - 2) out << ", ";
+            if (j < arity - 2)
+                out << ", ";
         }
         out << std::endl;
     }

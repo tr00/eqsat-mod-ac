@@ -647,8 +647,10 @@ TEST_CASE("MultisetIndex stress test with many operations", "[multiset_index]")
     for (id_t i = 0; i < 50; ++i)
     {
         ms.insert(i);
-        if (i % 3 == 0) ms.insert(i); // Some have count 2
-        if (i % 5 == 0) ms.insert(i); // Some have count 3
+        if (i % 3 == 0)
+            ms.insert(i); // Some have count 2
+        if (i % 5 == 0)
+            ms.insert(i); // Some have count 3
     }
 
     (*rel)[1000] = std::move(ms);

@@ -16,9 +16,10 @@ struct ENode
     {
     }
 
-    ENode& operator=(const ENode&) = delete;
     ENode(const ENode&) = default;
     ENode(ENode&&) = default;
+    ENode& operator=(const ENode&) = delete;
+    ENode& operator=(ENode&&) = default;
 
     bool operator==(const ENode& other) const
     {

@@ -32,7 +32,8 @@ size_t intersect_many(SortedVecSet& output, const Vec<AbstractSet>& sets)
                 break;
             }
         }
-        if (in_all_sets) output.insert(id);
+        if (in_all_sets)
+            output.insert(id);
     });
 
     return output.size();

@@ -43,7 +43,8 @@ EGraph::EGraph(const Theory& theory)
             auto required = query.get_required_indices();
             for (auto& [op, perm] : required)
             {
-                if (theory.get_arity(op) == AC) perm = 0;
+                if (theory.get_arity(op) == AC)
+                    perm = 0;
                 index_set.insert({op, perm});
             }
         }
@@ -56,7 +57,8 @@ EGraph::EGraph(const Theory& theory)
 
 id_t EGraph::add_expr(std::shared_ptr<Expr> expr)
 {
-    if (expr->is_variable()) throw std::runtime_error("Cannot insert pattern variables into e-graph");
+    if (expr->is_variable())
+        throw std::runtime_error("Cannot insert pattern variables into e-graph");
 
     // Recursively insert children and collect their ids
     Vec<id_t> child_ids;
@@ -89,7 +91,8 @@ id_t EGraph::add_enode(ENode enode)
 
     // lookup if enode already exists
     auto it = memo.find(enode);
-    if (it != memo.end()) return it->second;
+    if (it != memo.end())
+        return it->second;
 
     // create new eclass-id
     // and insert into db and memo
@@ -176,8 +179,28 @@ void EGraph::apply_match(const Vec<id_t>& match, Subst& subst, const HashMap<id_
 
 bool EGraph::rebuild()
 {
-    for (auto& [_, id] : memo)
+    Vec<std::pair<ENode, id_t>> worklist;
+    for (auto& [enode, id] : memo)
+    {
         id = canonicalize(id);
+
+        for (auto child : enode.children)
+            if (child != canonicalize(child))
+                worklist.push_back({enode, id});
+    }
+
+    for (auto& [enode, id] : worklist)
+    {
+        memo.erase(enode);
+
+        for (auto& child : enode.children)
+            child = canonicalize(child);
+
+        if (theory.get_arity(enode.op) == AC)
+            std::sort(enode.children.begin(), enode.children.end());
+
+        memo.emplace(enode, id);
+    }
 
     return db.rebuild(handle());
 }
@@ -201,7 +224,8 @@ void EGraph::saturate(std::size_t max_iters)
 
         for (const auto& [name, match_vec] : matches)
         {
-            if (match_vec.empty()) continue;
+            if (match_vec.empty())
+                continue;
 
             // find substitution with the same name
             const auto name2 = name;
@@ -222,6 +246,37 @@ void EGraph::saturate(std::size_t max_iters)
 void EGraph::dump_to_file() const
 {
     const std::string filename = "egraph_dump.txt";
-    db.dump_to_file(filename, theory.symbols);
+    std::ofstream out(filename);
+    if (!out.is_open())
+    {
+        throw std::runtime_error("Failed to open file for writing: " + filename);
+    }
+
+    db.dump_to_file(out, theory.symbols);
+
+    out << "====<< Hash Cons >>====\n\n";
+
+    for (const auto& [enode, eclass] : memo)
+    {
+        out << "  " << theory.symbols.get_string(enode.op) << "(";
+
+        size_t n = enode.children.size();
+        for (size_t i = 0; i < n; ++i)
+        {
+            out << enode.children[i];
+            if (i < n - 1)
+                out << ", ";
+        }
+
+        out << ") ~~> " << eclass << "\n";
+    }
+
+    out << "\n";
+
+    uf.dump_to_file(out);
+
+    out.flush();
+    out.close();
+
     std::cout << "E-graph dumped to: " << filename << std::endl;
 }

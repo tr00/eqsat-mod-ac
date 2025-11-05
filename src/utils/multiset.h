@@ -79,14 +79,18 @@ class Multiset
 
     [[nodiscard]] bool operator==(const Multiset& other) const
     {
-        if (this->size() != other.size()) return false;
-        if (this->data.size() != other.data.size()) return false;
+        if (this->size() != other.size())
+            return false;
+        if (this->data.size() != other.data.size())
+            return false;
 
         for (const auto& [value, count] : this->data)
-            if (other.count(value) != count) return false;
+            if (other.count(value) != count)
+                return false;
 
         for (const auto& [value, count] : other.data)
-            if (this->count(value) != count) return false;
+            if (this->count(value) != count)
+                return false;
 
         return true;
     }
@@ -96,7 +100,8 @@ class Multiset
         // Check if this multiset includes other as a subset
         // i.e., for every element in other, this has at least as many
         for (const auto& [value, count] : other.data)
-            if (this->count(value) < count) return false;
+            if (this->count(value) < count)
+                return false;
 
         return true;
     }
@@ -190,12 +195,14 @@ class Multiset
             }
         }
 
-        if (!changed) return;
+        if (!changed)
+            return;
 
         std::sort(data.begin(), data.end(), [](const auto& lhs, const auto& rhs) { return lhs.first < rhs.first; });
 
         // merge entries with same id
-        if (data.empty()) return;
+        if (data.empty())
+            return;
 
         size_t write_idx = 0;
         for (size_t read_idx = 1; read_idx < data.size(); ++read_idx)

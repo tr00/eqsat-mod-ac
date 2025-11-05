@@ -25,7 +25,8 @@ Symbol SymbolTable::create_opaque()
 const std::string& SymbolTable::get_string(Symbol symbol) const
 {
     for (auto const& [key, val] : map)
-        if (val == symbol) return key;
+        if (val == symbol)
+            return key;
 
     return opaque;
 }

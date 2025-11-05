@@ -327,8 +327,7 @@ TEST_CASE("AC interaction with rebuild after unification", "[egraph][ac][rebuild
         id_t add_aa_id = egraph.add_expr(add_aa);
 
         // With AC: add(a, b) where a≡b should be equivalent to add(a, a)
-        // TODO: Change to true when AC rebuild is implemented
-        REQUIRE(egraph.is_equiv(add_ab_id, add_aa_id) == false);
+        REQUIRE(egraph.is_equiv(add_ab_id, add_aa_id) == true);
     }
 }
 

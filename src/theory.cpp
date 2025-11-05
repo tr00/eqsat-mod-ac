@@ -92,7 +92,8 @@ RewriteRule Theory::add_rewrite_rule(const std::string& name, const std::string&
 
 std::string Expr::to_sexpr(const SymbolTable& symbols) const
 {
-    if (is_variable()) return "?" + symbols.get_string(symbol);
+    if (is_variable())
+        return "?" + symbols.get_string(symbol);
 
     std::string result = "(" + symbols.get_string(symbol);
 

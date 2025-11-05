@@ -1,5 +1,7 @@
 #pragma once
 
+#include <fstream>
+
 #include "id.h"
 #include "utils/vec.h"
 
@@ -27,7 +29,8 @@ class UnionFind
     {
         // quick check which helps the branch predictor
         // since most of our ids are already canonical
-        if (vec[x] == x) return x;
+        if (vec[x] == x)
+            return x;
 
         // iterative version with path halving
         return _find_root_ph(x);
@@ -52,4 +55,16 @@ class UnionFind
     }
 
     void normalize();
+
+    /**
+     * @brief Dump all equivalence classes to a file
+     *
+     * Computes and outputs all equivalence classes in the union-find structure.
+     * Each line shows a root ID followed by all IDs that belong to that equivalence class.
+     *
+     * @param out Output file stream
+     *
+     * @note This operation is expensive as it requires grouping all IDs by their roots
+     */
+    void dump_to_file(std::ofstream& out) const;
 };

@@ -46,7 +46,8 @@ bool RelationAC::rebuild(Handle egraph)
         {
             // Duplicate found - unify and skip this term
             id_t other_id = it->second;
-            if (id != other_id) egraph.unify(id, other_id);
+            if (id != other_id)
+                egraph.unify(id, other_id);
             // Don't add to terms_to_keep
         }
         else
@@ -94,7 +95,8 @@ void RelationAC::add_tuple(id_t id, Multiset mset)
             // with the multiset difference old \ new.
 
             auto diff = other_mset.msetdiff(mset);
-            if (diff.empty()) continue;
+            if (diff.empty())
+                continue;
             diff.insert(id);
             auto other_id = ids[other_term];
 
@@ -109,7 +111,8 @@ void RelationAC::add_tuple(id_t id, Multiset mset)
         {
             auto other_id = ids[other_term];
             auto diff = mset.msetdiff(other_mset);
-            if (diff.empty()) continue;
+            if (diff.empty())
+                continue;
             diff.insert(other_id);
 
             worklist.push_back({id, std::move(diff)});
@@ -172,19 +175,21 @@ void RelationAC::dump(std::ofstream& out, const SymbolTable& symbols) const
     {
         auto eclass = ids[term];
 
-        out << "eclass-id: " << eclass << "  term-id:" << term << "  mset: {";
+        out << "eclass-id: " << eclass << "  term-id:" << term << "  mset: {{";
 
         bool first = true;
         for (const auto& [id, count] : mset.data)
         {
-            if (!first) out << ", ";
+            if (!first)
+                out << ", ";
             first = false;
 
             out << id;
-            if (count > 1) out << "^" << count;
+            if (count > 1)
+                out << "^" << count;
         }
 
-        out << "}" << std::endl;
+        out << "}}" << std::endl;
     }
     out << std::endl;
 }
