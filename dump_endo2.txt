@@ -1,0 +1,41 @@
+====<< E-Graph >>====
+
+   enodes: 7
+ eclasses: 6
+
+====<< Database >>====
+
+---- *(AC) with 2 terms ----
+eclass-id: 2  term-id: 0  mset: {{0, 1}}
+eclass-id: 6  term-id: 1  mset: {{4, 5}}
+
+---- h(1) with 3 tuples ----
+eclass-id: 3  args: 2
+eclass-id: 4  args: 0
+eclass-id: 5  args: 1
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 0
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 1
+
+====<< Hash Cons >>====
+
+  <opaque>() ~~> 0
+  <opaque>() ~~> 1
+  *(0, 1) ~~> 2
+  h(2) ~~> 3
+  h(0) ~~> 4
+  h(1) ~~> 5
+  *(4, 5) ~~> 6
+
+====<< Union-Find >>====
+
+  {0}
+  {1}
+  {2}
+  {3, 6}
+  {4}
+  {5}
+

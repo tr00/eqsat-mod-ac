@@ -43,6 +43,7 @@ class EGraph
     EGraph& operator=(EGraph&&) = default;
 
     id_t add_expr(std::shared_ptr<Expr> expression);
+    id_t add_expr(const std::string& expr_str);
     id_t add_enode(ENode enode);
     id_t add_enode(Symbol symbol, Vec<id_t> children);
 
@@ -71,5 +72,5 @@ class EGraph
 
     void saturate(size_t max_iters);
 
-    void dump_to_file() const;
+    void dump_to_file(const std::string& filename) const;
 };

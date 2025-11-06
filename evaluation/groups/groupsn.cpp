@@ -59,7 +59,8 @@ int main()
     for (size_t i = 0; i < n; ++i)
     {
         std::cout << children1[i];
-        if (i < n - 1) std::cout << " ";
+        if (i < n - 1)
+            std::cout << " ";
     }
     std::cout << ")\n";
 
@@ -82,7 +83,7 @@ int main()
     bool res = egraph.is_equiv(a, b);
     std::cout << "result: " << (res ? "true" : "false") << std::endl;
 
-    egraph.dump_to_file();
+    egraph.dump_to_file("dump_group.txt");
 
     return res ? 0 : 1;
 }

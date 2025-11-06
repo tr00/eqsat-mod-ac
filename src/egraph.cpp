@@ -8,6 +8,7 @@
 #include "egraph.h"
 #include "engine.h"
 #include "id.h"
+#include "parser.h"
 #include "utils/hashmap.h"
 
 EGraph::EGraph(const Theory& theory)
@@ -73,6 +74,13 @@ id_t EGraph::add_expr(std::shared_ptr<Expr> expr)
     return add_enode(expr->symbol, std::move(child_ids));
 }
 
+id_t EGraph::add_expr(const std::string& expr_str)
+{
+    Parser parser(theory.symbols);
+    auto expr = parser.parse_sexpr(expr_str);
+    return add_expr(expr);
+}
+
 id_t EGraph::add_enode(Symbol symbol, Vec<id_t> children)
 {
     ENode enode(symbol, std::move(children));
@@ -127,7 +135,7 @@ id_t EGraph::unify(id_t a, id_t b)
 {
     id_t id = uf.unify(a, b);
 
-    std::cout << "unifying(" << a << ", " << b << ")\n";
+    // std::cout << "unifying(" << a << ", " << b << ")\n";
 
     return id;
 }
@@ -239,18 +247,19 @@ void EGraph::saturate(std::size_t max_iters)
         db.clear_indices();
         rebuild();
 
-        std::cout << "iteration: " << iter << "  eclasses: " << uf.size() << "  enodes: " << enodes << std::endl;
+        std::cout << "iteration: " << iter + 1 << "  eclasses: " << uf.size() << "  enodes: " << enodes << std::endl;
     }
 }
 
-void EGraph::dump_to_file() const
+void EGraph::dump_to_file(const std::string& filename) const
 {
-    const std::string filename = "egraph_dump.txt";
     std::ofstream out(filename);
     if (!out.is_open())
-    {
         throw std::runtime_error("Failed to open file for writing: " + filename);
-    }
+
+    out << "====<< E-Graph >>====\n\n";
+    out << "   enodes: " << enodes << "\n";
+    out << " eclasses: " << uf.eclasses() << "\n\n";
 
     db.dump_to_file(out, theory.symbols);
 

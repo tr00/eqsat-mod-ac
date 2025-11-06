@@ -29,7 +29,7 @@ int main()
     bool res = egraph.is_equiv(var_id, mul_id) == true;
     std::cout << "result: " << (res ? "true" : "false") << std::endl;
 
-    egraph.dump_to_file();
+    // egraph.dump_to_file();
 
     // (+ ?x (- ?x)) in? (+ a a (-a))
 }

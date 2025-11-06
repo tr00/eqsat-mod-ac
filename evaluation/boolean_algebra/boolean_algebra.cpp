@@ -37,7 +37,7 @@ int main()
     bool res = egraph.is_equiv(and_id, and_ab_id);
     std::cout << "result: " << (res ? "true" : "false") << std::endl;
 
-    egraph.dump_to_file();
+    // egraph.dump_to_file();
 
     return res ? 0 : 1;
 }

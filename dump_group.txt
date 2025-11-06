@@ -1,0 +1,1438 @@
+====<< E-Graph >>====
+
+   enodes: 405
+ eclasses: 203
+
+====<< Database >>====
+
+---- one(0) with 1 tuples ----
+eclass-id: 203
+
+---- inv(1) with 1 tuples ----
+eclass-id: 200  args: 44
+
+---- mul(AC) with 206 terms ----
+eclass-id: 201  term-id: 0  mset: {{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199}}
+eclass-id: 201  term-id: 1  mset: {{44, 200, 201}}
+eclass-id: 201  term-id: 2  mset: {{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44^2, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200}}
+eclass-id: 201  term-id: 3  mset: {{201, 203}}
+eclass-id: 201  term-id: 4  mset: {{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 203}}
+eclass-id: 203  term-id: 5  mset: {{44, 200}}
+eclass-id: 0  term-id: 6  mset: {{0, 203}}
+eclass-id: 1  term-id: 7  mset: {{1, 203}}
+eclass-id: 2  term-id: 8  mset: {{2, 203}}
+eclass-id: 3  term-id: 9  mset: {{3, 203}}
+eclass-id: 4  term-id: 10  mset: {{4, 203}}
+eclass-id: 5  term-id: 11  mset: {{5, 203}}
+eclass-id: 6  term-id: 12  mset: {{6, 203}}
+eclass-id: 7  term-id: 13  mset: {{7, 203}}
+eclass-id: 8  term-id: 14  mset: {{8, 203}}
+eclass-id: 9  term-id: 15  mset: {{9, 203}}
+eclass-id: 10  term-id: 16  mset: {{10, 203}}
+eclass-id: 11  term-id: 17  mset: {{11, 203}}
+eclass-id: 12  term-id: 18  mset: {{12, 203}}
+eclass-id: 13  term-id: 19  mset: {{13, 203}}
+eclass-id: 14  term-id: 20  mset: {{14, 203}}
+eclass-id: 15  term-id: 21  mset: {{15, 203}}
+eclass-id: 16  term-id: 22  mset: {{16, 203}}
+eclass-id: 17  term-id: 23  mset: {{17, 203}}
+eclass-id: 18  term-id: 24  mset: {{18, 203}}
+eclass-id: 19  term-id: 25  mset: {{19, 203}}
+eclass-id: 20  term-id: 26  mset: {{20, 203}}
+eclass-id: 21  term-id: 27  mset: {{21, 203}}
+eclass-id: 22  term-id: 28  mset: {{22, 203}}
+eclass-id: 23  term-id: 29  mset: {{23, 203}}
+eclass-id: 24  term-id: 30  mset: {{24, 203}}
+eclass-id: 25  term-id: 31  mset: {{25, 203}}
+eclass-id: 26  term-id: 32  mset: {{26, 203}}
+eclass-id: 27  term-id: 33  mset: {{27, 203}}
+eclass-id: 28  term-id: 34  mset: {{28, 203}}
+eclass-id: 29  term-id: 35  mset: {{29, 203}}
+eclass-id: 30  term-id: 36  mset: {{30, 203}}
+eclass-id: 31  term-id: 37  mset: {{31, 203}}
+eclass-id: 32  term-id: 38  mset: {{32, 203}}
+eclass-id: 33  term-id: 39  mset: {{33, 203}}
+eclass-id: 34  term-id: 40  mset: {{34, 203}}
+eclass-id: 35  term-id: 41  mset: {{35, 203}}
+eclass-id: 36  term-id: 42  mset: {{36, 203}}
+eclass-id: 37  term-id: 43  mset: {{37, 203}}
+eclass-id: 38  term-id: 44  mset: {{38, 203}}
+eclass-id: 39  term-id: 45  mset: {{39, 203}}
+eclass-id: 40  term-id: 46  mset: {{40, 203}}
+eclass-id: 41  term-id: 47  mset: {{41, 203}}
+eclass-id: 42  term-id: 48  mset: {{42, 203}}
+eclass-id: 43  term-id: 49  mset: {{43, 203}}
+eclass-id: 44  term-id: 50  mset: {{44, 203}}
+eclass-id: 45  term-id: 51  mset: {{45, 203}}
+eclass-id: 46  term-id: 52  mset: {{46, 203}}
+eclass-id: 47  term-id: 53  mset: {{47, 203}}
+eclass-id: 48  term-id: 54  mset: {{48, 203}}
+eclass-id: 49  term-id: 55  mset: {{49, 203}}
+eclass-id: 50  term-id: 56  mset: {{50, 203}}
+eclass-id: 51  term-id: 57  mset: {{51, 203}}
+eclass-id: 52  term-id: 58  mset: {{52, 203}}
+eclass-id: 53  term-id: 59  mset: {{53, 203}}
+eclass-id: 54  term-id: 60  mset: {{54, 203}}
+eclass-id: 55  term-id: 61  mset: {{55, 203}}
+eclass-id: 56  term-id: 62  mset: {{56, 203}}
+eclass-id: 57  term-id: 63  mset: {{57, 203}}
+eclass-id: 58  term-id: 64  mset: {{58, 203}}
+eclass-id: 59  term-id: 65  mset: {{59, 203}}
+eclass-id: 60  term-id: 66  mset: {{60, 203}}
+eclass-id: 61  term-id: 67  mset: {{61, 203}}
+eclass-id: 62  term-id: 68  mset: {{62, 203}}
+eclass-id: 63  term-id: 69  mset: {{63, 203}}
+eclass-id: 64  term-id: 70  mset: {{64, 203}}
+eclass-id: 65  term-id: 71  mset: {{65, 203}}
+eclass-id: 66  term-id: 72  mset: {{66, 203}}
+eclass-id: 67  term-id: 73  mset: {{67, 203}}
+eclass-id: 68  term-id: 74  mset: {{68, 203}}
+eclass-id: 69  term-id: 75  mset: {{69, 203}}
+eclass-id: 70  term-id: 76  mset: {{70, 203}}
+eclass-id: 71  term-id: 77  mset: {{71, 203}}
+eclass-id: 72  term-id: 78  mset: {{72, 203}}
+eclass-id: 73  term-id: 79  mset: {{73, 203}}
+eclass-id: 74  term-id: 80  mset: {{74, 203}}
+eclass-id: 75  term-id: 81  mset: {{75, 203}}
+eclass-id: 76  term-id: 82  mset: {{76, 203}}
+eclass-id: 77  term-id: 83  mset: {{77, 203}}
+eclass-id: 78  term-id: 84  mset: {{78, 203}}
+eclass-id: 79  term-id: 85  mset: {{79, 203}}
+eclass-id: 80  term-id: 86  mset: {{80, 203}}
+eclass-id: 81  term-id: 87  mset: {{81, 203}}
+eclass-id: 82  term-id: 88  mset: {{82, 203}}
+eclass-id: 83  term-id: 89  mset: {{83, 203}}
+eclass-id: 84  term-id: 90  mset: {{84, 203}}
+eclass-id: 85  term-id: 91  mset: {{85, 203}}
+eclass-id: 86  term-id: 92  mset: {{86, 203}}
+eclass-id: 87  term-id: 93  mset: {{87, 203}}
+eclass-id: 88  term-id: 94  mset: {{88, 203}}
+eclass-id: 89  term-id: 95  mset: {{89, 203}}
+eclass-id: 90  term-id: 96  mset: {{90, 203}}
+eclass-id: 91  term-id: 97  mset: {{91, 203}}
+eclass-id: 92  term-id: 98  mset: {{92, 203}}
+eclass-id: 93  term-id: 99  mset: {{93, 203}}
+eclass-id: 94  term-id: 100  mset: {{94, 203}}
+eclass-id: 95  term-id: 101  mset: {{95, 203}}
+eclass-id: 96  term-id: 102  mset: {{96, 203}}
+eclass-id: 97  term-id: 103  mset: {{97, 203}}
+eclass-id: 98  term-id: 104  mset: {{98, 203}}
+eclass-id: 99  term-id: 105  mset: {{99, 203}}
+eclass-id: 100  term-id: 106  mset: {{100, 203}}
+eclass-id: 101  term-id: 107  mset: {{101, 203}}
+eclass-id: 102  term-id: 108  mset: {{102, 203}}
+eclass-id: 103  term-id: 109  mset: {{103, 203}}
+eclass-id: 104  term-id: 110  mset: {{104, 203}}
+eclass-id: 105  term-id: 111  mset: {{105, 203}}
+eclass-id: 106  term-id: 112  mset: {{106, 203}}
+eclass-id: 107  term-id: 113  mset: {{107, 203}}
+eclass-id: 108  term-id: 114  mset: {{108, 203}}
+eclass-id: 109  term-id: 115  mset: {{109, 203}}
+eclass-id: 110  term-id: 116  mset: {{110, 203}}
+eclass-id: 111  term-id: 117  mset: {{111, 203}}
+eclass-id: 112  term-id: 118  mset: {{112, 203}}
+eclass-id: 113  term-id: 119  mset: {{113, 203}}
+eclass-id: 114  term-id: 120  mset: {{114, 203}}
+eclass-id: 115  term-id: 121  mset: {{115, 203}}
+eclass-id: 116  term-id: 122  mset: {{116, 203}}
+eclass-id: 117  term-id: 123  mset: {{117, 203}}
+eclass-id: 118  term-id: 124  mset: {{118, 203}}
+eclass-id: 119  term-id: 125  mset: {{119, 203}}
+eclass-id: 120  term-id: 126  mset: {{120, 203}}
+eclass-id: 121  term-id: 127  mset: {{121, 203}}
+eclass-id: 122  term-id: 128  mset: {{122, 203}}
+eclass-id: 123  term-id: 129  mset: {{123, 203}}
+eclass-id: 124  term-id: 130  mset: {{124, 203}}
+eclass-id: 125  term-id: 131  mset: {{125, 203}}
+eclass-id: 126  term-id: 132  mset: {{126, 203}}
+eclass-id: 127  term-id: 133  mset: {{127, 203}}
+eclass-id: 128  term-id: 134  mset: {{128, 203}}
+eclass-id: 129  term-id: 135  mset: {{129, 203}}
+eclass-id: 130  term-id: 136  mset: {{130, 203}}
+eclass-id: 131  term-id: 137  mset: {{131, 203}}
+eclass-id: 132  term-id: 138  mset: {{132, 203}}
+eclass-id: 133  term-id: 139  mset: {{133, 203}}
+eclass-id: 134  term-id: 140  mset: {{134, 203}}
+eclass-id: 135  term-id: 141  mset: {{135, 203}}
+eclass-id: 136  term-id: 142  mset: {{136, 203}}
+eclass-id: 137  term-id: 143  mset: {{137, 203}}
+eclass-id: 138  term-id: 144  mset: {{138, 203}}
+eclass-id: 139  term-id: 145  mset: {{139, 203}}
+eclass-id: 140  term-id: 146  mset: {{140, 203}}
+eclass-id: 141  term-id: 147  mset: {{141, 203}}
+eclass-id: 142  term-id: 148  mset: {{142, 203}}
+eclass-id: 143  term-id: 149  mset: {{143, 203}}
+eclass-id: 144  term-id: 150  mset: {{144, 203}}
+eclass-id: 145  term-id: 151  mset: {{145, 203}}
+eclass-id: 146  term-id: 152  mset: {{146, 203}}
+eclass-id: 147  term-id: 153  mset: {{147, 203}}
+eclass-id: 148  term-id: 154  mset: {{148, 203}}
+eclass-id: 149  term-id: 155  mset: {{149, 203}}
+eclass-id: 150  term-id: 156  mset: {{150, 203}}
+eclass-id: 151  term-id: 157  mset: {{151, 203}}
+eclass-id: 152  term-id: 158  mset: {{152, 203}}
+eclass-id: 153  term-id: 159  mset: {{153, 203}}
+eclass-id: 154  term-id: 160  mset: {{154, 203}}
+eclass-id: 155  term-id: 161  mset: {{155, 203}}
+eclass-id: 156  term-id: 162  mset: {{156, 203}}
+eclass-id: 157  term-id: 163  mset: {{157, 203}}
+eclass-id: 158  term-id: 164  mset: {{158, 203}}
+eclass-id: 159  term-id: 165  mset: {{159, 203}}
+eclass-id: 160  term-id: 166  mset: {{160, 203}}
+eclass-id: 161  term-id: 167  mset: {{161, 203}}
+eclass-id: 162  term-id: 168  mset: {{162, 203}}
+eclass-id: 163  term-id: 169  mset: {{163, 203}}
+eclass-id: 164  term-id: 170  mset: {{164, 203}}
+eclass-id: 165  term-id: 171  mset: {{165, 203}}
+eclass-id: 166  term-id: 172  mset: {{166, 203}}
+eclass-id: 167  term-id: 173  mset: {{167, 203}}
+eclass-id: 168  term-id: 174  mset: {{168, 203}}
+eclass-id: 169  term-id: 175  mset: {{169, 203}}
+eclass-id: 170  term-id: 176  mset: {{170, 203}}
+eclass-id: 171  term-id: 177  mset: {{171, 203}}
+eclass-id: 172  term-id: 178  mset: {{172, 203}}
+eclass-id: 173  term-id: 179  mset: {{173, 203}}
+eclass-id: 174  term-id: 180  mset: {{174, 203}}
+eclass-id: 175  term-id: 181  mset: {{175, 203}}
+eclass-id: 176  term-id: 182  mset: {{176, 203}}
+eclass-id: 177  term-id: 183  mset: {{177, 203}}
+eclass-id: 178  term-id: 184  mset: {{178, 203}}
+eclass-id: 179  term-id: 185  mset: {{179, 203}}
+eclass-id: 180  term-id: 186  mset: {{180, 203}}
+eclass-id: 181  term-id: 187  mset: {{181, 203}}
+eclass-id: 182  term-id: 188  mset: {{182, 203}}
+eclass-id: 183  term-id: 189  mset: {{183, 203}}
+eclass-id: 184  term-id: 190  mset: {{184, 203}}
+eclass-id: 185  term-id: 191  mset: {{185, 203}}
+eclass-id: 186  term-id: 192  mset: {{186, 203}}
+eclass-id: 187  term-id: 193  mset: {{187, 203}}
+eclass-id: 188  term-id: 194  mset: {{188, 203}}
+eclass-id: 189  term-id: 195  mset: {{189, 203}}
+eclass-id: 190  term-id: 196  mset: {{190, 203}}
+eclass-id: 191  term-id: 197  mset: {{191, 203}}
+eclass-id: 192  term-id: 198  mset: {{192, 203}}
+eclass-id: 193  term-id: 199  mset: {{193, 203}}
+eclass-id: 194  term-id: 200  mset: {{194, 203}}
+eclass-id: 195  term-id: 201  mset: {{195, 203}}
+eclass-id: 196  term-id: 202  mset: {{196, 203}}
+eclass-id: 197  term-id: 203  mset: {{197, 203}}
+eclass-id: 198  term-id: 204  mset: {{198, 203}}
+eclass-id: 199  term-id: 205  mset: {{199, 203}}
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 0
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 1
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 2
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 3
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 4
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 5
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 6
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 7
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 8
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 9
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 10
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 11
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 12
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 13
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 14
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 15
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 16
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 17
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 18
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 19
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 20
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 21
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 22
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 23
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 24
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 25
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 26
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 27
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 28
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 29
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 30
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 31
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 32
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 33
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 34
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 35
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 36
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 37
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 38
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 39
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 40
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 41
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 42
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 43
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 44
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 45
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 46
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 47
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 48
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 49
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 50
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 51
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 52
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 53
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 54
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 55
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 56
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 57
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 58
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 59
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 60
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 61
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 62
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 63
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 64
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 65
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 66
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 67
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 68
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 69
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 70
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 71
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 72
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 73
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 74
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 75
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 76
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 77
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 78
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 79
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 80
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 81
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 82
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 83
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 84
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 85
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 86
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 87
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 88
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 89
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 90
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 91
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 92
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 93
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 94
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 95
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 96
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 97
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 98
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 99
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 100
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 101
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 102
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 103
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 104
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 105
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 106
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 107
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 108
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 109
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 110
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 111
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 112
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 113
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 114
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 115
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 116
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 117
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 118
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 119
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 120
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 121
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 122
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 123
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 124
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 125
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 126
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 127
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 128
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 129
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 130
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 131
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 132
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 133
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 134
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 135
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 136
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 137
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 138
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 139
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 140
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 141
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 142
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 143
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 144
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 145
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 146
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 147
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 148
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 149
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 150
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 151
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 152
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 153
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 154
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 155
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 156
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 157
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 158
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 159
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 160
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 161
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 162
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 163
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 164
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 165
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 166
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 167
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 168
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 169
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 170
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 171
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 172
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 173
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 174
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 175
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 176
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 177
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 178
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 179
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 180
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 181
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 182
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 183
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 184
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 185
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 186
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 187
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 188
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 189
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 190
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 191
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 192
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 193
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 194
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 195
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 196
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 197
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 198
+
+---- <opaque>(0) with 1 tuples ----
+eclass-id: 199
+
+====<< Hash Cons >>====
+
+  <opaque>() ~~> 0
+  <opaque>() ~~> 1
+  <opaque>() ~~> 2
+  <opaque>() ~~> 3
+  <opaque>() ~~> 4
+  <opaque>() ~~> 5
+  <opaque>() ~~> 6
+  <opaque>() ~~> 7
+  <opaque>() ~~> 8
+  <opaque>() ~~> 9
+  <opaque>() ~~> 10
+  <opaque>() ~~> 11
+  <opaque>() ~~> 12
+  <opaque>() ~~> 13
+  <opaque>() ~~> 14
+  <opaque>() ~~> 15
+  <opaque>() ~~> 16
+  <opaque>() ~~> 17
+  <opaque>() ~~> 18
+  <opaque>() ~~> 19
+  <opaque>() ~~> 20
+  <opaque>() ~~> 21
+  <opaque>() ~~> 22
+  <opaque>() ~~> 23
+  <opaque>() ~~> 24
+  <opaque>() ~~> 25
+  <opaque>() ~~> 26
+  <opaque>() ~~> 27
+  <opaque>() ~~> 28
+  <opaque>() ~~> 29
+  <opaque>() ~~> 30
+  <opaque>() ~~> 31
+  <opaque>() ~~> 32
+  <opaque>() ~~> 33
+  <opaque>() ~~> 34
+  <opaque>() ~~> 35
+  <opaque>() ~~> 36
+  <opaque>() ~~> 37
+  <opaque>() ~~> 38
+  <opaque>() ~~> 39
+  <opaque>() ~~> 40
+  <opaque>() ~~> 41
+  <opaque>() ~~> 42
+  <opaque>() ~~> 43
+  <opaque>() ~~> 44
+  <opaque>() ~~> 45
+  <opaque>() ~~> 46
+  <opaque>() ~~> 47
+  <opaque>() ~~> 48
+  <opaque>() ~~> 49
+  <opaque>() ~~> 50
+  <opaque>() ~~> 51
+  <opaque>() ~~> 52
+  <opaque>() ~~> 53
+  <opaque>() ~~> 54
+  <opaque>() ~~> 55
+  <opaque>() ~~> 56
+  <opaque>() ~~> 57
+  <opaque>() ~~> 58
+  <opaque>() ~~> 59
+  <opaque>() ~~> 60
+  <opaque>() ~~> 61
+  <opaque>() ~~> 62
+  <opaque>() ~~> 63
+  <opaque>() ~~> 64
+  <opaque>() ~~> 65
+  <opaque>() ~~> 66
+  <opaque>() ~~> 67
+  <opaque>() ~~> 68
+  <opaque>() ~~> 69
+  <opaque>() ~~> 70
+  <opaque>() ~~> 71
+  <opaque>() ~~> 72
+  <opaque>() ~~> 73
+  <opaque>() ~~> 74
+  <opaque>() ~~> 75
+  <opaque>() ~~> 76
+  <opaque>() ~~> 77
+  <opaque>() ~~> 78
+  <opaque>() ~~> 79
+  <opaque>() ~~> 80
+  <opaque>() ~~> 81
+  <opaque>() ~~> 82
+  <opaque>() ~~> 83
+  <opaque>() ~~> 84
+  <opaque>() ~~> 85
+  <opaque>() ~~> 86
+  <opaque>() ~~> 87
+  <opaque>() ~~> 88
+  <opaque>() ~~> 89
+  <opaque>() ~~> 90
+  <opaque>() ~~> 91
+  <opaque>() ~~> 92
+  <opaque>() ~~> 93
+  <opaque>() ~~> 94
+  <opaque>() ~~> 95
+  <opaque>() ~~> 96
+  <opaque>() ~~> 97
+  <opaque>() ~~> 98
+  <opaque>() ~~> 99
+  <opaque>() ~~> 100
+  <opaque>() ~~> 101
+  <opaque>() ~~> 102
+  <opaque>() ~~> 103
+  <opaque>() ~~> 104
+  <opaque>() ~~> 105
+  <opaque>() ~~> 106
+  <opaque>() ~~> 107
+  <opaque>() ~~> 108
+  <opaque>() ~~> 109
+  <opaque>() ~~> 110
+  <opaque>() ~~> 111
+  <opaque>() ~~> 112
+  <opaque>() ~~> 113
+  <opaque>() ~~> 114
+  <opaque>() ~~> 115
+  <opaque>() ~~> 116
+  <opaque>() ~~> 117
+  <opaque>() ~~> 118
+  <opaque>() ~~> 119
+  <opaque>() ~~> 120
+  <opaque>() ~~> 121
+  <opaque>() ~~> 122
+  <opaque>() ~~> 123
+  <opaque>() ~~> 124
+  <opaque>() ~~> 125
+  <opaque>() ~~> 126
+  <opaque>() ~~> 127
+  <opaque>() ~~> 128
+  <opaque>() ~~> 129
+  <opaque>() ~~> 130
+  <opaque>() ~~> 131
+  <opaque>() ~~> 132
+  <opaque>() ~~> 133
+  <opaque>() ~~> 134
+  <opaque>() ~~> 135
+  <opaque>() ~~> 136
+  <opaque>() ~~> 137
+  <opaque>() ~~> 138
+  <opaque>() ~~> 139
+  <opaque>() ~~> 140
+  <opaque>() ~~> 141
+  <opaque>() ~~> 142
+  <opaque>() ~~> 143
+  <opaque>() ~~> 144
+  <opaque>() ~~> 145
+  <opaque>() ~~> 146
+  <opaque>() ~~> 147
+  <opaque>() ~~> 148
+  <opaque>() ~~> 149
+  <opaque>() ~~> 150
+  <opaque>() ~~> 151
+  <opaque>() ~~> 152
+  <opaque>() ~~> 153
+  <opaque>() ~~> 154
+  <opaque>() ~~> 155
+  <opaque>() ~~> 156
+  <opaque>() ~~> 157
+  <opaque>() ~~> 158
+  <opaque>() ~~> 159
+  <opaque>() ~~> 160
+  <opaque>() ~~> 161
+  <opaque>() ~~> 162
+  <opaque>() ~~> 163
+  <opaque>() ~~> 164
+  <opaque>() ~~> 165
+  <opaque>() ~~> 166
+  <opaque>() ~~> 167
+  <opaque>() ~~> 168
+  <opaque>() ~~> 169
+  <opaque>() ~~> 170
+  <opaque>() ~~> 171
+  <opaque>() ~~> 172
+  <opaque>() ~~> 173
+  <opaque>() ~~> 174
+  <opaque>() ~~> 175
+  <opaque>() ~~> 176
+  <opaque>() ~~> 177
+  <opaque>() ~~> 178
+  <opaque>() ~~> 179
+  <opaque>() ~~> 180
+  <opaque>() ~~> 181
+  <opaque>() ~~> 182
+  <opaque>() ~~> 183
+  <opaque>() ~~> 184
+  <opaque>() ~~> 185
+  <opaque>() ~~> 186
+  <opaque>() ~~> 187
+  <opaque>() ~~> 188
+  <opaque>() ~~> 189
+  <opaque>() ~~> 190
+  <opaque>() ~~> 191
+  <opaque>() ~~> 192
+  <opaque>() ~~> 193
+  <opaque>() ~~> 194
+  <opaque>() ~~> 195
+  <opaque>() ~~> 196
+  <opaque>() ~~> 197
+  <opaque>() ~~> 198
+  <opaque>() ~~> 199
+  inv(44) ~~> 200
+  mul(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199) ~~> 201
+  mul(44, 200, 201) ~~> 201
+  mul(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200) ~~> 201
+  mul(201, 203) ~~> 201
+  mul(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 203) ~~> 201
+  mul(44, 200) ~~> 203
+  one() ~~> 203
+  mul(199, 203) ~~> 199
+  mul(0, 203) ~~> 0
+  mul(149, 203) ~~> 149
+  mul(1, 203) ~~> 1
+  mul(198, 203) ~~> 198
+  mul(2, 203) ~~> 2
+  mul(100, 203) ~~> 100
+  mul(3, 203) ~~> 3
+  mul(197, 203) ~~> 197
+  mul(4, 203) ~~> 4
+  mul(132, 203) ~~> 132
+  mul(5, 203) ~~> 5
+  mul(196, 203) ~~> 196
+  mul(6, 203) ~~> 6
+  mul(101, 203) ~~> 101
+  mul(7, 203) ~~> 7
+  mul(195, 203) ~~> 195
+  mul(8, 203) ~~> 8
+  mul(148, 203) ~~> 148
+  mul(9, 203) ~~> 9
+  mul(194, 203) ~~> 194
+  mul(10, 203) ~~> 10
+  mul(102, 203) ~~> 102
+  mul(11, 203) ~~> 11
+  mul(193, 203) ~~> 193
+  mul(12, 203) ~~> 12
+  mul(125, 203) ~~> 125
+  mul(13, 203) ~~> 13
+  mul(192, 203) ~~> 192
+  mul(14, 203) ~~> 14
+  mul(103, 203) ~~> 103
+  mul(15, 203) ~~> 15
+  mul(191, 203) ~~> 191
+  mul(16, 203) ~~> 16
+  mul(147, 203) ~~> 147
+  mul(17, 203) ~~> 17
+  mul(190, 203) ~~> 190
+  mul(18, 203) ~~> 18
+  mul(104, 203) ~~> 104
+  mul(19, 203) ~~> 19
+  mul(189, 203) ~~> 189
+  mul(20, 203) ~~> 20
+  mul(136, 203) ~~> 136
+  mul(21, 203) ~~> 21
+  mul(188, 203) ~~> 188
+  mul(22, 203) ~~> 22
+  mul(105, 203) ~~> 105
+  mul(23, 203) ~~> 23
+  mul(187, 203) ~~> 187
+  mul(24, 203) ~~> 24
+  mul(146, 203) ~~> 146
+  mul(25, 203) ~~> 25
+  mul(186, 203) ~~> 186
+  mul(26, 203) ~~> 26
+  mul(106, 203) ~~> 106
+  mul(27, 203) ~~> 27
+  mul(185, 203) ~~> 185
+  mul(28, 203) ~~> 28
+  mul(126, 203) ~~> 126
+  mul(29, 203) ~~> 29
+  mul(184, 203) ~~> 184
+  mul(30, 203) ~~> 30
+  mul(107, 203) ~~> 107
+  mul(31, 203) ~~> 31
+  mul(183, 203) ~~> 183
+  mul(32, 203) ~~> 32
+  mul(145, 203) ~~> 145
+  mul(33, 203) ~~> 33
+  mul(182, 203) ~~> 182
+  mul(34, 203) ~~> 34
+  mul(108, 203) ~~> 108
+  mul(35, 203) ~~> 35
+  mul(181, 203) ~~> 181
+  mul(36, 203) ~~> 36
+  mul(131, 203) ~~> 131
+  mul(37, 203) ~~> 37
+  mul(180, 203) ~~> 180
+  mul(38, 203) ~~> 38
+  mul(109, 203) ~~> 109
+  mul(39, 203) ~~> 39
+  mul(179, 203) ~~> 179
+  mul(40, 203) ~~> 40
+  mul(144, 203) ~~> 144
+  mul(41, 203) ~~> 41
+  mul(178, 203) ~~> 178
+  mul(42, 203) ~~> 42
+  mul(110, 203) ~~> 110
+  mul(43, 203) ~~> 43
+  mul(177, 203) ~~> 177
+  mul(44, 203) ~~> 44
+  mul(127, 203) ~~> 127
+  mul(45, 203) ~~> 45
+  mul(176, 203) ~~> 176
+  mul(46, 203) ~~> 46
+  mul(111, 203) ~~> 111
+  mul(47, 203) ~~> 47
+  mul(175, 203) ~~> 175
+  mul(48, 203) ~~> 48
+  mul(143, 203) ~~> 143
+  mul(49, 203) ~~> 49
+  mul(174, 203) ~~> 174
+  mul(50, 203) ~~> 50
+  mul(112, 203) ~~> 112
+  mul(51, 203) ~~> 51
+  mul(173, 203) ~~> 173
+  mul(52, 203) ~~> 52
+  mul(135, 203) ~~> 135
+  mul(53, 203) ~~> 53
+  mul(172, 203) ~~> 172
+  mul(54, 203) ~~> 54
+  mul(113, 203) ~~> 113
+  mul(55, 203) ~~> 55
+  mul(171, 203) ~~> 171
+  mul(56, 203) ~~> 56
+  mul(142, 203) ~~> 142
+  mul(57, 203) ~~> 57
+  mul(170, 203) ~~> 170
+  mul(58, 203) ~~> 58
+  mul(114, 203) ~~> 114
+  mul(59, 203) ~~> 59
+  mul(169, 203) ~~> 169
+  mul(60, 203) ~~> 60
+  mul(128, 203) ~~> 128
+  mul(61, 203) ~~> 61
+  mul(168, 203) ~~> 168
+  mul(62, 203) ~~> 62
+  mul(115, 203) ~~> 115
+  mul(63, 203) ~~> 63
+  mul(167, 203) ~~> 167
+  mul(64, 203) ~~> 64
+  mul(141, 203) ~~> 141
+  mul(65, 203) ~~> 65
+  mul(166, 203) ~~> 166
+  mul(66, 203) ~~> 66
+  mul(116, 203) ~~> 116
+  mul(67, 203) ~~> 67
+  mul(165, 203) ~~> 165
+  mul(68, 203) ~~> 68
+  mul(133, 203) ~~> 133
+  mul(69, 203) ~~> 69
+  mul(164, 203) ~~> 164
+  mul(70, 203) ~~> 70
+  mul(117, 203) ~~> 117
+  mul(71, 203) ~~> 71
+  mul(163, 203) ~~> 163
+  mul(72, 203) ~~> 72
+  mul(140, 203) ~~> 140
+  mul(73, 203) ~~> 73
+  mul(162, 203) ~~> 162
+  mul(74, 203) ~~> 74
+  mul(118, 203) ~~> 118
+  mul(75, 203) ~~> 75
+  mul(161, 203) ~~> 161
+  mul(76, 203) ~~> 76
+  mul(129, 203) ~~> 129
+  mul(77, 203) ~~> 77
+  mul(160, 203) ~~> 160
+  mul(78, 203) ~~> 78
+  mul(119, 203) ~~> 119
+  mul(79, 203) ~~> 79
+  mul(159, 203) ~~> 159
+  mul(80, 203) ~~> 80
+  mul(139, 203) ~~> 139
+  mul(81, 203) ~~> 81
+  mul(158, 203) ~~> 158
+  mul(82, 203) ~~> 82
+  mul(120, 203) ~~> 120
+  mul(83, 203) ~~> 83
+  mul(157, 203) ~~> 157
+  mul(84, 203) ~~> 84
+  mul(134, 203) ~~> 134
+  mul(85, 203) ~~> 85
+  mul(156, 203) ~~> 156
+  mul(86, 203) ~~> 86
+  mul(121, 203) ~~> 121
+  mul(87, 203) ~~> 87
+  mul(155, 203) ~~> 155
+  mul(88, 203) ~~> 88
+  mul(138, 203) ~~> 138
+  mul(89, 203) ~~> 89
+  mul(154, 203) ~~> 154
+  mul(90, 203) ~~> 90
+  mul(122, 203) ~~> 122
+  mul(91, 203) ~~> 91
+  mul(153, 203) ~~> 153
+  mul(92, 203) ~~> 92
+  mul(130, 203) ~~> 130
+  mul(93, 203) ~~> 93
+  mul(152, 203) ~~> 152
+  mul(94, 203) ~~> 94
+  mul(123, 203) ~~> 123
+  mul(95, 203) ~~> 95
+  mul(151, 203) ~~> 151
+  mul(96, 203) ~~> 96
+  mul(137, 203) ~~> 137
+  mul(97, 203) ~~> 97
+  mul(150, 203) ~~> 150
+  mul(98, 203) ~~> 98
+  mul(124, 203) ~~> 124
+  mul(99, 203) ~~> 99
+
+====<< Union-Find >>====
+
+  {0, 205}
+  {1, 206}
+  {2, 207}
+  {3, 208}
+  {4, 209}
+  {5, 210}
+  {6, 211}
+  {7, 212}
+  {8, 213}
+  {9, 214}
+  {10, 215}
+  {11, 216}
+  {12, 217}
+  {13, 218}
+  {14, 219}
+  {15, 220}
+  {16, 221}
+  {17, 222}
+  {18, 223}
+  {19, 224}
+  {20, 225}
+  {21, 226}
+  {22, 227}
+  {23, 228}
+  {24, 229}
+  {25, 230}
+  {26, 231}
+  {27, 232}
+  {28, 233}
+  {29, 234}
+  {30, 235}
+  {31, 236}
+  {32, 237}
+  {33, 238}
+  {34, 239}
+  {35, 240}
+  {36, 241}
+  {37, 242}
+  {38, 243}
+  {39, 244}
+  {40, 245}
+  {41, 246}
+  {42, 247}
+  {43, 248}
+  {44, 249}
+  {45, 250}
+  {46, 251}
+  {47, 252}
+  {48, 253}
+  {49, 254}
+  {50, 255}
+  {51, 256}
+  {52, 257}
+  {53, 258}
+  {54, 259}
+  {55, 260}
+  {56, 261}
+  {57, 262}
+  {58, 263}
+  {59, 264}
+  {60, 265}
+  {61, 266}
+  {62, 267}
+  {63, 268}
+  {64, 269}
+  {65, 270}
+  {66, 271}
+  {67, 272}
+  {68, 273}
+  {69, 274}
+  {70, 275}
+  {71, 276}
+  {72, 277}
+  {73, 278}
+  {74, 279}
+  {75, 280}
+  {76, 281}
+  {77, 282}
+  {78, 283}
+  {79, 284}
+  {80, 285}
+  {81, 286}
+  {82, 287}
+  {83, 288}
+  {84, 289}
+  {85, 290}
+  {86, 291}
+  {87, 292}
+  {88, 293}
+  {89, 294}
+  {90, 295}
+  {91, 296}
+  {92, 297}
+  {93, 298}
+  {94, 299}
+  {95, 300}
+  {96, 301}
+  {97, 302}
+  {98, 303}
+  {99, 304}
+  {100, 305}
+  {101, 306}
+  {102, 307}
+  {103, 308}
+  {104, 309}
+  {105, 310}
+  {106, 311}
+  {107, 312}
+  {108, 313}
+  {109, 314}
+  {110, 315}
+  {111, 316}
+  {112, 317}
+  {113, 318}
+  {114, 319}
+  {115, 320}
+  {116, 321}
+  {117, 322}
+  {118, 323}
+  {119, 324}
+  {120, 325}
+  {121, 326}
+  {122, 327}
+  {123, 328}
+  {124, 329}
+  {125, 330}
+  {126, 331}
+  {127, 332}
+  {128, 333}
+  {129, 334}
+  {130, 335}
+  {131, 336}
+  {132, 337}
+  {133, 338}
+  {134, 339}
+  {135, 340}
+  {136, 341}
+  {137, 342}
+  {138, 343}
+  {139, 344}
+  {140, 345}
+  {141, 346}
+  {142, 347}
+  {143, 348}
+  {144, 349}
+  {145, 350}
+  {146, 351}
+  {147, 352}
+  {148, 353}
+  {149, 354}
+  {150, 355}
+  {151, 356}
+  {152, 357}
+  {153, 358}
+  {154, 359}
+  {155, 360}
+  {156, 361}
+  {157, 362}
+  {158, 363}
+  {159, 364}
+  {160, 365}
+  {161, 366}
+  {162, 367}
+  {163, 368}
+  {164, 369}
+  {165, 370}
+  {166, 371}
+  {167, 372}
+  {168, 373}
+  {169, 374}
+  {170, 375}
+  {171, 376}
+  {172, 377}
+  {173, 378}
+  {174, 379}
+  {175, 380}
+  {176, 381}
+  {177, 382}
+  {178, 383}
+  {179, 384}
+  {180, 385}
+  {181, 386}
+  {182, 387}
+  {183, 388}
+  {184, 389}
+  {185, 390}
+  {186, 391}
+  {187, 392}
+  {188, 393}
+  {189, 394}
+  {190, 395}
+  {191, 396}
+  {192, 397}
+  {193, 398}
+  {194, 399}
+  {195, 400}
+  {196, 401}
+  {197, 402}
+  {198, 403}
+  {199, 404}
+  {200}
+  {201, 202}
+  {203, 204}
+

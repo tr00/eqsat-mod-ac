@@ -30,6 +30,7 @@ struct MultisetPtrEqual
 
 bool RelationAC::rebuild(Handle egraph)
 {
+    return true;
     HashMap<const Multiset *, id_t, MultisetPtrHash, MultisetPtrEqual> cache;
     Vec<id_t> terms_to_keep;
 
@@ -175,7 +176,7 @@ void RelationAC::dump(std::ofstream& out, const SymbolTable& symbols) const
     {
         auto eclass = ids[term];
 
-        out << "eclass-id: " << eclass << "  term-id:" << term << "  mset: {{";
+        out << "eclass-id: " << eclass << "  term-id: " << term << "  mset: {{";
 
         bool first = true;
         for (const auto& [id, count] : mset.data)

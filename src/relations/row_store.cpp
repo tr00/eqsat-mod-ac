@@ -77,27 +77,28 @@ bool RowStore::rebuild(Handle handle)
     // Find neighboring tuples with identical arguments but different IDs
     for (size_t i = 0; i + 1 < num_tuples; ++i)
     {
+        id_t id1, id2, newid;
         id_t *tuple1 = &data[i * arity];
         id_t *tuple2 = &data[(i + 1) * arity];
 
-        // check if first (arity - 1) elements are identical
         for (size_t j = 0; j < arity - 1; ++j)
             if (tuple1[j] != tuple2[j])
-                continue;
+                goto next_tuple;
 
-        id_t id1 = tuple1[arity - 1];
-        id_t id2 = tuple2[arity - 1];
+        id1 = tuple1[arity - 1];
+        id2 = tuple2[arity - 1];
 
         if (id1 == id2)
             continue;
 
-        // unify and update ids
-        id_t newid = handle.unify(id1, id2);
+        newid = handle.unify(id1, id2);
 
         tuple1[arity - 1] = newid;
         tuple2[arity - 1] = newid;
 
         did_something = true;
+
+    next_tuple:;
     }
 
     return did_something;

@@ -1,0 +1,5 @@
+(mul (inv v2) (inv (mul (inv v1) v1)))
+(mul (inv v1) (inv (mul (inv (one)) (one))))
+(inv (inv (mul (mul v0 (inv v3)) v2)))
+(mul (one) (mul (mul v0 (one)) (mul (mul v1 v3) v1)))
+(inv (mul (inv (inv (mul (one) v2))) (one)))

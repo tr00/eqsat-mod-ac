@@ -9,6 +9,7 @@ class UnionFind
 {
   private:
     Vec<id_t> vec;
+    size_t nclasses = 0;
 
     id_t _find_root_ph(id_t x);
 
@@ -21,6 +22,11 @@ class UnionFind
 
     UnionFind(UnionFind&&) = default;
     UnionFind& operator=(UnionFind&&) = default;
+
+    size_t eclasses() const
+    {
+        return nclasses;
+    }
 
     id_t make_set();
     id_t unify(id_t a, id_t b);

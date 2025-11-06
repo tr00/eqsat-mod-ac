@@ -37,7 +37,7 @@ struct hash<ENode>
         uint64_t h1 = eqsat::hash64(node.op);
         uint64_t h2 = eqsat::hash64(node.children.size());
 
-        auto children = node.children;
+        const auto& children = node.children;
         for (const auto& child : children)
             h1 = eqsat::mix64(h1, child);
 

@@ -14,6 +14,7 @@ UnionFind::UnionFind()
 
 id_t UnionFind::make_set()
 {
+    ++nclasses;
     id_t x = static_cast<id_t>(vec.size());
     vec.push_back(x);
     return x;
@@ -43,6 +44,7 @@ id_t UnionFind::unify(id_t a, id_t b)
 
     vec[root_b] = root_a;
 
+    nclasses--;
     return root_a;
 }
 
