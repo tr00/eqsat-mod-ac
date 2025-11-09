@@ -80,13 +80,19 @@
 
 #include "query.h"
 #include "theory.h"
+#include "utils/hashmap.h"
 
 class Compiler
 {
   private:
     const Theory& theory;
     var_t next_id;
+    var_t next_term_id; // Separate counter for AC term-ids
 
+    // Pass 1: Count AC operators in the expression tree
+    int count_ac_operators(const std::shared_ptr<Expr>& expr) const;
+
+    // Pass 2: Compile with proper ID assignment
     var_t compile_rec(const std::shared_ptr<Expr>& expr, HashMap<Symbol, var_t>& env, Query& query);
 
   public:

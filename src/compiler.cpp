@@ -18,7 +18,21 @@ HashMap<var_t, int> create_consecutive_index_map(const Vec<var_t>& unique_indice
 Compiler::Compiler(const Theory& theory)
     : theory(theory)
     , next_id(0)
+    , next_term_id(0)
 {
+}
+
+int Compiler::count_ac_operators(const std::shared_ptr<Expr>& expr) const
+{
+    if (expr->is_variable())
+        return 0;
+
+    int count = theory.get_arity(expr->symbol) == AC ? 1 : 0;
+
+    for (const auto& child : expr->children)
+        count += count_ac_operators(child);
+
+    return count;
 }
 
 var_t Compiler::compile_rec(const std::shared_ptr<Expr>& expr, HashMap<Symbol, var_t>& symbol_to_var, Query& query)
@@ -29,7 +43,7 @@ var_t Compiler::compile_rec(const std::shared_ptr<Expr>& expr, HashMap<Symbol, v
         if (it != symbol_to_var.end())
             return it->second;
 
-        // create new var_t and add to map and head
+        // Pattern variables get IDs starting from offset (after all AC term-ids)
         var_t id = next_id++;
         symbol_to_var[expr->symbol] = id;
         query.add_head_var(id);
@@ -39,11 +53,11 @@ var_t Compiler::compile_rec(const std::shared_ptr<Expr>& expr, HashMap<Symbol, v
     {
         Vec<var_t> constraint_vars;
 
-        // if the current expr is AC we want to insert the term id
-        // into the constraint with term-id < children... < eclass-id
+        // AC term-ids get IDs from a separate counter (0, 1, 2, ...)
+        // This ensures ALL term-ids < ALL pattern variables and eclass-ids
         if (theory.get_arity(expr->symbol) == AC)
         {
-            var_t term_id = next_id++;
+            var_t term_id = next_term_id++;
             constraint_vars.push_back(term_id);
         }
 
@@ -53,6 +67,7 @@ var_t Compiler::compile_rec(const std::shared_ptr<Expr>& expr, HashMap<Symbol, v
             constraint_vars.push_back(child_var);
         }
 
+        // E-class IDs also use next_id (come after AC term-ids)
         var_t eclass_id = next_id++;
         constraint_vars.push_back(eclass_id);
 
@@ -73,16 +88,20 @@ var_t Compiler::compile_rec(const std::shared_ptr<Expr>& expr, HashMap<Symbol, v
 
 std::pair<Query, Subst> Compiler::compile(RewriteRule rule)
 {
-    // Reset variable counter for each compilation
-    next_id = 0;
+    // Pass 1: Count AC operators to reserve term-id slots
+    int num_ac_ops = count_ac_operators(rule.lhs);
 
-    // Symbol to variable mapping (for future extensions like variable reuse)
+    // Pass 2: Compile with proper ID assignment
+    // - AC term-ids get IDs 0, 1, 2, ..., (num_ac_ops - 1)
+    // - Pattern variables and e-class IDs start at num_ac_ops
+    next_term_id = 0;
+    next_id = num_ac_ops;
+
+    // Symbol to variable mapping (for pattern variable reuse)
     HashMap<Symbol, var_t> env;
 
     // Create empty query with name
     Query query(rule.name);
-
-    // Add the root variable to the head
 
     // Compile the pattern recursively
     var_t root = compile_rec(rule.lhs, env, query);
@@ -91,7 +110,7 @@ std::pair<Query, Subst> Compiler::compile(RewriteRule rule)
     HashMap<Symbol, int> env2;
     auto transl = create_consecutive_index_map(query.head);
 
-    for (auto [sym, var] : env)
+    for (const auto [sym, var] : env)
         env2[sym] = transl[var];
 
     Subst subst(rule.name, rule.rhs, env2, query.head.size());

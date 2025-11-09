@@ -1,27 +1,59 @@
 cmake_minimum_required(VERSION 3.14)
 
+
+# ===============================================
+# Compiler Configuration
+# ===============================================
+
 set(CMAKE_C_COMPILER "clang")
 set(CMAKE_CXX_COMPILER "clang++")
 
 project(eqsat-mod-ac)
-
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wpedantic -Werror -g")
 
-# Prefer mold linker if available, otherwise use system default
+# Prefer mold linker if available
 find_program(MOLD_LINKER mold)
 if(MOLD_LINKER)
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fuse-ld=mold")
     set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -fuse-ld=mold")
-    message(STATUS "Using mold linker")
-else()
-    message(STATUS "mold not found, using system default linker")
 endif()
 
-# Add library source files
+# ===============================================
+# External Dependencies
+# ===============================================
+
+# Small vector and unordered_dense (local submodules)
+add_subdirectory(external/small_vector)
+add_subdirectory(external/unordered_dense)
+
+# Fetch Catch2 for testing
+find_package(Catch2 3 QUIET)
+if(NOT Catch2_FOUND)
+    include(FetchContent)
+    FetchContent_Declare(
+        Catch2
+        GIT_REPOSITORY https://github.com/catchorg/Catch2.git
+        GIT_TAG        v3.4.0
+    )
+    FetchContent_MakeAvailable(Catch2)
+endif()
+
+# Fetch argparse for command-line tools
+include(FetchContent)
+FetchContent_Declare(
+    argparse
+    GIT_REPOSITORY https://github.com/p-ranav/argparse.git
+    GIT_TAG        v3.1
+)
+FetchContent_MakeAvailable(argparse)
+
+# ===============================================
+# Equality Saturation Library
+# ===============================================
+
 set(LIB_SOURCES
     src/theory.cpp
     src/symbol_table.cpp
@@ -42,34 +74,23 @@ set(LIB_SOURCES
     src/sets/abstract_set.cpp
 )
 
-# Create static library
 add_library(eqsat STATIC ${LIB_SOURCES})
 
-add_subdirectory(external/small_vector)
-add_subdirectory(external/unordered_dense)
+target_include_directories(eqsat PUBLIC
+    src
+    external/small_vector/source/include
+    external/unordered_dense/include
+)
 
-# Include directories
-target_include_directories(eqsat PUBLIC src)
-target_include_directories(eqsat PUBLIC external/small_vector/source/include)
-target_include_directories(eqsat PUBLIC external/unordered_dense/include)
+target_link_libraries(eqsat PUBLIC
+    gch::small_vector
+    unordered_dense::unordered_dense
+)
 
-target_link_libraries(eqsat PUBLIC gch::small_vector)
-target_link_libraries(eqsat PUBLIC unordered_dense::unordered_dense)
+# ===============================================
+# Unit Tests
+# ===============================================
 
-# Find or fetch Catch2
-find_package(Catch2 3 QUIET)
-
-if(NOT Catch2_FOUND)
-    include(FetchContent)
-    FetchContent_Declare(
-        Catch2
-        GIT_REPOSITORY https://github.com/catchorg/Catch2.git
-        GIT_TAG        v3.4.0
-    )
-    FetchContent_MakeAvailable(Catch2)
-endif()
-
-# Create unified unit test executable
 add_executable(unittests
     unittests/test_sorted_set.cpp
     unittests/test_abstract_set.cpp
@@ -88,12 +109,14 @@ add_executable(unittests
 target_include_directories(unittests PRIVATE src)
 target_link_libraries(unittests PRIVATE eqsat Catch2::Catch2WithMain)
 
-# Create system test executable
+# ===============================================
+# System Tests
+# ===============================================
+
 add_executable(systemtests
     systemtests/test_congruence.cpp
     systemtests/test_egraph_basic.cpp
     systemtests/test_egraph_rewrite.cpp
-    # systemtests/test_database.cpp
     systemtests/test_multiplicative_identity.cpp
     systemtests/test_ac_operators.cpp
     systemtests/test_ac_advanced.cpp
@@ -102,35 +125,9 @@ add_executable(systemtests
 target_include_directories(systemtests PRIVATE src)
 target_link_libraries(systemtests PRIVATE eqsat Catch2::Catch2WithMain)
 
-## DEMO DEMO DEMO DEMO DEMO
-
-add_executable(demo demo.cpp)
-target_include_directories(demo PRIVATE src)
-target_link_libraries(demo PRIVATE eqsat)
-
-add_executable(groups0 evaluation/groups/groups0.cpp)
-add_executable(groups1 evaluation/groups/groups1.cpp)
-add_executable(groups2 evaluation/groups/groups2.cpp)
-add_executable(groupsn evaluation/groups/groupsn.cpp)
-add_executable(idempotence evaluation/idempotence.cpp)
-add_executable(endomorphism evaluation/endomorphism.cpp)
-add_executable(boolean_algebra evaluation/boolean_algebra/boolean_algebra.cpp)
-target_include_directories(groups0 PRIVATE src)
-target_include_directories(groups1 PRIVATE src)
-target_include_directories(groups2 PRIVATE src)
-target_include_directories(groupsn PRIVATE src)
-target_include_directories(idempotence PRIVATE src)
-target_include_directories(endomorphism PRIVATE src)
-target_include_directories(boolean_algebra PRIVATE src)
-target_link_libraries(groups0 PRIVATE eqsat)
-target_link_libraries(groups1 PRIVATE eqsat)
-target_link_libraries(groups2 PRIVATE eqsat)
-target_link_libraries(groupsn PRIVATE eqsat)
-target_link_libraries(idempotence PRIVATE eqsat)
-target_link_libraries(endomorphism PRIVATE eqsat)
-target_link_libraries(boolean_algebra PRIVATE eqsat)
-
-## TESTING TESTING TESTING
+# ===============================================
+# Test Configuration
+# ===============================================
 
 enable_testing()
 add_test(NAME unit_tests COMMAND unittests)
@@ -153,3 +150,16 @@ add_custom_target(runsystem
     DEPENDS systemtests
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
 )
+
+# ===============================================
+# Demo
+# ===============================================
+
+add_executable(groups evaluation/groups.cpp)
+target_include_directories(groups PRIVATE src)
+target_link_libraries(groups PRIVATE eqsat)
+target_link_libraries(groups PRIVATE argparse)
+
+add_executable(horner evaluation/horner.cpp)
+target_include_directories(horner PRIVATE src)
+target_link_libraries(horner PRIVATE eqsat)
