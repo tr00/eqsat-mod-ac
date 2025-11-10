@@ -163,3 +163,7 @@ target_link_libraries(groups PRIVATE argparse)
 add_executable(horner evaluation/horner.cpp)
 target_include_directories(horner PRIVATE src)
 target_link_libraries(horner PRIVATE eqsat)
+
+add_executable(endomorphism evaluation/endomorphism.cpp)
+target_include_directories(endomorphism PRIVATE src)
+target_link_libraries(endomorphism PRIVATE eqsat)

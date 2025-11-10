@@ -46,7 +46,7 @@ TEST_CASE("Multiset basic operations", "[multiset]")
         ms.insert(10);
         ms.insert(10);
 
-        REQUIRE(ms.size() == 1); // Only one unique id
+        REQUIRE(ms.size() == 3); // Total count with multiplicities
         REQUIRE(ms.contains(10));
         REQUIRE(ms.count(10) == 3);
     }
@@ -112,7 +112,7 @@ TEST_CASE("Multiset remove operations", "[multiset]")
         ms.remove(10);
         REQUIRE(ms.count(10) == 0);
         REQUIRE_FALSE(ms.contains(10));
-        REQUIRE(ms.size() == 1); // Pair still exists
+        REQUIRE(ms.size() == 0); // No elements, count is zero
 
         // Can insert again
         ms.insert(10);
@@ -129,7 +129,7 @@ TEST_CASE("Multiset remove operations", "[multiset]")
 
         ms.remove(10);
         REQUIRE(ms.count(10) == 0);
-        REQUIRE(ms.size() == 1);
+        REQUIRE(ms.size() == 0);
     }
 
     SECTION("Remove with multiple elements")
@@ -148,7 +148,7 @@ TEST_CASE("Multiset remove operations", "[multiset]")
         ms.remove(20);
         REQUIRE(ms.count(20) == 0);
         REQUIRE_FALSE(ms.contains(20));
-        REQUIRE(ms.size() == 3); // All three ids still in data
+        REQUIRE(ms.size() == 3); // 1 + 0 + 2 = 3 total elements
     }
 }
 
@@ -170,7 +170,7 @@ TEST_CASE("Multiset clear operation", "[multiset]")
         ms.insert(20);
         ms.insert(30);
 
-        REQUIRE(ms.size() == 3);
+        REQUIRE(ms.size() == 4); // 2 + 1 + 1 = 4 total elements
 
         ms.clear();
         REQUIRE(ms.empty());
@@ -204,7 +204,7 @@ TEST_CASE("Multiset edge cases", "[multiset]")
         }
 
         REQUIRE(ms.count(42) == 1000);
-        REQUIRE(ms.size() == 1);
+        REQUIRE(ms.size() == 1000); // Total count with multiplicities
 
         for (int i = 0; i < 500; ++i)
         {

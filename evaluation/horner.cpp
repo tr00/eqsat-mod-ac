@@ -1,7 +1,8 @@
-#include "egraph.h"
-#include "theory.h"
 #include <iostream>
 #include <memory>
+
+#include "egraph.h"
+#include "theory.h"
 
 int main()
 {

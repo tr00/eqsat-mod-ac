@@ -175,7 +175,7 @@ TEST_CASE("MultisetIndex select and unselect children", "[multiset_index]")
         // Verify we can select again
         index.select(100);
         AbstractSet children = index.project();
-        REQUIRE(children.size() == 3);
+        REQUIRE(children.size() == 4); // 10 appears twice, plus 20 and 30
     }
 }
 
@@ -200,7 +200,7 @@ TEST_CASE("MultisetIndex reset operation", "[multiset_index]")
         // Should be able to select normally
         index.select(100);
         AbstractSet children = index.project();
-        REQUIRE(children.size() == 3);
+        REQUIRE(children.size() == 4); // 10 appears twice, plus 20 and 30
     }
 
     SECTION("Reset after child selections restores all elements")
@@ -226,7 +226,7 @@ TEST_CASE("MultisetIndex reset operation", "[multiset_index]")
         // Select term again and verify all children restored
         index.select(100);
         AbstractSet children2 = index.project();
-        REQUIRE(children2.size() == 3);
+        REQUIRE(children2.size() == 4); // 10 appears twice, plus 20 and 30
         REQUIRE(children2.contains(10));
         REQUIRE(children2.contains(20));
         REQUIRE(children2.contains(30));
@@ -246,7 +246,7 @@ TEST_CASE("MultisetIndex reset operation", "[multiset_index]")
 
         index.select(100);
         AbstractSet children = index.project();
-        REQUIRE(children.size() == 3);
+        REQUIRE(children.size() == 4); // 10 appears twice, plus 20 and 30
     }
 }
 
@@ -392,7 +392,7 @@ TEST_CASE("MultisetIndex edge cases", "[multiset_index]")
 
         // Verify initial state
         AbstractSet children = index.project();
-        REQUIRE(children.size() == 1);
+        REQUIRE(children.size() == 100); // 99 appears 100 times
         REQUIRE(children.contains(99));
 
         // Remove many times
@@ -608,7 +608,7 @@ TEST_CASE("MultisetIndex multiple terms with different sizes", "[multiset_index]
         index.reset();
         index.select(30);
         AbstractSet children3 = index.project();
-        REQUIRE(children3.size() == 10);
+        REQUIRE(children3.size() == 20); // 10 unique IDs, each with count 2
         for (id_t i = 5; i < 15; ++i)
         {
             REQUIRE(children3.contains(i));
@@ -683,7 +683,7 @@ TEST_CASE("MultisetIndex stress test with many operations", "[multiset_index]")
         index.reset();
         index.select(1000);
         AbstractSet children2 = index.project();
-        REQUIRE(children2.size() == 50);
+        REQUIRE(children2.size() == 77); // 50 base + 17 (divisible by 3) + 10 (divisible by 5)
     }
 
     SECTION("Build complex ENode")
