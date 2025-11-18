@@ -50,6 +50,11 @@ class UnionFind
         return x;
     }
 
+    inline bool same(id_t a, id_t b) noexcept
+    {
+        return find_root(a) == find_root(b);
+    }
+
     inline bool same(id_t a, id_t b) const noexcept
     {
         return find_root(a) == find_root(b);

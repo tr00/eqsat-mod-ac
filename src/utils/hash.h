@@ -32,11 +32,13 @@
 #pragma once
 
 #include "ankerl/unordered_dense.h"
+#include <cassert>
 
 namespace eqsat
 {
 
 #define SEED 0x9E3779B97F4A7C15UL
+#define PRIME 0xFFFFFFFFFFFFFFE7UL
 
 /// CREDIT: https://github.com/wangyi-fudan/wyhash
 [[nodiscard]] inline uint64_t hash64(uint64_t x) noexcept
@@ -57,6 +59,51 @@ namespace eqsat
     a = c;
     b = c >> 32;
     return a ^ b;
+}
+
+[[nodiscard]] inline uint64_t hashmodp(uint64_t x) noexcept
+{
+    uint64_t v = hash64(x);
+
+    if (v == 0)
+        return 42;
+
+    return v % PRIME;
+}
+
+// (x + y) mod p
+[[nodiscard]] inline uint64_t addmodp(uint64_t x, uint64_t y) noexcept
+{
+    assert(x < PRIME);
+    assert(y < PRIME);
+
+    uint64_t sum = x + y;
+
+    if (__builtin_expect(sum < PRIME, true))
+        return sum;
+
+    return sum - PRIME;
+}
+//
+// (x - y) mod p
+[[nodiscard]] inline uint64_t submodp(uint64_t x, uint64_t y) noexcept
+{
+    assert(x < PRIME);
+    assert(y < PRIME);
+
+    if (x >= y)
+        return x - y;
+
+    return x + (PRIME - y);
+}
+
+// (x * y) mod p
+[[nodiscard]] inline uint64_t mulmodp(uint64_t x, uint64_t y) noexcept
+{
+    assert(x < PRIME);
+    assert(y < PRIME);
+
+    return ((__uint128_t)x * (__uint128_t)y) % PRIME;
 }
 
 } // namespace eqsat

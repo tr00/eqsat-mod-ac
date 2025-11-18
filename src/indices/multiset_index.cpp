@@ -11,9 +11,13 @@ AbstractSet MultisetIndex::project()
     {
         return AbstractSet(WrappedHashMapSet(*data));
     }
-    else // children...
+    else if (!mset->empty()) // children...
     {
         return AbstractSet(MultisetSupport(*mset));
+    }
+    else
+    {
+        return AbstractSet();
     }
 }
 
@@ -23,7 +27,7 @@ void MultisetIndex::select(id_t key)
     {
         mset = data->at(key);
     }
-    else // children...
+    else if (!mset->empty()) // children...
     {
         history.push_back(key);
         // We search in the multiset for this key and decrement its counter.

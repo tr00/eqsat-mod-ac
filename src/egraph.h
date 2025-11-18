@@ -51,6 +51,11 @@ class EGraph
 
     id_t unify(id_t a, id_t b);
 
+    bool is_equiv(id_t a, id_t b)
+    {
+        return uf.same(a, b);
+    }
+
     bool is_equiv(id_t a, id_t b) const
     {
         return uf.same(a, b);

@@ -17,6 +17,16 @@
     return egraph.canonicalize(id);
 }
 
+[[nodiscard]] bool Handle::equiv(id_t a, id_t b)
+{
+    return egraph.is_equiv(a, b);
+}
+
+[[nodiscard]] bool Handle::equiv(id_t a, id_t b) const
+{
+    return egraph.is_equiv(a, b);
+}
+
 id_t Handle::unify(id_t a, id_t b)
 {
     return egraph.unify(a, b);

@@ -5,7 +5,7 @@
 
 int main()
 {
-    size_t n = 6;
+    size_t n = 5;
 
     Theory theory;
 
@@ -36,8 +36,7 @@ int main()
     auto a = egraph.add_expr(h1);
     auto b = egraph.add_expr(h2);
 
-    egraph.saturate(5);
-    // egraph.rebuild();
+    egraph.saturate(4);
 
     bool res = egraph.is_equiv(a, b);
     std::cout << "result: " << (res ? "true" : "false") << std::endl;

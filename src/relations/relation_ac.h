@@ -12,11 +12,16 @@
 class RelationAC
 {
   private:
-    // eclass-id < term-id < mset
+    // data[term-id] = mset
     std::shared_ptr<HashMap<id_t, Multiset>> data;
-    Vec<id_t> ids;
+    Vec<id_t> ids; // ids[term-id] = eclass-id
     Symbol symbol;
     Handle egraph;
+
+    // scans the relation for other terms which include the given multiset.
+    // fills a buffer with all term ids of such super-terms.
+    // returns the number of added ids.
+    size_t check_inclusion(const Multiset& mset, Vec<id_t>& buffer);
 
   public:
     RelationAC(Symbol symbol, Handle egraph)

@@ -167,3 +167,7 @@ target_link_libraries(horner PRIVATE eqsat)
 add_executable(endomorphism evaluation/endomorphism.cpp)
 target_include_directories(endomorphism PRIVATE src)
 target_link_libraries(endomorphism PRIVATE eqsat)
+
+add_executable(ainva evaluation/a_inv_a.cpp)
+target_include_directories(ainva PRIVATE src)
+target_link_libraries(ainva PRIVATE eqsat)

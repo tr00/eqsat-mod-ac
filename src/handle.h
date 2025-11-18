@@ -20,6 +20,9 @@ class Handle
     id_t canonicalize(id_t);
     id_t canonicalize(id_t) const;
 
+    bool equiv(id_t, id_t);
+    bool equiv(id_t, id_t) const;
+
     id_t unify(id_t, id_t);
 
     id_t add_enode(ENode enode);

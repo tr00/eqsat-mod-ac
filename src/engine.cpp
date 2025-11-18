@@ -34,6 +34,16 @@ size_t Engine::intersect(State& state)
         auto enode = state.fd->make_enode();
         auto id = egraph.lookup(enode);
 
+        // DEBUG
+        /*
+        std::cerr << "FD lookup for enode: " << enode.symbol << " [";
+        for (size_t i = 0; i < enode.args.size(); ++i) {
+            if (i > 0) std::cerr << ", ";
+            std::cerr << enode.args[i];
+        }
+        std::cerr << "] -> " << (id.has_value() ? std::to_string(id.value()) : "NOT FOUND") << std::endl;
+        */
+
         if (!id.has_value())
         {
             // Create ephemeral ID with MSB set

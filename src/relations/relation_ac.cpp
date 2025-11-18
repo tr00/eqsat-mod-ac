@@ -9,6 +9,19 @@
 #include "utils/hashmap.h"
 #include "utils/multiset.h"
 
+/**
+ * Invariants which need to be maintained:
+ *  1. each multiset must be unique
+ *  2. each term id must be unique
+ *  3. all eclass ids need to be canonical
+ *  4. ...
+ *
+ * Idea: store the stuff as a set and actually build an index.
+ * We can draw and traverse the subset-inclusion graph
+ * to since only maximal nodes need to be queried.
+ *
+ */
+
 namespace
 {
 struct MultisetPtrHash
@@ -28,9 +41,21 @@ struct MultisetPtrEqual
 };
 } // namespace
 
+size_t RelationAC::check_inclusion(const Multiset& mset, Vec<id_t>& buffer)
+{
+    auto before = buffer.size();
+
+    for (const auto& [other_term_id, other_mset] : *data)
+        if (other_mset.includes(mset))
+            buffer.push_back(other_term_id);
+
+    auto after = buffer.size();
+    return after - before;
+}
+
+// TODO: rebuilding should trigger the inclusion cascade
 bool RelationAC::rebuild(Handle egraph)
 {
-    return true;
     HashMap<const Multiset *, id_t, MultisetPtrHash, MultisetPtrEqual> cache;
     Vec<id_t> terms_to_keep;
 
@@ -83,6 +108,9 @@ void RelationAC::add_tuple(id_t id, Multiset mset)
 {
     Vec<std::pair<id_t, Multiset>> worklist;
 
+    // Vec<id_t> buffer;
+    // check_inclusion(mset, buffer);
+
     // is the new term included in any other existing term?
     for (auto& [other_term, other_mset] : *data)
     {
@@ -96,8 +124,8 @@ void RelationAC::add_tuple(id_t id, Multiset mset)
             // with the multiset difference old \ new.
 
             auto diff = other_mset.msetdiff(mset);
-            if (diff.empty())
-                continue;
+            // if (diff.empty())
+            //     continue;
             diff.insert(id);
             auto other_id = ids[other_term];
 
@@ -112,8 +140,8 @@ void RelationAC::add_tuple(id_t id, Multiset mset)
         {
             auto other_id = ids[other_term];
             auto diff = mset.msetdiff(other_mset);
-            if (diff.empty())
-                continue;
+            // if (diff.empty())
+            //     continue;
             diff.insert(other_id);
 
             worklist.push_back({id, std::move(diff)});
