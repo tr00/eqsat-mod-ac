@@ -38,7 +38,8 @@ namespace eqsat
 {
 
 #define SEED 0x9E3779B97F4A7C15UL
-#define PRIME 0xFFFFFFFFFFFFFFE7UL
+#define SEED2 0x14003c93edaa4b55ull
+#define PRIME 0x7fffffffffffffe7ull
 
 /// CREDIT: https://github.com/wangyi-fudan/wyhash
 [[nodiscard]] inline uint64_t hash64(uint64_t x) noexcept
@@ -79,12 +80,12 @@ namespace eqsat
 
     uint64_t sum = x + y;
 
-    if (__builtin_expect(sum < PRIME, true))
+    if (sum < PRIME)
         return sum;
 
     return sum - PRIME;
 }
-//
+
 // (x - y) mod p
 [[nodiscard]] inline uint64_t submodp(uint64_t x, uint64_t y) noexcept
 {

@@ -10,6 +10,40 @@
 
 class MultisetSupport;
 
+struct MultisetFingerprint
+{
+    uint64_t fingerprint = SEED2;
+
+    MultisetFingerprint()
+    {
+    }
+
+    uint64_t hash() const noexcept
+    {
+        return fingerprint;
+    }
+
+    void insert(id_t x)
+    {
+        fingerprint = eqsat::addmodp(fingerprint, eqsat::hashmodp(x));
+    }
+
+    void insert(id_t x, unsigned count)
+    {
+        fingerprint = eqsat::addmodp(fingerprint, eqsat::mulmodp(eqsat::hashmodp(x), count));
+    }
+
+    void remove(id_t x)
+    {
+        fingerprint = eqsat::submodp(fingerprint, eqsat::hashmodp(x));
+    }
+
+    void reset()
+    {
+        fingerprint = SEED2;
+    }
+};
+
 /**
  * @brief A multiset data structure that maintains element counts and supports efficient operations.
  *
@@ -32,7 +66,7 @@ class Multiset
   private:
     Vec<std::pair<id_t, uint32_t>> data;
     size_t nelements;
-    uint64_t fingerprint;
+    MultisetFingerprint fingerprint;
 
     static bool cmp(const std::pair<id_t, uint32_t>& pair, id_t val)
     {
@@ -93,16 +127,11 @@ class Multiset
      */
     void rehash()
     {
-        fingerprint = SEED;
+        fingerprint.reset();
 
         for (const auto& [value, count] : data)
-        {
             if (count > 0)
-            {
-                uint64_t hash = eqsat::hash64(value);
-                fingerprint = eqsat::addmodp(fingerprint, eqsat::mulmodp(hash, count));
-            }
-        }
+                fingerprint.insert(value, count);
     }
 
     friend class MultisetSupport;
@@ -115,7 +144,7 @@ class Multiset
     Multiset()
         : data()
         , nelements(0)
-        , fingerprint(SEED)
+        , fingerprint()
     {
     }
 
@@ -130,7 +159,7 @@ class Multiset
     Multiset(const Vec<id_t>& vec)
         : data()
         , nelements(vec.size())
-        , fingerprint(SEED)
+        , fingerprint()
     {
         construct(vec.cbegin(), vec.cend());
     }
@@ -147,7 +176,7 @@ class Multiset
     Multiset(Vec<id_t>::const_iterator begin, Vec<id_t>::const_iterator end)
         : data()
         , nelements(end - begin)
-        , fingerprint(SEED)
+        , fingerprint()
     {
         construct(begin, end);
     }
@@ -250,10 +279,9 @@ class Multiset
             data.insert(it, {id, count});
         }
 
-        uint64_t hash = eqsat::hash64(id);
-        fingerprint = eqsat::addmodp(fingerprint, eqsat::mulmodp(hash, count));
-
         nelements += count;
+
+        fingerprint.insert(id, count);
     }
 
     /**
@@ -282,8 +310,8 @@ class Multiset
         {
             it->second--;
             nelements--;
-            uint64_t hash = eqsat::hash64(id) % PRIME;
-            fingerprint = eqsat::submodp(fingerprint, hash);
+
+            fingerprint.remove(id);
         }
     }
 
@@ -318,7 +346,7 @@ class Multiset
     {
         data.clear();
         nelements = 0;
-        fingerprint = SEED;
+        fingerprint.reset();
     }
 
     /**
@@ -407,7 +435,7 @@ class Multiset
      */
     uint64_t hash() const noexcept
     {
-        return fingerprint;
+        return fingerprint.hash();
     }
 
     /**
