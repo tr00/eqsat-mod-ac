@@ -5,8 +5,8 @@
 #include <utility>
 
 #include "../id.h"
-#include "../utils/vec.h"
 #include "utils/hash.h"
+#include "utils/vec.h"
 
 class MultisetSupport;
 
@@ -135,7 +135,7 @@ class Multiset
     }
 
     friend class MultisetSupport;
-    friend class RelationAC;
+    friend class RelationAC2;
 
   public:
     /**
@@ -228,31 +228,6 @@ class Multiset
                 return false;
 
         return true;
-    }
-
-    /**
-     * @brief Computes the multiset difference between this and another multiset.
-     *
-     * Returns a new multiset containing elements from this multiset with their counts reduced
-     * by the counts in 'other'. Elements with zero or negative difference are omitted.
-     *
-     * @param other The multiset to subtract
-     * @return A new multiset representing this \ other
-     */
-    [[nodiscard]] Multiset msetdiff(const Multiset& other) const
-    {
-        Multiset diff;
-
-        for (const auto& [value, count] : data)
-        {
-            uint32_t other_count = other.count(value);
-            if (count > other_count)
-            {
-                diff.insert(value, count - other_count);
-            }
-        }
-
-        return diff;
     }
 
     /**
@@ -436,6 +411,37 @@ class Multiset
     uint64_t hash() const noexcept
     {
         return fingerprint.hash();
+    }
+
+    /**
+     * @brief Computes the multiset difference between this and another multiset.
+     *
+     * Returns a new multiset containing elements from this multiset with their counts reduced
+     * by the counts in 'other'. Elements with zero or negative difference are omitted.
+     *
+     * @param other The multiset to subtract
+     * @return A new multiset representing this \ other
+     */
+    [[nodiscard]] Multiset msetdiff(const Multiset& other) const
+    {
+        Multiset diff;
+
+        for (const auto& [value, count] : data)
+        {
+            uint32_t other_count = other.count(value);
+            if (count > other_count)
+            {
+                diff.insert(value, count - other_count);
+            }
+        }
+
+        return diff;
+    }
+
+    void insert_all(const Multiset& other)
+    {
+        for (const auto& [value, count] : other.data)
+            insert(value, count);
     }
 
     /**

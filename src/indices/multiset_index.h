@@ -11,14 +11,14 @@
 class MultisetIndex
 {
   private:
-    // term-id < children... < eclass-id
+    // term-id < children... [ < eclass-id ]
     Vec<id_t> history;
-    std::shared_ptr<const HashMap<id_t, Multiset>> data;
-    std::optional<Multiset> mset;
+    HashMap<id_t, Multiset> data;
+    std::optional<Multiset *> mset;
     Symbol symbol;
 
   public:
-    MultisetIndex(Symbol symbol, std::shared_ptr<const HashMap<id_t, Multiset>> data)
+    MultisetIndex(Symbol symbol, const HashMap<id_t, Multiset> data)
         : history()
         , data(data)
         , mset()

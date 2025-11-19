@@ -5,10 +5,10 @@
 class MultisetSupport
 {
   private:
-    Multiset& mset;
+    const Multiset& mset;
 
   public:
-    explicit MultisetSupport(Multiset& m)
+    explicit MultisetSupport(const Multiset& m)
         : mset(m)
     {
     }

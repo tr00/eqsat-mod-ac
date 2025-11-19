@@ -9,32 +9,36 @@ AbstractSet MultisetIndex::project()
 {
     if (!mset.has_value()) // term-id
     {
-        return AbstractSet(WrappedHashMapSet(*data));
+        return AbstractSet(WrappedHashMapSet(data));
     }
-    else if (!mset->empty()) // children...
+    else if (!mset.value()->empty()) // children...
     {
-        return AbstractSet(MultisetSupport(*mset));
+        const Multiset& cref = *mset.value();
+        return AbstractSet(MultisetSupport(cref));
     }
-    else
-    {
-        return AbstractSet();
-    }
+
+    return AbstractSet();
 }
 
 void MultisetIndex::select(id_t key)
 {
     if (!mset.has_value()) // term-id
     {
-        mset = data->at(key);
+        mset = &data.at(key);
+        return;
     }
-    else if (!mset->empty()) // children...
-    {
-        history.push_back(key);
-        // We search in the multiset for this key and decrement its counter.
-        // This means we have temporarily removed it from the set.
-        // In order to later "unselect" this key, we've added it to the history.
-        mset->remove(key);
-    }
+
+    auto& args = mset.value();
+
+    if (args->empty())
+        return;
+
+    history.push_back(key);
+
+    // We search in the multiset for this key and decrement its counter.
+    // This means we have temporarily removed it from the set.
+    // In order to later "unselect" this key, we've added it to the history.
+    args->remove(key);
 }
 
 void MultisetIndex::unselect()
@@ -47,7 +51,7 @@ void MultisetIndex::unselect()
     {
         auto key = history.back();
         history.pop_back();
-        mset->insert(key);
+        mset.value()->insert(key);
     }
 }
 
@@ -63,7 +67,7 @@ void MultisetIndex::reset()
     {
         auto key = history.back();
         history.pop_back();
-        mset->insert(key);
+        mset.value()->insert(key);
     }
 
     mset = std::nullopt;
