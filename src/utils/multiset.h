@@ -135,7 +135,7 @@ class Multiset
     }
 
     friend class MultisetSupport;
-    friend class RelationAC2;
+    friend class RelationAC;
 
   public:
     /**

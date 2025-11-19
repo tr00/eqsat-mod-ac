@@ -9,7 +9,7 @@
 #include "utils/multiset.h"
 #include "utils/vec.h"
 
-class RelationAC2
+class RelationAC
 {
   private:
     Vec<std::pair<id_t, Multiset>> data;
@@ -23,7 +23,7 @@ class RelationAC2
     bool unflatten();
 
   public:
-    RelationAC2(Symbol symbol)
+    RelationAC(Symbol symbol)
         : data()
         , symbol(symbol)
     {

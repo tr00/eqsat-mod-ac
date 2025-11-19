@@ -2,11 +2,11 @@
 
 #include "indices/abstract_index.h"
 #include "indices/multiset_index.h"
-#include "relation_ac2.h"
+#include "relation_ac.h"
 #include "utils/hashmap.h"
 #include "utils/multiset.h"
 
-bool RelationAC2::insert(std::pair<id_t, Multiset> tuple)
+bool RelationAC::insert(std::pair<id_t, Multiset> tuple)
 {
     auto cmp = [](const std::pair<id_t, Multiset>& lhs, const std::pair<id_t, Multiset>& rhs) {
         if (lhs.first != rhs.first)
@@ -29,7 +29,7 @@ bool RelationAC2::insert(std::pair<id_t, Multiset> tuple)
     return true;
 }
 
-void RelationAC2::sort()
+void RelationAC::sort()
 {
     std::sort(data.begin(), data.end(), [](const auto& lhs, const auto& rhs) {
         if (lhs.first != rhs.first)
@@ -39,12 +39,20 @@ void RelationAC2::sort()
     });
 }
 
-void RelationAC2::add_tuple(id_t id, Multiset mset)
+void RelationAC::add_tuple(id_t id, Multiset mset)
 {
     insert({id, mset});
 }
 
-AbstractIndex RelationAC2::populate_index()
+void RelationAC::add_tuple(const Vec<id_t>& tuple)
+{
+    id_t id = tuple.back();
+    Multiset mset{tuple.cbegin(), tuple.cend() - 1};
+
+    insert({id, mset});
+}
+
+AbstractIndex RelationAC::populate_index()
 {
     HashMap<id_t, Multiset> index;
 
@@ -58,7 +66,7 @@ AbstractIndex RelationAC2::populate_index()
 }
 
 // O(mn)
-bool RelationAC2::canonicalize(const Handle egraph)
+bool RelationAC::canonicalize(const Handle egraph)
 {
     bool changed = false;
 
@@ -105,7 +113,7 @@ struct MultisetPtrEqual
 
 // O(mn)
 // assumes canonical relation!
-bool RelationAC2::congruence(Handle egraph)
+bool RelationAC::congruence(Handle egraph)
 {
     HashMap<MultisetPtr, id_t, MultisetPtrHash, MultisetPtrEqual> cache;
 
@@ -131,7 +139,7 @@ bool RelationAC2::congruence(Handle egraph)
     return changed;
 }
 
-bool RelationAC2::flatten()
+bool RelationAC::flatten()
 {
     bool changed = false;
 
@@ -158,7 +166,7 @@ bool RelationAC2::flatten()
     return changed;
 }
 
-bool RelationAC2::unflatten()
+bool RelationAC::unflatten()
 {
     bool changed = false;
 
@@ -191,7 +199,7 @@ bool RelationAC2::unflatten()
 // and E contains only a=b. Well, then there will be l many iterations.
 // which gives a total running time of O(lmn)
 
-void RelationAC2::dump(std::ofstream& out, const SymbolTable& symbols) const
+void RelationAC::dump(std::ofstream& out, const SymbolTable& symbols) const
 {
     out << "---- " << symbols.get_string(symbol) << "(AC) with " << size() << " tuples ----" << std::endl;
 
@@ -215,7 +223,7 @@ void RelationAC2::dump(std::ofstream& out, const SymbolTable& symbols) const
     }
     out << std::endl;
 }
-bool RelationAC2::rebuild(Handle egraph)
+bool RelationAC::rebuild(Handle egraph)
 {
     bool changed = false;
 

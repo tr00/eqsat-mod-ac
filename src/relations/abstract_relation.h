@@ -5,7 +5,7 @@
 
 #include "handle.h"
 #include "indices/abstract_index.h"
-#include "relations/relation_ac2.h"
+#include "relations/relation_ac.h"
 #include "row_store.h"
 #include "symbol_table.h"
 
@@ -21,7 +21,7 @@ class AbstractRelation
     RelationKind kind;
     union {
         RowStore row_store;
-        RelationAC2 ac_rel;
+        RelationAC ac_rel;
     };
 
   public:
@@ -31,7 +31,7 @@ class AbstractRelation
     {
     }
 
-    explicit AbstractRelation(RelationAC2 rel)
+    explicit AbstractRelation(RelationAC rel)
         : kind(RELATION_AC)
         , ac_rel(std::move(rel))
     {
@@ -45,7 +45,7 @@ class AbstractRelation
             row_store.~RowStore();
             break;
         case RELATION_AC:
-            ac_rel.~RelationAC2();
+            ac_rel.~RelationAC();
             break;
         }
     }
@@ -62,7 +62,7 @@ class AbstractRelation
             new (&row_store) RowStore(std::move(other.row_store));
             break;
         case RELATION_AC:
-            new (&ac_rel) RelationAC2(std::move(other.ac_rel));
+            new (&ac_rel) RelationAC(std::move(other.ac_rel));
             break;
         }
     }
@@ -78,7 +78,7 @@ class AbstractRelation
                 row_store.~RowStore();
                 break;
             case RELATION_AC:
-                ac_rel.~RelationAC2();
+                ac_rel.~RelationAC();
                 break;
             }
             // Move construct new object
@@ -89,7 +89,7 @@ class AbstractRelation
                 new (&row_store) RowStore(std::move(other.row_store));
                 break;
             case RELATION_AC:
-                new (&ac_rel) RelationAC2(std::move(other.ac_rel));
+                new (&ac_rel) RelationAC(std::move(other.ac_rel));
                 break;
             }
         }

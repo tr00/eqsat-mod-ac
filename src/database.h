@@ -173,7 +173,7 @@ class Database
 
     void create_relation_ac(Symbol name, Handle)
     {
-        relations.emplace(name, AbstractRelation(RelationAC2(name)));
+        relations.emplace(name, AbstractRelation(RelationAC(name)));
     }
 
     /**

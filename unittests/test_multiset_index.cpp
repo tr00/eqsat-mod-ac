@@ -1,13 +1,12 @@
 #include <catch2/catch_test_macros.hpp>
-#include <memory>
 
 #include "enode.h"
 #include "indices/multiset_index.h"
 
 TEST_CASE("MultisetIndex basic operations", "[multiset_index]")
 {
-    // New structure: HashMap<term_id, Multiset>
-    auto rel = std::make_shared<HashMap<id_t, Multiset>>();
+    // HashMap<term_id, Multiset>
+    HashMap<id_t, Multiset> rel;
     Symbol test_symbol = 42;
 
     SECTION("Single term with multiple children")
@@ -17,7 +16,7 @@ TEST_CASE("MultisetIndex basic operations", "[multiset_index]")
         ms.insert(20);
         ms.insert(30);
 
-        (*rel)[100] = std::move(ms); // term_id = 100
+        rel[100] = std::move(ms); // term_id = 100
 
         MultisetIndex index(test_symbol, rel);
 
@@ -45,8 +44,8 @@ TEST_CASE("MultisetIndex basic operations", "[multiset_index]")
         ms2.insert(30);
         ms2.insert(40);
 
-        (*rel)[100] = std::move(ms1);
-        (*rel)[101] = std::move(ms2);
+        rel[100] = std::move(ms1);
+        rel[101] = std::move(ms2);
 
         MultisetIndex index(test_symbol, rel);
 
@@ -82,7 +81,7 @@ TEST_CASE("MultisetIndex basic operations", "[multiset_index]")
 
 TEST_CASE("MultisetIndex select and unselect children", "[multiset_index]")
 {
-    auto rel = std::make_shared<HashMap<id_t, Multiset>>();
+    HashMap<id_t, Multiset> rel;
     Symbol test_symbol = 1;
 
     Multiset ms;
@@ -91,7 +90,7 @@ TEST_CASE("MultisetIndex select and unselect children", "[multiset_index]")
     ms.insert(30);
     ms.insert(10); // Add duplicate - 10 now has count 2
 
-    (*rel)[100] = std::move(ms);
+    rel[100] = std::move(ms);
 
     MultisetIndex index(test_symbol, rel);
 
@@ -181,7 +180,7 @@ TEST_CASE("MultisetIndex select and unselect children", "[multiset_index]")
 
 TEST_CASE("MultisetIndex reset operation", "[multiset_index]")
 {
-    auto rel = std::make_shared<HashMap<id_t, Multiset>>();
+    HashMap<id_t, Multiset> rel;
     Symbol test_symbol = 5;
 
     Multiset ms;
@@ -190,7 +189,7 @@ TEST_CASE("MultisetIndex reset operation", "[multiset_index]")
     ms.insert(30);
     ms.insert(10); // 10 has count 2
 
-    (*rel)[100] = std::move(ms);
+    rel[100] = std::move(ms);
 
     MultisetIndex index(test_symbol, rel);
 
@@ -256,9 +255,9 @@ TEST_CASE("MultisetIndex edge cases", "[multiset_index]")
 
     SECTION("Empty multiset in relation")
     {
-        auto rel = std::make_shared<HashMap<id_t, Multiset>>();
+        HashMap<id_t, Multiset> rel;
         Multiset ms; // Empty
-        (*rel)[100] = std::move(ms);
+        rel[100] = std::move(ms);
 
         MultisetIndex index(test_symbol, rel);
         index.select(100);
@@ -269,7 +268,7 @@ TEST_CASE("MultisetIndex edge cases", "[multiset_index]")
 
     SECTION("Multiset with high count elements")
     {
-        auto rel = std::make_shared<HashMap<id_t, Multiset>>();
+        HashMap<id_t, Multiset> rel;
         Multiset ms;
         for (int i = 0; i < 10; ++i)
         {
@@ -277,7 +276,7 @@ TEST_CASE("MultisetIndex edge cases", "[multiset_index]")
         }
         ms.insert(100);
 
-        (*rel)[200] = std::move(ms);
+        rel[200] = std::move(ms);
         MultisetIndex index(test_symbol, rel);
 
         index.select(200);
@@ -308,13 +307,13 @@ TEST_CASE("MultisetIndex edge cases", "[multiset_index]")
 
     SECTION("Select same element to zero")
     {
-        auto rel = std::make_shared<HashMap<id_t, Multiset>>();
+        HashMap<id_t, Multiset> rel;
         Multiset ms;
         ms.insert(10);
         ms.insert(10);
         ms.insert(10);
 
-        (*rel)[100] = std::move(ms);
+        rel[100] = std::move(ms);
         MultisetIndex index(test_symbol, rel);
 
         index.select(100);
@@ -340,14 +339,14 @@ TEST_CASE("MultisetIndex edge cases", "[multiset_index]")
 
     SECTION("Complex navigation pattern")
     {
-        auto rel = std::make_shared<HashMap<id_t, Multiset>>();
+        HashMap<id_t, Multiset> rel;
         Multiset ms;
         ms.insert(1);
         ms.insert(2);
         ms.insert(3);
         ms.insert(2); // 2 has count 2
 
-        (*rel)[500] = std::move(ms);
+        rel[500] = std::move(ms);
         MultisetIndex index(test_symbol, rel);
 
         index.select(500); // term-id
@@ -378,14 +377,14 @@ TEST_CASE("MultisetIndex edge cases", "[multiset_index]")
 
     SECTION("Single element with high multiplicity")
     {
-        auto rel = std::make_shared<HashMap<id_t, Multiset>>();
+        HashMap<id_t, Multiset> rel;
         Multiset ms;
         for (int i = 0; i < 100; ++i)
         {
             ms.insert(99);
         }
 
-        (*rel)[1] = std::move(ms);
+        rel[1] = std::move(ms);
         MultisetIndex index(test_symbol, rel);
 
         index.select(1);
@@ -418,7 +417,7 @@ TEST_CASE("MultisetIndex edge cases", "[multiset_index]")
 
 TEST_CASE("MultisetIndex for_each iteration", "[multiset_index]")
 {
-    auto rel = std::make_shared<HashMap<id_t, Multiset>>();
+    HashMap<id_t, Multiset> rel;
     Symbol test_symbol = 3;
 
     Multiset ms;
@@ -427,7 +426,7 @@ TEST_CASE("MultisetIndex for_each iteration", "[multiset_index]")
     ms.insert(30);
     ms.insert(10); // 10 has count 2
 
-    (*rel)[100] = std::move(ms);
+    rel[100] = std::move(ms);
     MultisetIndex index(test_symbol, rel);
 
     SECTION("Iterate over all children")
@@ -474,7 +473,7 @@ TEST_CASE("MultisetIndex for_each iteration", "[multiset_index]")
 
 TEST_CASE("MultisetIndex make_enode", "[multiset_index]")
 {
-    auto rel = std::make_shared<HashMap<id_t, Multiset>>();
+    HashMap<id_t, Multiset> rel;
     Symbol test_symbol = 99;
 
     Multiset ms;
@@ -482,7 +481,7 @@ TEST_CASE("MultisetIndex make_enode", "[multiset_index]")
     ms.insert(20);
     ms.insert(30);
 
-    (*rel)[100] = std::move(ms);
+    rel[100] = std::move(ms);
 
     MultisetIndex index(test_symbol, rel);
 
@@ -534,13 +533,14 @@ TEST_CASE("MultisetIndex make_enode", "[multiset_index]")
 
     SECTION("ENode with duplicates in history")
     {
+        HashMap<id_t, Multiset> rel2;
         Multiset ms2;
         ms2.insert(5);
         ms2.insert(5);
         ms2.insert(5);
 
-        (*rel)[200] = std::move(ms2);
-        MultisetIndex index2(test_symbol, rel);
+        rel2[200] = std::move(ms2);
+        MultisetIndex index2(test_symbol, rel2);
 
         index2.select(200);
         index2.select(5);
@@ -555,20 +555,20 @@ TEST_CASE("MultisetIndex make_enode", "[multiset_index]")
 
 TEST_CASE("MultisetIndex multiple terms with different sizes", "[multiset_index]")
 {
-    auto rel = std::make_shared<HashMap<id_t, Multiset>>();
+    HashMap<id_t, Multiset> rel;
     Symbol test_symbol = 50;
 
     // Term 1: small multiset
     Multiset ms1;
     ms1.insert(1);
-    (*rel)[10] = std::move(ms1);
+    rel[10] = std::move(ms1);
 
     // Term 2: medium multiset
     Multiset ms2;
     ms2.insert(2);
     ms2.insert(3);
     ms2.insert(4);
-    (*rel)[20] = std::move(ms2);
+    rel[20] = std::move(ms2);
 
     // Term 3: large multiset with duplicates
     Multiset ms3;
@@ -577,7 +577,7 @@ TEST_CASE("MultisetIndex multiple terms with different sizes", "[multiset_index]
         ms3.insert(i);
         ms3.insert(i); // Each has count 2
     }
-    (*rel)[30] = std::move(ms3);
+    rel[30] = std::move(ms3);
 
     MultisetIndex index(test_symbol, rel);
 
@@ -640,7 +640,7 @@ TEST_CASE("MultisetIndex multiple terms with different sizes", "[multiset_index]
 
 TEST_CASE("MultisetIndex stress test with many operations", "[multiset_index]")
 {
-    auto rel = std::make_shared<HashMap<id_t, Multiset>>();
+    HashMap<id_t, Multiset> rel;
     Symbol test_symbol = 77;
 
     Multiset ms;
@@ -653,7 +653,7 @@ TEST_CASE("MultisetIndex stress test with many operations", "[multiset_index]")
             ms.insert(i); // Some have count 3
     }
 
-    (*rel)[1000] = std::move(ms);
+    rel[1000] = std::move(ms);
     MultisetIndex index(test_symbol, rel);
 
     SECTION("Many selections and unselections")

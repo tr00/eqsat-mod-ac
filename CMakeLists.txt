@@ -67,7 +67,7 @@ set(LIB_SOURCES
     src/database.cpp
     src/parser.cpp
     src/relations/row_store.cpp
-    src/relations/relation_ac2.cpp
+    src/relations/relation_ac.cpp
     src/indices/trie_index.cpp
     src/indices/multiset_index.cpp
     src/sets/sorted_vec_set.cpp
