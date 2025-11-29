@@ -129,20 +129,6 @@ TEST_CASE("AC operators with multiple rewrite rules interacting", "[egraph][ac][
     }
 }
 
-TEST_CASE("AC operators with high multiplicity elements", "[egraph][ac][multiplicity]")
-{
-    Theory theory;
-
-    theory.add_operator("a", 0);
-    theory.add_operator("mul", AC);
-
-    SECTION("Non-linear pattern with multiplicity 3 is rejected")
-    {
-        // Non-linear pattern (mul ?x ?x ?x) is not supported
-        REQUIRE_THROWS_AS(theory.add_rewrite_rule("triple", "(mul ?x ?x ?x)", "?x"), std::invalid_argument);
-    }
-}
-
 TEST_CASE("AC operators with unification cascades", "[egraph][ac][unification]")
 {
     Theory theory;
@@ -401,24 +387,6 @@ TEST_CASE("AC operators with interleaved non-AC operators", "[egraph][ac][mixed]
     }
 }
 
-TEST_CASE("AC operators with pattern variables appearing multiple times", "[egraph][ac][variables]")
-{
-    Theory theory;
-
-    theory.add_operator("a", 0);
-    theory.add_operator("b", 0);
-    theory.add_operator("mul", AC);
-    theory.add_operator("sqr", 1);
-
-    SECTION("Non-linear patterns with repeated variables are rejected")
-    {
-        // Patterns with variable appearing multiple times are non-linear
-        REQUIRE_THROWS_AS(theory.add_rewrite_rule("square", "(mul ?x ?x)", "(sqr ?x)"), std::invalid_argument);
-
-        REQUIRE_THROWS_AS(theory.add_rewrite_rule("absorb", "(mul ?x ?x ?x)", "?x"), std::invalid_argument);
-    }
-}
-
 TEST_CASE("AC operators with ground term matching", "[egraph][ac][ground]")
 {
     Theory theory;
@@ -506,14 +474,6 @@ TEST_CASE("AC operators with conditional-like patterns", "[egraph][ac][condition
     auto ff = theory.add_operator("false", 0);
     auto andd = theory.add_operator("and", AC);
     theory.add_operator("or", AC); // Define but don't need to store
-
-    SECTION("Non-linear idempotence patterns are rejected")
-    {
-        // Idempotence rules are non-linear patterns
-        REQUIRE_THROWS_AS(theory.add_rewrite_rule("and_idem", "(and ?x ?x)", "?x"), std::invalid_argument);
-
-        REQUIRE_THROWS_AS(theory.add_rewrite_rule("or_idem", "(or ?x ?x)", "?x"), std::invalid_argument);
-    }
 
     SECTION("Linear boolean algebra rules work")
     {

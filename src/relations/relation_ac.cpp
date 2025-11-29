@@ -1,5 +1,7 @@
 #include <algorithm>
+#include <utility>
 
+#include "enode.h"
 #include "indices/abstract_index.h"
 #include "indices/multiset_index.h"
 #include "relation_ac.h"
@@ -27,6 +29,19 @@ bool RelationAC::insert(std::pair<id_t, Multiset> tuple)
 
     data.insert(it, std::move(tuple));
     return true;
+}
+
+bool RelationAC::contains(std::pair<id_t, Multiset> tuple)
+{
+    auto cmp = [](const std::pair<id_t, Multiset>& lhs, const std::pair<id_t, Multiset>& rhs) {
+        if (lhs.first != rhs.first)
+            return lhs.first < rhs.first;
+        return lhs.second.hash() < rhs.second.hash();
+    };
+
+    auto it = std::lower_bound(data.begin(), data.end(), tuple, cmp);
+
+    return it != data.end() && it->first == tuple.first && it->second.hash() == tuple.second.hash();
 }
 
 void RelationAC::sort()
@@ -139,65 +154,109 @@ bool RelationAC::congruence(Handle egraph)
     return changed;
 }
 
-bool RelationAC::flatten()
+bool RelationAC::flatten(Handle egraph)
 {
     bool changed = false;
 
+    Vec<std::pair<id_t, Multiset>> worklist;
     for (const auto& [id_a, mset_a] : data)
     {
         for (const auto& [id_b, mset_b] : data)
         {
-            if (mset_a.contains(id_b))
-            {
-                // a = f(X \cup {b})
-                // b = f(Y)
-                // ~~> a = f(X \cup Y)
-                auto args = mset_a;
-                args.remove(id_b);
-                args.insert_all(mset_b);
+            if (mset_a.hash() == mset_b.hash())
+                continue;
 
-                insert({id_a, args});
+            if (mset_b.contains(id_b)) // cyclic
+                continue;
 
-                changed = true;
-            }
+            if (!mset_a.contains(id_b))
+                continue;
+
+            // a = f(X \cup {b})
+            // b = f(Y)
+            // ~~> a = f(X \cup Y)
+            auto args = mset_a;
+            args.remove(id_b);
+            args.insert_all(mset_b);
+
+            if (contains({id_a, args}))
+                continue;
+
+            worklist.push_back({id_a, args});
+            changed = true;
         }
+    }
+
+    for (const auto& [id, mset] : worklist)
+    {
+        ENode enode{symbol, mset.collect()};
+        egraph.add_enode_to_memo(id, enode);
+        insert({id, mset});
     }
 
     return changed;
 }
 
-bool RelationAC::unflatten()
+bool RelationAC::unflatten(Handle egraph)
 {
     bool changed = false;
+
+    Vec<std::pair<id_t, Multiset>> worklist;
 
     for (const auto& [id_a, mset_a] : data)
     {
         for (const auto& [id_b, mset_b] : data)
         {
-            if (mset_a.includes(mset_b))
-            {
-                // a = f(X \cup Y)
-                // b = f(Y)
-                // ~~> a = f(X \cup {b})
-                auto args = mset_a.msetdiff(mset_b);
-                args.insert(id_b);
+            if (mset_a.hash() == mset_b.hash())
+                continue;
 
-                // TODO: assert size > 1 (?)
+            if (!mset_a.includes(mset_b))
+                continue;
 
-                insert({id_a, args});
+            // a = f(X \cup Y)
+            // b = f(Y)
+            // ~~> a = f(X \cup {b})
+            auto args = mset_a.msetdiff(mset_b);
+            args.insert(id_b);
 
-                changed = true;
-            }
+            if (contains({id_a, args}))
+                continue;
+
+            // TODO: assert size > 1 (?)
+            worklist.push_back({id_a, args});
+            changed = true;
         }
+    }
+
+    for (const auto& [id, mset] : worklist)
+    {
+        ENode enode{symbol, mset.collect()};
+        egraph.add_enode_to_memo(id, enode);
+        insert({id, mset});
     }
 
     return changed;
 }
 
-// how long can this keep going?
-// well suppose we have a chain f(f(...f(a)))) and f(f(...f(b))) of length l
-// and E contains only a=b. Well, then there will be l many iterations.
-// which gives a total running time of O(lmn)
+bool RelationAC::rebuild(Handle egraph)
+{
+    bool changed = false;
+
+    canonicalize(egraph);
+    changed = congruence(egraph);
+
+    for (size_t i = 30; changed && i >= 0; --i)
+    {
+        changed = canonicalize(egraph);
+        if (changed)
+            changed = congruence(egraph);
+    }
+
+    flatten(egraph);
+    unflatten(egraph);
+
+    return true;
+}
 
 void RelationAC::dump(std::ofstream& out, const SymbolTable& symbols) const
 {
@@ -222,23 +281,4 @@ void RelationAC::dump(std::ofstream& out, const SymbolTable& symbols) const
         out << "}}" << std::endl;
     }
     out << std::endl;
-}
-bool RelationAC::rebuild(Handle egraph)
-{
-    bool changed = false;
-
-    canonicalize(egraph);
-    changed = congruence(egraph);
-
-    for (size_t i = 30; changed && i >= 0; --i)
-    {
-        changed = canonicalize(egraph);
-        if (changed)
-            changed = congruence(egraph);
-    }
-
-    flatten();
-    unflatten();
-
-    return true;
 }

@@ -1,7 +1,5 @@
 #include <catch2/catch_test_macros.hpp>
-#include <iostream>
 
-#include "utils/hash.h"
 #include "utils/multiset.h"
 
 TEST_CASE("Multiset basic operations", "[multiset]")
@@ -355,9 +353,6 @@ TEST_CASE("Multiset incremental hash invariants", "[multiset][hash]")
         ms.insert(10);
         ms.insert(20);
         auto h1 = ms.hash();
-
-        auto y = eqsat::hash64(20) % PRIME;
-        std::cout << "x: " << h1 << "  y: " << y << std::endl;
 
         ms.remove(20);
         auto h2 = ms.hash();

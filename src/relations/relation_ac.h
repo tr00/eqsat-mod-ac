@@ -9,6 +9,8 @@
 #include "utils/multiset.h"
 #include "utils/vec.h"
 
+// TODO: sort multisets lexicographically or by size to get early pruning
+
 class RelationAC
 {
   private:
@@ -16,11 +18,12 @@ class RelationAC
     Symbol symbol;
 
     bool insert(std::pair<id_t, Multiset> tuple);
+    bool contains(std::pair<id_t, Multiset> tuple);
     void sort();
     bool canonicalize(const Handle egraph);
     bool congruence(Handle egraph);
-    bool flatten();
-    bool unflatten();
+    bool flatten(Handle egraph);
+    bool unflatten(Handle egraph);
 
   public:
     RelationAC(Symbol symbol)
