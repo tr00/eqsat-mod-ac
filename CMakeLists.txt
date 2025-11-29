@@ -12,9 +12,23 @@ project(eqsat-mod-ac)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wpedantic -Werror -g")
 
-# Prefer mold linker if available
+if(NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "Build type (Debug or Release)" FORCE)
+endif()
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wpedantic -Werror")
+
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0 -fsanitize=address,undefined")
+    message(STATUS "Building in DEBUG mode with flags: ${CMAKE_CXX_FLAGS}")
+elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -DNDEBUG -march=native -flto")
+    message(STATUS "Building in RELEASE mode with flags: ${CMAKE_CXX_FLAGS}")
+else()
+    message(WARNING "Unknown build type: ${CMAKE_BUILD_TYPE}")
+endif()
+
 find_program(MOLD_LINKER mold)
 if(MOLD_LINKER)
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fuse-ld=mold")
@@ -132,24 +146,6 @@ target_link_libraries(systemtests PRIVATE eqsat Catch2::Catch2WithMain)
 enable_testing()
 add_test(NAME unit_tests COMMAND unittests)
 add_test(NAME system_tests COMMAND systemtests)
-
-add_custom_target(runtest
-    COMMAND ${CMAKE_CTEST_COMMAND} --output-on-failure --progress
-    DEPENDS unittests systemtests
-    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-)
-
-add_custom_target(rununit
-    COMMAND ${CMAKE_CTEST_COMMAND} -R unit_tests --output-on-failure --progress
-    DEPENDS unittests
-    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-)
-
-add_custom_target(runsystem
-    COMMAND ${CMAKE_CTEST_COMMAND} -R system_tests --output-on-failure --progress
-    DEPENDS systemtests
-    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-)
 
 # ===============================================
 # Demo

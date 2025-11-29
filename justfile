@@ -1,23 +1,38 @@
 default:
     @ just --list
 
-clean:
-    @ ninja -C build -t clean
+clean-debug:
+    @ rm -rf build/debug
 
-configure:
-    cmake -B build -G Ninja
+clean-release:
+    @ rm -rf build/release
 
-build:
-    @ ninja -C build
+clean: clean-debug clean-release
 
-test: build
-    ninja -C build runtest
+configure-debug:
+    cmake -B build/debug -G Ninja -DCMAKE_BUILD_TYPE=Debug
+    @ ln -sf build/debug/compile_commands.json compile_commands.json
 
-unittests: build
-    @ ./build/unittests
+configure-release:
+    cmake -B build/release -G Ninja -DCMAKE_BUILD_TYPE=Release
 
-systemtests: build
-    @ ./build/systemtests
+configure: configure-debug configure-release
+
+build-debug: configure-debug
+    @ ninja -C build/debug
+
+build-release: configure-release
+    @ ninja -C build/release
+
+build: build-debug build-release
+
+unittests: build-debug
+    @ ./build/debug/unittests
+
+systemtests: build-debug
+    @ ./build/debug/systemtests
+
+test: unittests systemtests
 
 format:
     @ clang-format-19 -i --style=file --verbose src/*.cpp src/**/*.cpp src/*.h src/**/*.h unittests/*.cpp systemtests/*.cpp
