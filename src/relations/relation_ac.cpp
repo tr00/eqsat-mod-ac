@@ -80,6 +80,28 @@ AbstractIndex RelationAC::populate_index()
     return AbstractIndex(MultisetIndex(symbol, index));
 }
 
+void RelationAC::deduplicate()
+{
+    if (data.empty())
+        return;
+
+    size_t write_idx = 0;
+    for (size_t read_idx = 1; read_idx < data.size(); ++read_idx)
+    {
+        if (data[write_idx].first != data[read_idx].first ||
+            data[write_idx].second.hash() != data[read_idx].second.hash())
+        {
+            ++write_idx;
+            if (write_idx != read_idx)
+            {
+                data[write_idx] = std::move(data[read_idx]);
+            }
+        }
+    }
+
+    data.resize(write_idx + 1);
+}
+
 // O(mn)
 bool RelationAC::canonicalize(const Handle egraph)
 {
@@ -100,7 +122,10 @@ bool RelationAC::canonicalize(const Handle egraph)
     // we mutated the tuples inplace so they are no longer ordered.
     // For future insertions/lookups they should be sorted.
     if (changed)
+    {
         sort();
+        deduplicate();
+    }
 
     return changed;
 }

@@ -24,6 +24,7 @@ class RelationAC
     bool congruence(Handle egraph);
     bool flatten(Handle egraph);
     bool unflatten(Handle egraph);
+    void deduplicate();
 
   public:
     RelationAC(Symbol symbol)

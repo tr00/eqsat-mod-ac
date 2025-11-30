@@ -46,9 +46,9 @@ build/
 # Cache directory
 .cache/
 
-# Compilation database
 compile_commands.json
 TODO.md
 CLAUDE.md
 egraph_dump.txt
 dump*.txt
+perf.data*

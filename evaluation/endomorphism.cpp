@@ -5,7 +5,7 @@
 
 int main()
 {
-    size_t n = 5;
+    size_t n = 7;
 
     Theory theory;
 
@@ -36,12 +36,11 @@ int main()
     auto a = egraph.add_expr(h1);
     auto b = egraph.add_expr(h2);
 
-    egraph.saturate(4);
+    egraph.saturate(5);
 
     bool res = egraph.is_equiv(a, b);
-    std::cout << "result: " << (res ? "true" : "false") << std::endl;
+    // std::cout << "result: " << (res ? "true" : "false") << std::endl;
 
-    egraph.dump_to_file("dump_endo.txt");
-
+    // egraph.dump_to_file("dump_endo.txt");
     return res ? 0 : 1;
 }

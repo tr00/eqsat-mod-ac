@@ -42,3 +42,7 @@ all: format build test
 
 dev: build unittests
     @echo "✅ Development cycle completed!"
+
+bench: build-release
+    /usr/lib/linux-tools-6.8.0-88/perf record -F 997 --call-graph dwarf ./build/release/endomorphism
+    /usr/lib/linux-tools-6.8.0-88/perf script | stackcollapse-perf.pl | flamegraph.pl > flamegraph.svg

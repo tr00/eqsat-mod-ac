@@ -247,7 +247,8 @@ void EGraph::saturate(std::size_t max_iters)
         db.clear_indices();
         rebuild();
 
-        std::cout << "iteration: " << iter + 1 << "  eclasses: " << uf.size() << "  enodes: " << enodes << std::endl;
+        std::cout << "iteration: " << iter + 1 << "  eclasses: " << uf.size() << "  enodes: " << enodes
+                  << "  memo: " << memo.size() << std::endl;
     }
 }
 
@@ -264,6 +265,8 @@ void EGraph::dump_to_file(const std::string& filename) const
     db.dump_to_file(out, theory.symbols);
 
     out << "====<< Hash Cons >>====\n\n";
+
+    out << "size: " << memo.size() << "\n\n";
 
     for (const auto& [enode, eclass] : memo)
     {
