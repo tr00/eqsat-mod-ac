@@ -52,3 +52,4 @@ CLAUDE.md
 egraph_dump.txt
 dump*.txt
 perf.data*
+flamegraph.svg
