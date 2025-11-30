@@ -15,6 +15,14 @@ class RowStore
     size_t arity;
     Symbol symbol;
 
+    /**
+     * @brief Remove duplicate tuples from the relation
+     *
+     * Assumes data is already sorted. Removes consecutive duplicate tuples
+     * where all arity elements (including e-class ID) are identical.
+     */
+    void deduplicate();
+
   public:
     RowStore(Symbol symbol, size_t arity)
         : arity(arity)

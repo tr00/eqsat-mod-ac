@@ -301,4 +301,19 @@ class Database
      * @param symbols Symbol table for resolving operator names
      */
     void dump_to_file(std::ofstream& out, const SymbolTable& symbols) const;
+
+    /**
+     * @brief Calculate the total number of tuples across all relations
+     *
+     * @return The sum of sizes of all relations in the database
+     */
+    size_t total_size() const
+    {
+        size_t total = 0;
+        for (const auto& [symbol, relation] : relations)
+        {
+            total += relation.size();
+        }
+        return total;
+    }
 };

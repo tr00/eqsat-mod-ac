@@ -246,8 +246,9 @@ void EGraph::saturate(std::size_t max_iters)
 
         db.clear_indices();
         rebuild();
+        rebuild();
 
-        std::cout << "iteration: " << iter + 1 << "  eclasses: " << uf.size() << "  enodes: " << enodes
+        std::cout << "iteration: " << iter + 1 << "  eclasses: " << uf.eclasses() << "  enodes: " << db.total_size()
                   << "  memo: " << memo.size() << std::endl;
     }
 }

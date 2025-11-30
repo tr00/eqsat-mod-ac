@@ -56,6 +56,53 @@ static int tuple_compare(const void *a, const void *b, void *context)
     return 0; // Equal
 }
 
+void RowStore::deduplicate()
+{
+    if (data.empty())
+        return;
+
+    const size_t num_tuples = size();
+    if (num_tuples <= 1)
+        return;
+
+    size_t write_idx = 0;
+    size_t read_idx = arity;
+
+    // Keep first tuple, compare rest
+    while (read_idx < data.size())
+    {
+        const id_t *current = &data[write_idx];
+        const id_t *candidate = &data[read_idx];
+
+        // Check if all arity elements are identical
+        bool is_duplicate = true;
+        for (size_t i = 0; i < arity; ++i)
+        {
+            if (current[i] != candidate[i])
+            {
+                is_duplicate = false;
+                break;
+            }
+        }
+
+        if (!is_duplicate)
+        {
+            // Move to next write position and copy tuple
+            write_idx += arity;
+            if (write_idx != read_idx)
+            {
+                for (size_t i = 0; i < arity; ++i)
+                    data[write_idx + i] = candidate[i];
+            }
+        }
+
+        read_idx += arity;
+    }
+
+    // Resize to remove duplicates
+    data.resize(write_idx + arity);
+}
+
 bool RowStore::rebuild(Handle handle)
 {
     for (auto& id : data)
@@ -100,6 +147,9 @@ bool RowStore::rebuild(Handle handle)
 
     next_tuple:;
     }
+
+    // Remove duplicate tuples created by unification
+    deduplicate();
 
     return did_something;
 }
