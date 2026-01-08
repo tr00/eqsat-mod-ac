@@ -62,7 +62,7 @@ TEST_CASE("Ephemeral IDs for AC partial multiset matching", "[engine][ac][epheme
         egraph.add_expr(a_expr);
         id_t mul_id = egraph.add_expr(mul_expr);
 
-        egraph.saturate(5);
+        egraph.saturate(3);
 
         // After applying inverse rule twice and identity rules,
         // should reduce to one
