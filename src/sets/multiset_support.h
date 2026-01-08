@@ -20,7 +20,7 @@ class MultisetSupport
 
     size_t size() const
     {
-        return mset.size();
+        return mset.unique_size();
     }
 
     bool empty() const

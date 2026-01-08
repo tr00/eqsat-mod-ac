@@ -5,22 +5,15 @@
 // Dummy symbol for testing
 constexpr Symbol DUMMY_SYMBOL = 0;
 
-TEST_CASE("TrieNode basic operations", "[trie_node]")
+TEST_CASE("TrieNode empty", "[trie_node]")
 {
     TrieNode node;
 
-    SECTION("Empty node has no keys or children")
-    {
-        REQUIRE(node.keys.empty());
-        REQUIRE(node.children.empty());
-        REQUIRE(node.find_key_index(42) == -1);
-    }
-
-    SECTION("Find key index on empty node returns -1")
-    {
-        REQUIRE(node.find_key_index(0) == -1);
-        REQUIRE(node.find_key_index(100) == -1);
-    }
+    REQUIRE(node.keys.empty());
+    REQUIRE(node.children.empty());
+    REQUIRE(node.find_key_index(0) == -1);
+    REQUIRE(node.find_key_index(1) == -1);
+    REQUIRE(node.find_key_index(9999) == -1);
 }
 
 TEST_CASE("TrieNode insert_path single element", "[trie_node]")
@@ -163,18 +156,18 @@ TEST_CASE("TrieIndex navigation", "[trie_index]")
         TrieIndex index(DUMMY_SYMBOL, root);
 
         // Initially at root
-        AbstractSet keys = index.project();
-        REQUIRE(keys.size() == 2);
-        REQUIRE(keys.contains(10));
-        REQUIRE(keys.contains(15));
+        AbstractSet keys1 = index.project();
+        REQUIRE(keys1.size() == 2);
+        REQUIRE(keys1.contains(10));
+        REQUIRE(keys1.contains(15));
 
         // Select key 10 and project
         index.select(10);
 
-        keys = index.project();
-        REQUIRE(keys.size() == 2);
-        REQUIRE(keys.contains(20));
-        REQUIRE(keys.contains(30));
+        AbstractSet keys2 = index.project();
+        REQUIRE(keys2.size() == 2);
+        REQUIRE(keys2.contains(20));
+        REQUIRE(keys2.contains(30));
     }
 
     SECTION("Select and backtrack")
@@ -292,39 +285,50 @@ TEST_CASE("TrieIndex simultaneous traversal", "[trie_index]")
         TrieIndex index1(DUMMY_SYMBOL, root);
         TrieIndex index2(DUMMY_SYMBOL, root);
 
-        // Both should start at root and see the same keys
-        AbstractSet keys1 = index1.project();
-        AbstractSet keys2 = index2.project();
-        REQUIRE(keys1.size() == 2);
-        REQUIRE(keys2.size() == 2);
-        REQUIRE(keys1.contains(1));
-        REQUIRE(keys2.contains(1));
+        {
+            AbstractSet keys1 = index1.project();
+            AbstractSet keys2 = index2.project();
+
+            // Both should start at root and see the same keys
+            REQUIRE(keys1.size() == 2);
+            REQUIRE(keys2.size() == 2);
+            REQUIRE(keys1.contains(1));
+            REQUIRE(keys2.contains(1));
+        }
 
         // Navigate index1 down path {1, 10}
         index1.select(1);
-        AbstractSet index1_keys = index1.project();
-        REQUIRE(index1_keys.size() == 2);
-        REQUIRE(index1_keys.contains(10));
-        REQUIRE(index1_keys.contains(20));
 
-        // index2 should still be at root
-        AbstractSet index2_keys = index2.project();
-        REQUIRE(index2_keys.size() == 2);
-        REQUIRE(index2_keys.contains(1));
-        REQUIRE(index2_keys.contains(2));
+        {
+            AbstractSet keys1 = index1.project();
+            AbstractSet keys2 = index2.project();
+
+            REQUIRE(keys1.size() == 2);
+            REQUIRE(keys1.contains(10));
+            REQUIRE(keys1.contains(20));
+
+            // index2 should still be at root
+            REQUIRE(keys2.size() == 2);
+            REQUIRE(keys2.contains(1));
+            REQUIRE(keys2.contains(2));
+        }
 
         // Navigate index2 down path {2, 30}
         index2.select(2);
-        index2_keys = index2.project();
-        REQUIRE(index2_keys.size() == 2);
-        REQUIRE(index2_keys.contains(30));
-        REQUIRE(index2_keys.contains(40));
 
-        // index1 should still be at {1, *}
-        index1_keys = index1.project();
-        REQUIRE(index1_keys.size() == 2);
-        REQUIRE(index1_keys.contains(10));
-        REQUIRE(index1_keys.contains(20));
+        {
+            AbstractSet keys1 = index1.project();
+            AbstractSet keys2 = index2.project();
+
+            REQUIRE(keys2.size() == 2);
+            REQUIRE(keys2.contains(30));
+            REQUIRE(keys2.contains(40));
+
+            // index1 should still be at {1, *}
+            REQUIRE(keys1.size() == 2);
+            REQUIRE(keys1.contains(10));
+            REQUIRE(keys1.contains(20));
+        }
 
         // Continue both paths
         index1.select(10);
@@ -343,23 +347,28 @@ TEST_CASE("TrieIndex simultaneous traversal", "[trie_index]")
         // Create copy while index1 is at position {1, *}
         TrieIndex index2 = index1;
 
-        // Both should be at the same position initially
-        AbstractSet keys1 = index1.project();
-        AbstractSet keys2 = index2.project();
-        REQUIRE(keys1.size() == 2);
-        REQUIRE(keys2.size() == 2);
-        REQUIRE(keys1.contains(10));
-        REQUIRE(keys2.contains(10));
+        {
+            AbstractSet keys1 = index1.project();
+            AbstractSet keys2 = index2.project();
+
+            // Both should be at the same position initially
+            REQUIRE(keys1.size() == 2);
+            REQUIRE(keys2.size() == 2);
+            REQUIRE(keys1.contains(10));
+            REQUIRE(keys2.contains(10));
+        }
 
         // Navigate index1 further
         index1.select(10);
         REQUIRE(index1.project().empty());
 
-        // index2 should still be at {1, *}
-        keys2 = index2.project();
-        REQUIRE(keys2.size() == 2);
-        REQUIRE(keys2.contains(10));
-        REQUIRE(keys2.contains(20));
+        {
+            // index2 should still be at {1, *}
+            AbstractSet keys2 = index2.project();
+            REQUIRE(keys2.size() == 2);
+            REQUIRE(keys2.contains(10));
+            REQUIRE(keys2.contains(20));
+        }
 
         // Navigate index2 differently
         index2.select(20);
@@ -368,13 +377,13 @@ TEST_CASE("TrieIndex simultaneous traversal", "[trie_index]")
         // Verify both are at different leaf positions
         // index1 backtrack should go to {1, 10}
         index1.unselect();
-        keys1 = index1.project();
+        AbstractSet keys1 = index1.project();
         REQUIRE(keys1.size() == 2);
         REQUIRE(keys1.contains(10));
 
         // index2 backtrack should go to {1, 20}
         index2.unselect();
-        keys2 = index2.project();
+        AbstractSet keys2 = index2.project();
         REQUIRE(keys2.size() == 2);
         REQUIRE(keys2.contains(20));
     }

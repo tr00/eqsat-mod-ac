@@ -49,7 +49,9 @@ build/
 compile_commands.json
 TODO.md
 CLAUDE.md
+REPORT.md
 egraph_dump.txt
 dump*.txt
 perf.data*
 flamegraph.svg
+results_ace_modac.csv
