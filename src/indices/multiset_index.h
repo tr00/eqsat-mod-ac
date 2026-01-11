@@ -4,9 +4,7 @@
 
 #include "../sets/abstract_set.h"
 #include "../utils/multiset.h"
-#include "enode.h"
-#include "id.h"
-#include "symbol_table.h"
+#include "types.h"
 
 namespace eqsat
 {

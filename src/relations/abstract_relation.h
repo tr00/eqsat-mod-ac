@@ -7,7 +7,7 @@
 #include "handle.h"
 #include "indices/abstract_index.h"
 #include "relations/relation_ac.h"
-#include "row_store.h"
+#include "relations/row_store.h"
 #include "symbol_table.h"
 
 namespace eqsat

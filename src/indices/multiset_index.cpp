@@ -1,6 +1,4 @@
 #include "multiset_index.h"
-#include "enode.h"
-#include "id.h"
 #include "sets/abstract_set.h"
 #include "sets/hashmap_wrapper.h"
 #include "utils/multiset.h"

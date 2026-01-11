@@ -3,12 +3,10 @@
 #include <memory>
 
 #include "database.h"
-#include "enode.h"
 #include "handle.h"
-#include "id.h"
 #include "query.h"
-#include "symbol_table.h"
 #include "theory.h"
+#include "types.h"
 #include "union_find.h"
 
 namespace eqsat

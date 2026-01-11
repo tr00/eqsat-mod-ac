@@ -7,9 +7,7 @@
 #include "compiler.h"
 #include "egraph.h"
 #include "engine.h"
-#include "id.h"
 #include "parser.h"
-#include "utils/hashmap.h"
 
 namespace eqsat
 {

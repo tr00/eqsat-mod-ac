@@ -3,9 +3,9 @@
 #include <functional>
 #include <memory>
 
-#include "id.h"
 #include "symbol_table.h"
 #include "theory.h"
+#include "types.h"
 #include "utils/hash.h"
 
 namespace eqsat

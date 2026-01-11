@@ -1,6 +1,7 @@
+#include <utility>
+
 #include "compiler.h"
 #include "theory.h"
-#include <utility>
 
 namespace eqsat
 {

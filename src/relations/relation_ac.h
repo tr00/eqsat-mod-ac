@@ -7,7 +7,6 @@
 #include "indices/abstract_index.h"
 #include "symbol_table.h"
 #include "utils/multiset.h"
-#include "utils/vec.h"
 
 namespace eqsat
 {

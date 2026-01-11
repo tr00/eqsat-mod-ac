@@ -1,11 +1,9 @@
 #include <algorithm>
 #include <utility>
 
-#include "enode.h"
 #include "indices/abstract_index.h"
 #include "indices/multiset_index.h"
 #include "relation_ac.h"
-#include "utils/hashmap.h"
 #include "utils/multiset.h"
 
 namespace eqsat

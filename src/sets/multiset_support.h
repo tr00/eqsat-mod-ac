@@ -1,6 +1,7 @@
 #pragma once
 
-#include "../utils/multiset.h"
+#include "types.h"
+#include "utils/multiset.h"
 
 namespace eqsat
 {

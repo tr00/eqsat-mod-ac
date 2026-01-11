@@ -4,7 +4,7 @@
 #include <string>
 
 #include "symbol_table.h"
-#include "utils/vec.h"
+#include "types.h"
 
 namespace eqsat
 {

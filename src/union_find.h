@@ -2,8 +2,7 @@
 
 #include <fstream>
 
-#include "id.h"
-#include "utils/vec.h"
+#include "types.h"
 
 namespace eqsat
 {

@@ -4,9 +4,7 @@
 #include <functional>
 #include <utility>
 
-#include "../id.h"
-#include "utils/hash.h"
-#include "utils/vec.h"
+#include "types.h"
 
 namespace eqsat
 {

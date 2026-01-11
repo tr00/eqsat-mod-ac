@@ -2,7 +2,10 @@
 
 #include <cstdint>
 
-#include "utils/vec.h"
+#include "types.h"
+
+namespace eqsat
+{
 
 /**
  * @brief Permutation utilities for converting between permutation vectors and indices
@@ -133,3 +136,5 @@ void apply_permutation(uint32_t index, Vec<uint32_t>& vec);
  * ```
  */
 void apply_permutation(const Vec<uint32_t>& perm_indices, Vec<uint32_t>& vec);
+
+} // namespace eqsat

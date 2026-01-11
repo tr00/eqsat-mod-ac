@@ -80,7 +80,6 @@
 
 #include "query.h"
 #include "theory.h"
-#include "utils/hashmap.h"
 
 namespace eqsat
 {

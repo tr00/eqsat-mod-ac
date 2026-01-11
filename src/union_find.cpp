@@ -6,7 +6,6 @@
 #include <fstream>
 
 #include "union_find.h"
-#include "utils/hashmap.h"
 
 namespace eqsat
 {

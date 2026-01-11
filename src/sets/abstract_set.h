@@ -4,12 +4,12 @@
 #include <functional>
 #include <variant>
 
-#include "../id.h"
 #include "sets/hashmap_wrapper.h"
 #include "sets/multiset_support.h"
 #include "sets/singleton_set.h"
-#include "sorted_iter_set.h"
-#include "sorted_vec_set.h"
+#include "sets/sorted_iter_set.h"
+#include "sets/sorted_vec_set.h"
+#include "types.h"
 
 namespace eqsat
 {

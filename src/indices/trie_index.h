@@ -2,10 +2,8 @@
 
 #include <memory>
 
-#include "../sets/abstract_set.h"
-#include "enode.h"
-#include "id.h"
-#include "symbol_table.h"
+#include "sets/abstract_set.h"
+#include "types.h"
 
 namespace eqsat
 {

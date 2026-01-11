@@ -4,6 +4,8 @@
 
 #include "permutation.h"
 
+using namespace eqsat;
+
 TEST_CASE("Factorial function", "[permutation]")
 {
     SECTION("Basic factorial calculations")

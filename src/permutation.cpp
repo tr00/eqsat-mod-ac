@@ -4,6 +4,9 @@
 
 #include "permutation.h"
 
+namespace eqsat
+{
+
 uint32_t factorial(int n)
 {
     if (n < 0 || n > 12)
@@ -216,3 +219,5 @@ Vec<uint32_t> index_to_permutation(uint32_t index, const Vec<uint32_t>& elements
 
     return result;
 }
+
+} // namespace eqsat

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "enode.h"
+#include "types.h"
 
 namespace eqsat
 {

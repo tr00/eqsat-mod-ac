@@ -2,8 +2,7 @@
 
 #include <functional>
 
-#include "../id.h"
-#include "../utils/hashmap.h"
+#include "types.h"
 
 namespace eqsat
 {

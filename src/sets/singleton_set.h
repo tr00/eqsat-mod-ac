@@ -2,7 +2,7 @@
 
 #include <cstddef>
 
-#include "../id.h"
+#include "types.h"
 
 namespace eqsat
 {

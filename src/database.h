@@ -3,11 +3,11 @@
 #include <cassert>
 #include <stdexcept>
 
-#include "id.h"
 #include "indices/abstract_index.h"
 #include "relations/abstract_relation.h"
 #include "relations/row_store.h"
 #include "symbol_table.h"
+#include "types.h"
 
 namespace eqsat
 {

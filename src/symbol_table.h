@@ -1,14 +1,11 @@
 #pragma once
 
-#include <cstdint>
 #include <string>
 
-#include "utils/hashmap.h"
+#include "types.h"
 
 namespace eqsat
 {
-
-using Symbol = uint32_t;
 
 class SymbolTable
 {

@@ -2,9 +2,9 @@
 
 #include <variant>
 
-#include "enode.h"
 #include "indices/multiset_index.h"
-#include "trie_index.h"
+#include "indices/trie_index.h"
+#include "types.h"
 
 namespace eqsat
 {
