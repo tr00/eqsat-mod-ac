@@ -2,6 +2,9 @@
 
 #include "../utils/multiset.h"
 
+namespace eqsat
+{
+
 class MultisetSupport
 {
   private:
@@ -36,3 +39,5 @@ class MultisetSupport
                 f(item);
     }
 };
+
+} // namespace eqsat

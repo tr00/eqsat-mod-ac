@@ -5,6 +5,9 @@
 #include "query.h"
 #include "sets/abstract_set.h"
 
+namespace eqsat
+{
+
 void State::prepare()
 {
     it = candidates.begin();
@@ -164,58 +167,4 @@ void Engine::execute_rec(Vec<id_t>& results, size_t level)
     return;
 }
 
-Vec<id_t> Engine::execute()
-{
-    Vec<id_t> results;
-    auto state = states.begin();
-
-    id_t cand;
-
-DEEPER:
-    if (state == states.end())
-        goto YIELD;
-
-    if (intersect(*state) == 0)
-        goto BACKTRACK;
-
-    state->prepare();
-
-    // first candidate
-    cand = state->next();
-
-    for (auto index : state->indices)
-        index->select(cand);
-
-    ++state;
-
-    goto DEEPER;
-
-BACKTRACK:
-
-    if (state == states.begin())
-        return results;
-
-    --state;
-
-    for (auto index : state->indices)
-        index->unselect();
-
-    if (state->empty())
-        goto BACKTRACK;
-
-    // ith candidate
-    cand = state->next();
-    for (auto index : state->indices)
-        index->select(cand);
-
-    ++state;
-
-    goto DEEPER;
-
-YIELD:
-
-    for (var_t var : head)
-        results.push_back(states[var].current());
-
-    goto BACKTRACK;
-}
+} // namespace eqsat

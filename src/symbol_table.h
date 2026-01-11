@@ -5,6 +5,9 @@
 
 #include "utils/hashmap.h"
 
+namespace eqsat
+{
+
 using Symbol = uint32_t;
 
 class SymbolTable
@@ -34,3 +37,5 @@ class SymbolTable
     bool has_symbol(Symbol symbol) const;
     size_t size() const;
 };
+
+} // namespace eqsat

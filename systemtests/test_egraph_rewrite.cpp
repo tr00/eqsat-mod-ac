@@ -1,8 +1,11 @@
+#include <catch2/catch_test_macros.hpp>
+
 #include "compiler.h"
 #include "egraph.h"
 #include "symbol_table.h"
 #include "theory.h"
-#include <catch2/catch_test_macros.hpp>
+
+using namespace eqsat;
 
 TEST_CASE("EGraph can handle rewrite rules with pattern compilation", "[egraph][rewrite]")
 {

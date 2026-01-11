@@ -3,6 +3,8 @@
 #include "egraph.h"
 #include "theory.h"
 
+using namespace eqsat;
+
 // These tests verify Associative-Commutative (AC) operator behavior
 // AC operators should match patterns regardless of argument order
 // and ensure congruence closure respects commutativity

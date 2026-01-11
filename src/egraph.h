@@ -11,6 +11,9 @@
 #include "theory.h"
 #include "union_find.h"
 
+namespace eqsat
+{
+
 class EGraph
 {
   private:
@@ -79,3 +82,5 @@ class EGraph
 
     void dump_to_file(const std::string& filename) const;
 };
+
+} // namespace eqsat

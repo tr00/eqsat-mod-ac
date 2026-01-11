@@ -3,6 +3,9 @@
 #include "../id.h"
 #include "../utils/vec.h"
 
+namespace eqsat
+{
+
 class SortedVecSet
 {
   private:
@@ -51,3 +54,5 @@ class SortedVecSet
             f(*it);
     }
 };
+
+} // namespace eqsat

@@ -10,6 +10,9 @@
 #include "row_store.h"
 #include "symbol_table.h"
 
+namespace eqsat
+{
+
 class AbstractRelation
 {
   private:
@@ -67,3 +70,5 @@ class AbstractRelation
         return std::holds_alternative<RelationAC>(impl);
     }
 };
+
+} // namespace eqsat

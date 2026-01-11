@@ -4,6 +4,8 @@
 #include "sets/abstract_set.h"
 #include "utils/multiset.h"
 
+using namespace eqsat;
+
 // ============================================================================
 // Test Suite Template - tests behavior independent of implementation
 // ============================================================================

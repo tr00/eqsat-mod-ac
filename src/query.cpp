@@ -3,6 +3,9 @@
 #include "permutation.h"
 #include "query.h"
 
+namespace eqsat
+{
+
 Constraint::Constraint(Symbol op, const Vec<var_t>& vars)
     : symbol(op)
     , variables(vars)
@@ -123,3 +126,5 @@ Vec<std::pair<Symbol, uint32_t>> Query::get_required_indices() const
 
     return required;
 }
+
+} // namespace eqsat

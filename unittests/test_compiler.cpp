@@ -3,6 +3,8 @@
 #include "../src/theory.h"
 #include <catch2/catch_test_macros.hpp>
 
+using namespace eqsat;
+
 TEST_CASE("Simple expression compilation", "[pattern_compiler]")
 {
     // Create a simple expression: f()

@@ -1,9 +1,13 @@
 #pragma once
 
+#include <variant>
+
 #include "enode.h"
 #include "indices/multiset_index.h"
 #include "trie_index.h"
-#include <variant>
+
+namespace eqsat
+{
 
 struct NullIndex
 {
@@ -88,3 +92,5 @@ class AbstractIndex
         std::visit([](auto& index) { return index.reset(); }, impl);
     }
 };
+
+} // namespace eqsat

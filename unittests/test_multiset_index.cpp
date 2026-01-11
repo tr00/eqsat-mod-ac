@@ -3,6 +3,8 @@
 #include "enode.h"
 #include "indices/multiset_index.h"
 
+using namespace eqsat;
+
 TEST_CASE("MultisetIndex basic operations", "[multiset_index]")
 {
     // HashMap<term_id, Multiset>

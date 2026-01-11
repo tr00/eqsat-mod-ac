@@ -8,6 +8,9 @@
 #include "id.h"
 #include "symbol_table.h"
 
+namespace eqsat
+{
+
 class MultisetIndex
 {
   private:
@@ -32,3 +35,5 @@ class MultisetIndex
     ENode make_enode();
     void reset();
 };
+
+} // namespace eqsat

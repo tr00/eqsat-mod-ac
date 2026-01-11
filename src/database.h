@@ -9,6 +9,9 @@
 #include "relations/row_store.h"
 #include "symbol_table.h"
 
+namespace eqsat
+{
+
 /**
  * @brief Key for indexing relations by operator symbol and permutation
  *
@@ -318,3 +321,5 @@ class Database
         return total;
     }
 };
+
+} // namespace eqsat

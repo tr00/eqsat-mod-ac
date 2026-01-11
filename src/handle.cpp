@@ -1,6 +1,10 @@
-#include "handle.h"
-#include "egraph.h"
 #include <algorithm>
+
+#include "egraph.h"
+#include "handle.h"
+
+namespace eqsat
+{
 
 [[nodiscard]] std::optional<id_t> Handle::lookup(ENode enode) const
 {
@@ -46,3 +50,5 @@ void Handle::add_enode_to_memo(id_t id, ENode enode)
 
     egraph.memo.emplace(std::move(enode), id);
 }
+
+} // namespace eqsat

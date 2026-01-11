@@ -5,6 +5,9 @@
 #include "sets/hashmap_wrapper.h"
 #include "utils/multiset.h"
 
+namespace eqsat
+{
+
 AbstractSet MultisetIndex::project()
 {
     if (!mset.has_value()) // term-id
@@ -72,3 +75,5 @@ void MultisetIndex::reset()
 
     mset = std::nullopt;
 }
+
+} // namespace eqsat

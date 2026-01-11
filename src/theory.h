@@ -6,7 +6,11 @@
 #include "symbol_table.h"
 #include "utils/vec.h"
 
-#define AC -1
+namespace eqsat
+{
+
+// #define AC -1
+constexpr auto AC = -1;
 
 /**
  * @brief Enumeration for distinguishing between different kinds of expression nodes.
@@ -176,3 +180,5 @@ class Theory
     RewriteRule add_rewrite_rule(const std::string& name, std::shared_ptr<Expr> lhs, std::shared_ptr<Expr> rhs);
     RewriteRule add_rewrite_rule(const std::string& name, const std::string& lhs_str, const std::string& rhs_str);
 };
+
+} // namespace eqsat

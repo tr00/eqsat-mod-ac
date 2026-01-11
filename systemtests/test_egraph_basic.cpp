@@ -4,6 +4,8 @@
 #include "symbol_table.h"
 #include "theory.h"
 
+using namespace eqsat;
+
 TEST_CASE("EGraph can do simple pattern matching", "[egraph]")
 {
     Theory theory;

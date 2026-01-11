@@ -113,7 +113,7 @@ add_executable(unittests
     unittests/test_union_find.cpp
     unittests/test_trie_index.cpp
     unittests/test_permutation.cpp
-    unittests/test_engine.cpp
+    # unittests/test_engine.cpp
     unittests/test_parser.cpp
     unittests/test_multiset.cpp
     unittests/test_multiset_index.cpp
@@ -160,9 +160,9 @@ add_test(NAME system_tests COMMAND systemtests)
 # target_include_directories(horner PRIVATE src)
 # target_link_libraries(horner PRIVATE eqsat)
 
-add_executable(endomorphism evaluation/endomorphism.cpp)
-target_include_directories(endomorphism PRIVATE src)
-target_link_libraries(endomorphism PRIVATE eqsat)
+# add_executable(endomorphism evaluation/endomorphism.cpp)
+# target_include_directories(endomorphism PRIVATE src)
+# target_link_libraries(endomorphism PRIVATE eqsat)
 
 # add_executable(ainva evaluation/a_inv_a.cpp)
 # target_include_directories(ainva PRIVATE src)

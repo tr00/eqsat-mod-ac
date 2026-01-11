@@ -8,6 +8,9 @@
 #include "utils/hash.h"
 #include "utils/vec.h"
 
+namespace eqsat
+{
+
 class MultisetSupport;
 
 struct MultisetFingerprint
@@ -471,3 +474,5 @@ class Multiset
         return vec;
     }
 };
+
+} // namespace eqsat

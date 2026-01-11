@@ -4,6 +4,9 @@
 
 #include "../id.h"
 
+namespace eqsat
+{
+
 class SingletonSet
 {
   private:
@@ -41,3 +44,5 @@ class SingletonSet
         f(value);
     }
 };
+
+} // namespace eqsat

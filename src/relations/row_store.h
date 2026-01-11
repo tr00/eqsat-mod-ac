@@ -8,6 +8,9 @@
 #include "indices/abstract_index.h"
 #include "symbol_table.h"
 
+namespace eqsat
+{
+
 class RowStore
 {
   private:
@@ -85,3 +88,5 @@ class RowStore
      */
     void dump(std::ofstream& out, const SymbolTable& symbols) const;
 };
+
+} // namespace eqsat

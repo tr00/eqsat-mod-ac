@@ -7,6 +7,9 @@
 #include "permutation.h"
 #include "relations/row_store.h"
 
+namespace eqsat
+{
+
 AbstractIndex RowStore::populate_index(uint32_t vo)
 {
     auto trie = std::make_shared<TrieNode>();
@@ -176,3 +179,5 @@ void RowStore::dump(std::ofstream& out, const SymbolTable& symbols) const
     }
     out << std::endl;
 }
+
+} // namespace eqsat

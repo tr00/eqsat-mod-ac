@@ -5,6 +5,9 @@
 #include "id.h"
 #include "utils/vec.h"
 
+namespace eqsat
+{
+
 class UnionFind
 {
   private:
@@ -79,3 +82,5 @@ class UnionFind
      */
     void dump_to_file(std::ofstream& out) const;
 };
+
+} // namespace eqsat

@@ -5,6 +5,9 @@
 #include "utils/hash.h"
 #include "utils/vec.h"
 
+namespace eqsat
+{
+
 struct ENode
 {
     Symbol op;
@@ -27,12 +30,15 @@ struct ENode
     }
 };
 
+} // namespace eqsat
+
 namespace std
 {
+
 template <>
-struct hash<ENode>
+struct hash<eqsat::ENode>
 {
-    size_t operator()(const ENode& node) const
+    size_t operator()(const eqsat::ENode& node) const
     {
         uint64_t h1 = eqsat::hash64(node.op);
         uint64_t h2 = eqsat::hash64(node.children.size());
@@ -44,4 +50,5 @@ struct hash<ENode>
         return eqsat::mix64(h1, h2);
     }
 };
+
 } // namespace std

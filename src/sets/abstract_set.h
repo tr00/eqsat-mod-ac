@@ -11,6 +11,9 @@
 #include "sorted_iter_set.h"
 #include "sorted_vec_set.h"
 
+namespace eqsat
+{
+
 struct EmptySet
 {
     bool contains(id_t) const
@@ -87,3 +90,5 @@ class AbstractSet
 };
 
 size_t intersect_many(SortedVecSet& output, const Vec<AbstractSet>& sets);
+
+} // namespace eqsat

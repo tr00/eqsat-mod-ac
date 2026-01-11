@@ -5,6 +5,9 @@
 #include "../id.h"
 #include "../utils/hashmap.h"
 
+namespace eqsat
+{
+
 class WrappedHashMapSet
 {
   private:
@@ -42,3 +45,5 @@ class WrappedHashMapSet
         for_each_fn(map, f);
     }
 };
+
+} // namespace eqsat

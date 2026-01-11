@@ -2,6 +2,8 @@
 
 #include "indices/trie_index.h"
 
+using namespace eqsat;
+
 // Dummy symbol for testing
 constexpr Symbol DUMMY_SYMBOL = 0;
 

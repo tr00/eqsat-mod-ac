@@ -2,6 +2,8 @@
 
 #include "union_find.h"
 
+using namespace eqsat;
+
 TEST_CASE("UnionFind basic operations", "[union_find]")
 {
     UnionFind uf;

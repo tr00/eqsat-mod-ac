@@ -6,6 +6,9 @@
 #include "indices/abstract_index.h"
 #include "query.h"
 
+namespace eqsat
+{
+
 struct State
 {
     Vec<id_t>::const_iterator it;
@@ -55,8 +58,6 @@ class Engine
 
     size_t intersect(State& state);
 
-    Vec<id_t> execute();
-
     void execute(Vec<id_t>& buffer, const Query& query);
     void execute_rec(Vec<id_t>& results, size_t level);
 
@@ -65,3 +66,5 @@ class Engine
         return ephemeral_map;
     }
 };
+
+} // namespace eqsat

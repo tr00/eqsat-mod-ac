@@ -7,6 +7,8 @@
 #include "query.h"
 #include "theory.h"
 
+using namespace eqsat;
+
 TEST_CASE("Engine with single state - simple query", "[engine]")
 {
     // Create a simple theory with a binary operator "add"

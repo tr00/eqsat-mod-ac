@@ -3,6 +3,9 @@
 
 #include "database.h"
 
+namespace eqsat
+{
+
 void Database::clear_indices()
 {
     indices.clear();
@@ -29,3 +32,5 @@ void Database::dump_to_file(std::ofstream& out, const SymbolTable& symbols) cons
     for (const auto& [name, relation] : relations)
         relation.dump(out, symbols);
 }
+
+} // namespace eqsat

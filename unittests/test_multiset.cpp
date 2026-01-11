@@ -2,6 +2,8 @@
 
 #include "utils/multiset.h"
 
+using namespace eqsat;
+
 TEST_CASE("Multiset basic operations", "[multiset]")
 {
     Multiset ms;

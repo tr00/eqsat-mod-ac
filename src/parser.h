@@ -7,6 +7,9 @@
 #include "symbol_table.h"
 #include "theory.h"
 
+namespace eqsat
+{
+
 enum class TokenType
 {
     LPAREN,     // (
@@ -53,3 +56,5 @@ class Parser
 
     std::shared_ptr<Expr> parse_sexpr(const std::string& input);
 };
+
+} // namespace eqsat

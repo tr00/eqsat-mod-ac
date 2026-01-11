@@ -3,6 +3,8 @@
 #include "egraph.h"
 #include "theory.h"
 
+using namespace eqsat;
+
 // Advanced and convoluted tests for AC operators
 // These test edge cases, complex nested structures, and intricate pattern matching scenarios
 

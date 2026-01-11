@@ -3,6 +3,9 @@
 
 #include "trie_index.h"
 
+namespace eqsat
+{
+
 int TrieNode::find_key_index(id_t key) const
 {
     auto it = std::lower_bound(keys.begin(), keys.end(), key);
@@ -81,3 +84,5 @@ ENode TrieIndex::make_enode() const
 {
     return ENode(symbol, history);
 }
+
+} // namespace eqsat

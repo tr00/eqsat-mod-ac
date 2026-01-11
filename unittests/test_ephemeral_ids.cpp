@@ -3,6 +3,8 @@
 #include "egraph.h"
 #include "theory.h"
 
+using namespace eqsat;
+
 TEST_CASE("Ephemeral IDs for AC partial multiset matching", "[engine][ac][ephemeral]")
 {
     Theory theory;

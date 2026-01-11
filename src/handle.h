@@ -2,6 +2,9 @@
 
 #include "enode.h"
 
+namespace eqsat
+{
+
 class EGraph;
 
 class Handle
@@ -28,3 +31,5 @@ class Handle
     id_t add_enode(ENode enode);
     void add_enode_to_memo(id_t id, ENode enode);
 };
+
+} // namespace eqsat

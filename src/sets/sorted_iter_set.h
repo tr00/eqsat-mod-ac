@@ -5,6 +5,9 @@
 #include "../id.h"
 #include "utils/vec.h"
 
+namespace eqsat
+{
+
 class SortedIterSet
 {
   private:
@@ -36,3 +39,5 @@ class SortedIterSet
             f(*it);
     }
 };
+
+} // namespace eqsat

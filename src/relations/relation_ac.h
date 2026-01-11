@@ -9,6 +9,9 @@
 #include "utils/multiset.h"
 #include "utils/vec.h"
 
+namespace eqsat
+{
+
 // TODO: sort multisets lexicographically or by size to get early pruning
 
 class RelationAC
@@ -52,3 +55,5 @@ class RelationAC
 
     void dump(std::ofstream& out, const SymbolTable& symbols) const;
 };
+
+} // namespace eqsat

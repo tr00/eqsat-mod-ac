@@ -7,6 +7,9 @@
 #include "id.h"
 #include "symbol_table.h"
 
+namespace eqsat
+{
+
 class TrieNode
 {
   public:
@@ -64,3 +67,5 @@ class TrieIndex
     AbstractSet project() const;
     ENode make_enode() const;
 };
+
+} // namespace eqsat

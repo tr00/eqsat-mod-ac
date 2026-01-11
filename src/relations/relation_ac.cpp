@@ -8,6 +8,9 @@
 #include "utils/hashmap.h"
 #include "utils/multiset.h"
 
+namespace eqsat
+{
+
 bool RelationAC::insert(std::pair<id_t, Multiset> tuple)
 {
     auto cmp = [](const std::pair<id_t, Multiset>& lhs, const std::pair<id_t, Multiset>& rhs) {
@@ -307,3 +310,5 @@ void RelationAC::dump(std::ofstream& out, const SymbolTable& symbols) const
     }
     out << std::endl;
 }
+
+} // namespace eqsat
