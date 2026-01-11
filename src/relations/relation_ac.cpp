@@ -67,7 +67,7 @@ void RelationAC::add_tuple(const Vec<id_t>& tuple)
     insert({id, mset});
 }
 
-AbstractIndex RelationAC::populate_index()
+AbstractIndex RelationAC::populate_index(uint32_t)
 {
     HashMap<id_t, Multiset> index;
 

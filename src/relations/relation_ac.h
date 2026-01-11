@@ -46,7 +46,7 @@ class RelationAC
     void add_tuple(const Vec<id_t>& tuple);
     void add_tuple(id_t id, Multiset mset);
 
-    AbstractIndex populate_index();
+    AbstractIndex populate_index(uint32_t);
 
     bool rebuild(Handle egraph);
 
