@@ -525,3 +525,20 @@ TEST_CASE("AC operators with conditional-like patterns", "[egraph][ac][condition
         REQUIRE(egraph.is_equiv(and_id, ff_id) == true);
     }
 }
+
+TEST_CASE("AC operators with circular ground equation", "[egraph][ac][cool]")
+{
+    Theory theory;
+    theory.add_operator("v", 0);
+    theory.add_operator("0", 0);
+    theory.add_operator("mul", AC);
+    theory.add_rewrite_rule("unit", "(mul ?x (0))", "(0)");
+
+    EGraph egraph(theory);
+
+    egraph.add_expr("(mul (v) (0))");
+
+    egraph.saturate(2);
+
+    // egraph.dump_to_file("cool.txt");
+}

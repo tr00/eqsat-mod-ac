@@ -76,7 +76,7 @@ set(LIB_SOURCES
     src/compiler.cpp
     src/egraph.cpp
     src/handle.cpp
-    src/permutation.cpp
+    src/utils/permutation.cpp
     src/engine.cpp
     src/database.cpp
     src/parser.cpp
@@ -106,21 +106,22 @@ target_link_libraries(eqsat PUBLIC
 # ===============================================
 
 add_executable(unittests
-    unittests/test_sorted_set.cpp
-    unittests/test_abstract_set.cpp
-    unittests/test_set_implementations.cpp
-    unittests/test_compiler.cpp
-    unittests/test_union_find.cpp
-    unittests/test_trie_index.cpp
-    unittests/test_permutation.cpp
-    # unittests/test_engine.cpp
-    unittests/test_parser.cpp
-    unittests/test_multiset.cpp
-    unittests/test_multiset_index.cpp
-    unittests/test_ephemeral_ids.cpp
+    tests/unit/test_sorted_set.cpp
+    tests/unit/test_abstract_set.cpp
+    tests/unit/test_set_implementations.cpp
+    tests/unit/test_compiler.cpp
+    tests/unit/test_union_find.cpp
+    tests/unit/test_trie_index.cpp
+    tests/unit/test_permutation.cpp
+    tests/unit/test_engine.cpp
+    tests/unit/test_parser.cpp
+    tests/unit/test_multiset.cpp
+    tests/unit/test_multiset_index.cpp
+    tests/unit/test_ephemeral_ids.cpp
+    tests/unit/test_query_builder.cpp
 )
 
-target_include_directories(unittests PRIVATE src)
+target_include_directories(unittests PRIVATE src tests/utils)
 target_link_libraries(unittests PRIVATE eqsat Catch2::Catch2WithMain)
 
 # ===============================================
@@ -128,15 +129,16 @@ target_link_libraries(unittests PRIVATE eqsat Catch2::Catch2WithMain)
 # ===============================================
 
 add_executable(systemtests
-    systemtests/test_congruence.cpp
-    systemtests/test_egraph_basic.cpp
-    systemtests/test_egraph_rewrite.cpp
-    systemtests/test_multiplicative_identity.cpp
-    systemtests/test_ac_operators.cpp
-    systemtests/test_ac_advanced.cpp
+    tests/system/test_congruence.cpp
+    # tests/system/test_database.cpp
+    tests/system/test_egraph_basic.cpp
+    tests/system/test_egraph_rewrite.cpp
+    tests/system/test_multiplicative_identity.cpp
+    tests/system/test_ac_operators.cpp
+    tests/system/test_ac_advanced.cpp
 )
 
-target_include_directories(systemtests PRIVATE src)
+target_include_directories(systemtests PRIVATE src tests/utils)
 target_link_libraries(systemtests PRIVATE eqsat Catch2::Catch2WithMain)
 
 # ===============================================

@@ -1,7 +1,7 @@
 #include <algorithm>
 
-#include "permutation.h"
 #include "query.h"
+#include "utils/permutation.h"
 
 namespace eqsat
 {
@@ -59,6 +59,11 @@ void Query::add_constraint(const Constraint& constraint)
     constraints.push_back(constraint);
     var_t maxvar = *std::max_element(constraint.variables.begin(), constraint.variables.end());
     nvars = std::max(nvars, maxvar + 1);
+}
+
+void Query::add_constraint(Symbol op, const Vec<var_t>& vars)
+{
+    add_constraint(Constraint(op, vars));
 }
 
 void Query::add_head_var(var_t var)

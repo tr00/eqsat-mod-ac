@@ -4,8 +4,8 @@
 #include "handle.h"
 #include "indices/abstract_index.h"
 #include "indices/trie_index.h"
-#include "permutation.h"
 #include "relations/row_store.h"
+#include "utils/permutation.h"
 
 namespace eqsat
 {

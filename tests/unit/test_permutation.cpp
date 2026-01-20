@@ -2,7 +2,7 @@
 #include <catch2/catch_test_macros.hpp>
 #include <numeric>
 
-#include "permutation.h"
+#include "utils/permutation.h"
 
 using namespace eqsat;
 
