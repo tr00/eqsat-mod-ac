@@ -4,9 +4,10 @@
 #include <functional>
 #include <utility>
 
-#include "../id.h"
-#include "utils/hash.h"
-#include "utils/vec.h"
+#include "types.h"
+
+namespace eqsat
+{
 
 class MultisetSupport;
 
@@ -334,6 +335,13 @@ class Multiset
         return nelements;
     }
 
+    size_t unique_size() const
+    {
+        // not entirely accurate but always larger than
+        // the actual number of unique elements
+        return data.size();
+    }
+
     /**
      * @brief Checks if the multiset contains no elements with positive count.
      *
@@ -464,3 +472,5 @@ class Multiset
         return vec;
     }
 };
+
+} // namespace eqsat

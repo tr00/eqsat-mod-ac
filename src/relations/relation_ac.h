@@ -7,7 +7,9 @@
 #include "indices/abstract_index.h"
 #include "symbol_table.h"
 #include "utils/multiset.h"
-#include "utils/vec.h"
+
+namespace eqsat
+{
 
 // TODO: sort multisets lexicographically or by size to get early pruning
 
@@ -46,9 +48,11 @@ class RelationAC
     void add_tuple(const Vec<id_t>& tuple);
     void add_tuple(id_t id, Multiset mset);
 
-    AbstractIndex populate_index();
+    AbstractIndex populate_index(uint32_t);
 
     bool rebuild(Handle egraph);
 
     void dump(std::ofstream& out, const SymbolTable& symbols) const;
 };
+
+} // namespace eqsat

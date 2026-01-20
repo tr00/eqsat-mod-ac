@@ -3,6 +3,8 @@
 #include "egraph.h"
 #include "theory.h"
 
+using namespace eqsat;
+
 TEST_CASE("EGraph proves fa = fb via congruence of a=b", "[egraph][rewrite][congruence]")
 {
     Theory theory;

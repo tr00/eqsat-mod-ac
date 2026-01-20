@@ -6,7 +6,9 @@
 #include <fstream>
 
 #include "union_find.h"
-#include "utils/hashmap.h"
+
+namespace eqsat
+{
 
 UnionFind::UnionFind()
 {
@@ -87,3 +89,5 @@ void UnionFind::dump_to_file(std::ofstream& out) const
     }
     out << "\n";
 }
+
+} // namespace eqsat

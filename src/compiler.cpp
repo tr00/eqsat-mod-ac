@@ -1,6 +1,10 @@
+#include <utility>
+
 #include "compiler.h"
 #include "theory.h"
-#include <utility>
+
+namespace eqsat
+{
 
 HashMap<var_t, int> create_consecutive_index_map(const Vec<var_t>& unique_indices)
 {
@@ -128,3 +132,5 @@ Vec<std::pair<Query, Subst>> Compiler::compile_many(const Vec<RewriteRule>& rule
 
     return kernels;
 }
+
+} // namespace eqsat

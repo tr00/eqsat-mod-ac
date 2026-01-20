@@ -2,6 +2,9 @@
 
 #include "abstract_set.h"
 
+namespace eqsat
+{
+
 // TODO: partially sorting.
 
 size_t intersect_many(SortedVecSet& output, const Vec<AbstractSet>& sets)
@@ -38,3 +41,5 @@ size_t intersect_many(SortedVecSet& output, const Vec<AbstractSet>& sets)
 
     return output.size();
 }
+
+} // namespace eqsat

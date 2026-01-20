@@ -7,9 +7,10 @@
 #include "compiler.h"
 #include "egraph.h"
 #include "engine.h"
-#include "id.h"
 #include "parser.h"
-#include "utils/hashmap.h"
+
+namespace eqsat
+{
 
 EGraph::EGraph(const Theory& theory)
     : theory(theory)
@@ -146,6 +147,7 @@ void EGraph::apply_matches(const Vec<id_t>& matches, Subst& subst, const HashMap
 
     assert(!matches.empty());
     assert(head_size != 0);
+    assert(matches.size() % head_size == 0);
 
     size_t num_matches = matches.size() / head_size;
 
@@ -293,3 +295,5 @@ void EGraph::dump_to_file(const std::string& filename) const
 
     std::cout << "E-graph dumped to: " << filename << std::endl;
 }
+
+} // namespace eqsat

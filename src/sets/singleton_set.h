@@ -2,7 +2,10 @@
 
 #include <cstddef>
 
-#include "../id.h"
+#include "types.h"
+
+namespace eqsat
+{
 
 class SingletonSet
 {
@@ -41,3 +44,5 @@ class SingletonSet
         f(value);
     }
 };
+
+} // namespace eqsat

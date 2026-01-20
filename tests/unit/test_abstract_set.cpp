@@ -2,6 +2,8 @@
 
 #include "sets/abstract_set.h"
 
+using namespace eqsat;
+
 TEST_CASE("AbstractSet basic operations")
 {
     SortedVecSet sorted_set;

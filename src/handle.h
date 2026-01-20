@@ -1,6 +1,9 @@
 #pragma once
 
-#include "enode.h"
+#include "types.h"
+
+namespace eqsat
+{
 
 class EGraph;
 
@@ -28,3 +31,5 @@ class Handle
     id_t add_enode(ENode enode);
     void add_enode_to_memo(id_t id, ENode enode);
 };
+
+} // namespace eqsat

@@ -4,8 +4,11 @@
 #include "handle.h"
 #include "indices/abstract_index.h"
 #include "indices/trie_index.h"
-#include "permutation.h"
 #include "relations/row_store.h"
+#include "utils/permutation.h"
+
+namespace eqsat
+{
 
 AbstractIndex RowStore::populate_index(uint32_t vo)
 {
@@ -176,3 +179,5 @@ void RowStore::dump(std::ofstream& out, const SymbolTable& symbols) const
     }
     out << std::endl;
 }
+
+} // namespace eqsat

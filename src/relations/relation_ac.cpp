@@ -1,12 +1,13 @@
 #include <algorithm>
 #include <utility>
 
-#include "enode.h"
 #include "indices/abstract_index.h"
 #include "indices/multiset_index.h"
 #include "relation_ac.h"
-#include "utils/hashmap.h"
 #include "utils/multiset.h"
+
+namespace eqsat
+{
 
 bool RelationAC::insert(std::pair<id_t, Multiset> tuple)
 {
@@ -67,7 +68,7 @@ void RelationAC::add_tuple(const Vec<id_t>& tuple)
     insert({id, mset});
 }
 
-AbstractIndex RelationAC::populate_index()
+AbstractIndex RelationAC::populate_index(uint32_t)
 {
     HashMap<id_t, Multiset> index;
 
@@ -307,3 +308,5 @@ void RelationAC::dump(std::ofstream& out, const SymbolTable& symbols) const
     }
     out << std::endl;
 }
+
+} // namespace eqsat

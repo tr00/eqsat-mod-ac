@@ -1,6 +1,10 @@
 #pragma once
 
-#include "../utils/multiset.h"
+#include "types.h"
+#include "utils/multiset.h"
+
+namespace eqsat
+{
 
 class MultisetSupport
 {
@@ -20,7 +24,7 @@ class MultisetSupport
 
     size_t size() const
     {
-        return mset.size();
+        return mset.unique_size();
     }
 
     bool empty() const
@@ -36,3 +40,5 @@ class MultisetSupport
                 f(item);
     }
 };
+
+} // namespace eqsat

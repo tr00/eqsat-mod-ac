@@ -3,11 +3,14 @@
 #include <cassert>
 #include <stdexcept>
 
-#include "id.h"
 #include "indices/abstract_index.h"
 #include "relations/abstract_relation.h"
 #include "relations/row_store.h"
 #include "symbol_table.h"
+#include "types.h"
+
+namespace eqsat
+{
 
 /**
  * @brief Key for indexing relations by operator symbol and permutation
@@ -219,7 +222,7 @@ class Database
      */
     AbstractIndex get_index(Symbol name, uint32_t perm) const
     {
-        if (get_relation(name)->get_kind() == RELATION_AC)
+        if (get_relation(name)->is_ac())
             perm = static_cast<uint32_t>(-1);
 
         IndexKey key(name, perm);
@@ -237,7 +240,7 @@ class Database
      */
     bool has_index(Symbol name, uint32_t perm) const
     {
-        if (get_relation(name)->get_kind() == RELATION_AC)
+        if (get_relation(name)->is_ac())
             perm = static_cast<uint32_t>(-1);
 
         IndexKey key(name, perm);
@@ -267,12 +270,13 @@ class Database
      */
     void populate_index(Symbol name, uint32_t perm)
     {
-        if (get_relation(name)->get_kind() == RELATION_AC)
+        auto relation = get_relation(name);
+
+        if (relation->is_ac())
             perm = static_cast<uint32_t>(-1);
 
         IndexKey key{name, perm};
 
-        auto *relation = get_relation(name);
         assert(relation != nullptr && "Relation not found");
 
         indices[key] = relation->populate_index(perm);
@@ -317,3 +321,5 @@ class Database
         return total;
     }
 };
+
+} // namespace eqsat

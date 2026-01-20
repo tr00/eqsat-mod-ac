@@ -4,9 +4,11 @@
 #include <fstream>
 
 #include "handle.h"
-#include "id.h"
 #include "indices/abstract_index.h"
 #include "symbol_table.h"
+
+namespace eqsat
+{
 
 class RowStore
 {
@@ -85,3 +87,5 @@ class RowStore
      */
     void dump(std::ofstream& out, const SymbolTable& symbols) const;
 };
+
+} // namespace eqsat

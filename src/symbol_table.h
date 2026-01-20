@@ -1,11 +1,11 @@
 #pragma once
 
-#include <cstdint>
 #include <string>
 
-#include "utils/hashmap.h"
+#include "types.h"
 
-using Symbol = uint32_t;
+namespace eqsat
+{
 
 class SymbolTable
 {
@@ -34,3 +34,5 @@ class SymbolTable
     bool has_symbol(Symbol symbol) const;
     size_t size() const;
 };
+
+} // namespace eqsat

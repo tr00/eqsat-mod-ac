@@ -4,6 +4,8 @@
 #include "../src/parser.h"
 #include "../src/symbol_table.h"
 
+using namespace eqsat;
+
 TEST_CASE("Parse simple variable patterns", "[parser]")
 {
     SymbolTable symbols;

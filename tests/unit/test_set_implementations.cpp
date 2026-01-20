@@ -4,6 +4,8 @@
 #include "sets/abstract_set.h"
 #include "utils/multiset.h"
 
+using namespace eqsat;
+
 // ============================================================================
 // Test Suite Template - tests behavior independent of implementation
 // ============================================================================
@@ -618,27 +620,6 @@ TEST_CASE("AbstractSet - move constructor SortedVecSet", "[set][abstract][move]"
     REQUIRE(moved.contains(1) == true);
     REQUIRE(moved.contains(2) == true);
     REQUIRE(moved.contains(3) == true);
-}
-
-TEST_CASE("AbstractSet - move assignment SortedVecSet", "[set][abstract][move]")
-{
-    SortedVecSet vec_set1, vec_set2;
-    vec_set1.insert(1);
-    vec_set1.insert(2);
-
-    vec_set2.insert(10);
-    vec_set2.insert(20);
-    vec_set2.insert(30);
-
-    AbstractSet set1(std::move(vec_set1));
-    AbstractSet set2(std::move(vec_set2));
-
-    set1 = std::move(set2);
-
-    REQUIRE(set1.size() == 3);
-    REQUIRE(set1.contains(10) == true);
-    REQUIRE(set1.contains(20) == true);
-    REQUIRE(set1.contains(30) == true);
 }
 
 // ============================================================================

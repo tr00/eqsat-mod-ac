@@ -2,6 +2,9 @@
 
 #include "symbol_table.h"
 
+namespace eqsat
+{
+
 static const std::string opaque = "<opaque>";
 
 Symbol SymbolTable::intern(const std::string& str)
@@ -40,3 +43,5 @@ size_t SymbolTable::size() const
 {
     return next_id;
 }
+
+} // namespace eqsat

@@ -2,10 +2,11 @@
 
 #include <memory>
 
-#include "../sets/abstract_set.h"
-#include "enode.h"
-#include "id.h"
-#include "symbol_table.h"
+#include "sets/abstract_set.h"
+#include "types.h"
+
+namespace eqsat
+{
 
 class TrieNode
 {
@@ -64,3 +65,5 @@ class TrieIndex
     AbstractSet project() const;
     ENode make_enode() const;
 };
+
+} // namespace eqsat

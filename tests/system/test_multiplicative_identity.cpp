@@ -3,6 +3,8 @@
 #include "egraph.h"
 #include "theory.h"
 
+using namespace eqsat;
+
 TEST_CASE("EGraph applies multiplicative identity rewrite rule", "[egraph][rewrite][identity]")
 {
     // Create theory with operators: one, var, mul

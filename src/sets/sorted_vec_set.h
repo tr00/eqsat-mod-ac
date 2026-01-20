@@ -1,7 +1,9 @@
 #pragma once
 
-#include "../id.h"
-#include "../utils/vec.h"
+#include "types.h"
+
+namespace eqsat
+{
 
 class SortedVecSet
 {
@@ -51,3 +53,5 @@ class SortedVecSet
             f(*it);
     }
 };
+
+} // namespace eqsat

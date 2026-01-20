@@ -4,6 +4,9 @@
 #include "parser.h"
 #include "theory.h"
 
+namespace eqsat
+{
+
 Expr::Expr(NodeKind k, Symbol sym)
     : kind(k)
     , symbol(sym)
@@ -149,3 +152,5 @@ bool Expr::is_linear() const
 
     return check_linear(this);
 }
+
+} // namespace eqsat

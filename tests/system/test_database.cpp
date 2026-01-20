@@ -1,7 +1,10 @@
+#include <catch2/catch_test_macros.hpp>
+
 #include "database.h"
 #include "egraph.h"
 #include "symbol_table.h"
-#include <catch2/catch_test_macros.hpp>
+
+using namespace eqsat;
 
 TEST_CASE("Database basic operations", "[database]")
 {

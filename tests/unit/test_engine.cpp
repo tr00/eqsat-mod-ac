@@ -5,12 +5,17 @@
 #include "engine.h"
 #include "handle.h"
 #include "query.h"
+#include "query_builder.h"
 #include "theory.h"
+
+using namespace eqsat;
+using namespace eqsat::test;
 
 TEST_CASE("Engine with single state - simple query", "[engine]")
 {
     // Create a simple theory with a binary operator "add"
     Theory theory;
+
     Symbol add = theory.add_operator("add", 2);
 
     // Create database and add relation for "add"
@@ -28,21 +33,16 @@ TEST_CASE("Engine with single state - simple query", "[engine]")
     // Build index for the relation
     db.populate_index(add, 0); // identity permutation
 
-    // Create EGraph to get handle
     EGraph egraph(theory);
 
     SECTION("Query for all results - single constraint")
     {
-        // Query: add(0, 1, 2) - find all (x, y, z) where add(x, y, z)
-        Query query(theory.intern("test_query"));
-        query.add_constraint(Constraint(add, Vec<var_t>{0, 1, 2}));
-        query.add_head_var(0); // x
-        query.add_head_var(1); // y
-        query.add_head_var(2); // z
+        // find all (x, y, z) where add(x, y, z)
+        Query query = QueryBuilder(theory, "Q").with_constraint(add, {0, 1, 2}).with_head_vars({0, 1, 2}).build();
 
         Engine engine(db, Handle(egraph));
-        engine.prepare(query);
-        Vec<id_t> results = engine.execute();
+        Vec<id_t> results;
+        engine.execute(results, query);
 
         // Should return all tuples: (1,2,10), (4,5,11), (1,3,12)
         REQUIRE(results.size() == 9); // 3 tuples * 3 variables each
@@ -84,25 +84,6 @@ TEST_CASE("Engine with single state - simple query", "[engine]")
     //     // No matches expected
     //     REQUIRE(results.size() == 0);
     // }
-
-    SECTION("Query with constant pattern")
-    {
-        // We already have: add(1, 2; 10) and add(1, 3; 12)
-        // Both have first arg = 1
-
-        // Query: find all (x, y, z) where add(x, y; z)
-        Query query(theory.intern("test_query3"));
-        query.add_constraint(Constraint(add, Vec<var_t>{0, 1, 2}));
-        query.add_head_var(0);
-        query.add_head_var(1);
-        query.add_head_var(2);
-
-        Engine engine(db, Handle(egraph));
-        engine.prepare(query);
-        Vec<id_t> results = engine.execute();
-
-        REQUIRE(results.size() > 0); // Should find matches
-    }
 }
 
 TEST_CASE("Engine with single state - empty database", "[engine]")
@@ -119,15 +100,11 @@ TEST_CASE("Engine with single state - empty database", "[engine]")
 
     EGraph egraph(theory);
 
-    Query query(theory.intern("empty_query"));
-    query.add_constraint(Constraint(mul, Vec<var_t>{0, 1, 2}));
-    query.add_head_var(0);
-    query.add_head_var(1);
-    query.add_head_var(2);
+    Query query = QueryBuilder(theory, "Q").with_constraint(mul, {0, 1, 2}).with_head_vars({0, 1, 2}).build();
 
     Engine engine(db, Handle(egraph));
-    engine.prepare(query);
-    Vec<id_t> results = engine.execute();
+    Vec<id_t> results;
+    engine.execute(results, query);
 
     REQUIRE(results.size() == 0);
 }
@@ -154,8 +131,8 @@ TEST_CASE("Engine with single state - single tuple", "[engine]")
     query.add_head_var(1);
 
     Engine engine(db, Handle(egraph));
-    engine.prepare(query);
-    Vec<id_t> results = engine.execute();
+    Vec<id_t> results;
+    engine.execute(results, query);
 
     REQUIRE(results.size() == 2);
     REQUIRE(results[0] == 5);
@@ -187,8 +164,8 @@ TEST_CASE("Engine state intersection", "[engine]")
     query.add_head_var(2);
 
     Engine engine(db, Handle(egraph));
-    engine.prepare(query);
-    Vec<id_t> results = engine.execute();
+    Vec<id_t> results;
+    engine.execute(results, query);
 
     // Should find all 3 tuples
     REQUIRE(results.size() == 9);
@@ -252,8 +229,8 @@ TEST_CASE("Engine multi-state join - two constraints", "[engine][multi-state]")
         query.add_head_var(4);
 
         Engine engine(db, Handle(egraph));
-        engine.prepare(query);
-        Vec<id_t> results = engine.execute();
+        Vec<id_t> results;
+        engine.execute(results, query);
 
         // Expected matches:
         // (1, 2, 10, 5, 20) - add(1,2;10), mul(10,5;20)
@@ -332,8 +309,8 @@ TEST_CASE("Engine multi-state join - three constraints", "[engine][multi-state]"
         query.add_head_var(4);
 
         Engine engine(db, Handle(egraph));
-        engine.prepare(query);
-        Vec<id_t> results = engine.execute();
+        Vec<id_t> results;
+        engine.execute(results, query);
 
         // Expected matches:
         // (1, 10, 20, 30, 40) - f(1;10), g(10,20;30), h(30;40)
@@ -393,8 +370,8 @@ TEST_CASE("Engine multi-state - variable appears in multiple constraints", "[eng
     query.add_head_var(2);
 
     Engine engine(db, Handle(egraph));
-    engine.prepare(query);
-    Vec<id_t> results = engine.execute();
+    Vec<id_t> results;
+    engine.execute(results, query);
 
     REQUIRE(results.size() == 9);
 
@@ -451,8 +428,8 @@ TEST_CASE("Engine multi-state - empty intersection with backtracking", "[engine]
         query.add_head_var(0);
 
         Engine engine(db, Handle(egraph));
-        engine.prepare(query);
-        Vec<id_t> results = engine.execute();
+        Vec<id_t> results;
+        engine.execute(results, query);
 
         REQUIRE(results.size() == 0);
     }
@@ -488,8 +465,8 @@ TEST_CASE("Engine multi-state - shared variable at different positions", "[engin
         query.add_head_var(3);                                     // w
 
         Engine engine(db, Handle(egraph));
-        engine.prepare(query);
-        Vec<id_t> results = engine.execute();
+        Vec<id_t> results;
+        engine.execute(results, query);
 
         // Expected matches:
         // x=1: op(1,5;10), op(2,1;11) -> (1, 5, 2)
@@ -557,8 +534,8 @@ TEST_CASE("Engine with non-identity permutations", "[engine][multi-state][permut
         query.add_head_var(4);
 
         Engine engine(db, Handle(egraph));
-        engine.prepare(query);
-        Vec<id_t> results = engine.execute();
+        Vec<id_t> results;
+        engine.execute(results, query);
 
         // Expected: (1, 2, 100, 10, 200), (1, 2, 100, 30, 203), (3, 4, 101, 20, 201), (5, 6, 102, 10, 202)
         REQUIRE(results.size() == 20); // 4 matches * 5 variables
@@ -604,8 +581,8 @@ TEST_CASE("Engine with non-identity permutations", "[engine][multi-state][permut
         query.add_head_var(4);
 
         Engine engine(db, Handle(egraph));
-        engine.prepare(query);
-        Vec<id_t> results = engine.execute();
+        Vec<id_t> results;
+        engine.execute(results, query);
 
         // Expected: Same matches but with x and y swapped
         // (2, 1, 100, 10, 200), (2, 1, 100, 30, 203), (4, 3, 101, 20, 201), (6, 5, 102, 10, 202)
@@ -678,9 +655,8 @@ TEST_CASE("Engine", "[engine]")
         db.populate_index(mul, 2);
 
         Engine engine(db, Handle(egraph));
-
-        engine.prepare(query);
-        auto results = engine.execute();
+        Vec<id_t> results;
+        engine.execute(results, query);
 
         REQUIRE(results.size() == 2);
         REQUIRE(results[0] == 202);

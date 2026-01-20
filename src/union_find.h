@@ -2,8 +2,10 @@
 
 #include <fstream>
 
-#include "id.h"
-#include "utils/vec.h"
+#include "types.h"
+
+namespace eqsat
+{
 
 class UnionFind
 {
@@ -79,3 +81,5 @@ class UnionFind
      */
     void dump_to_file(std::ofstream& out) const;
 };
+
+} // namespace eqsat

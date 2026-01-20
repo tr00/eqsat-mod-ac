@@ -3,10 +3,15 @@
 #include <functional>
 #include <memory>
 
-#include "id.h"
 #include "symbol_table.h"
 #include "theory.h"
+#include "types.h"
 #include "utils/hash.h"
+
+namespace eqsat
+{
+
+using namespace std;
 
 /**
  * @brief Variable type for query variables
@@ -132,12 +137,36 @@ class Query
     Vec<std::pair<Symbol, uint32_t>> get_required_indices() const;
 };
 
+using callback_t = function<id_t(Symbol, Vec<id_t>)>;
+class Subst
+{
+  public:
+    Symbol name;
+    size_t head_size;
+    shared_ptr<Expr> root;
+    HashMap<Symbol, int> env;
+
+    id_t instantiate_rec(callback_t f, const Vec<id_t>& match, shared_ptr<Expr> expr);
+
+    Subst(Symbol name, shared_ptr<Expr> root, HashMap<Symbol, int> env, size_t head_size)
+        : name(name)
+        , head_size(head_size)
+        , root(root)
+        , env(env)
+    {
+    }
+
+    id_t instantiate(callback_t f, const Vec<id_t>& match);
+};
+
+} // namespace eqsat
+
 namespace std
 {
 template <>
-struct hash<Constraint>
+struct hash<eqsat::Constraint>
 {
-    size_t operator()(const Constraint& constraint) const
+    size_t operator()(const eqsat::Constraint& constraint) const
     {
         uint64_t h1 = SEED;
         uint64_t h2 = eqsat::hash64(constraint.symbol);
@@ -149,25 +178,3 @@ struct hash<Constraint>
     }
 };
 } // namespace std
-
-using callback_t = std::function<id_t(Symbol, Vec<id_t>)>;
-class Subst
-{
-  public:
-    Symbol name;
-    size_t head_size;
-    std::shared_ptr<Expr> root;
-    HashMap<Symbol, int> env;
-
-    id_t instantiate_rec(callback_t f, const Vec<id_t>& match, std::shared_ptr<Expr> expr);
-
-    Subst(Symbol name, std::shared_ptr<Expr> root, HashMap<Symbol, int> env, size_t head_size)
-        : name(name)
-        , head_size(head_size)
-        , root(root)
-        , env(env)
-    {
-    }
-
-    id_t instantiate(callback_t f, const Vec<id_t>& match);
-};

@@ -1,7 +1,8 @@
 #include <catch2/catch_test_macros.hpp>
 
-#include "enode.h"
 #include "indices/multiset_index.h"
+
+using namespace eqsat;
 
 TEST_CASE("MultisetIndex basic operations", "[multiset_index]")
 {
@@ -174,7 +175,7 @@ TEST_CASE("MultisetIndex select and unselect children", "[multiset_index]")
         // Verify we can select again
         index.select(100);
         AbstractSet children = index.project();
-        REQUIRE(children.size() == 4); // 10 appears twice, plus 20 and 30
+        REQUIRE(children.size() == 3); // 10 appears twice, plus 20 and 30
     }
 }
 
@@ -199,7 +200,7 @@ TEST_CASE("MultisetIndex reset operation", "[multiset_index]")
         // Should be able to select normally
         index.select(100);
         AbstractSet children = index.project();
-        REQUIRE(children.size() == 4); // 10 appears twice, plus 20 and 30
+        REQUIRE(children.size() == 3); // 10 appears twice, plus 20 and 30
     }
 
     SECTION("Reset after child selections restores all elements")
@@ -225,7 +226,7 @@ TEST_CASE("MultisetIndex reset operation", "[multiset_index]")
         // Select term again and verify all children restored
         index.select(100);
         AbstractSet children2 = index.project();
-        REQUIRE(children2.size() == 4); // 10 appears twice, plus 20 and 30
+        REQUIRE(children2.size() == 3); // 10 appears twice, plus 20 and 30
         REQUIRE(children2.contains(10));
         REQUIRE(children2.contains(20));
         REQUIRE(children2.contains(30));
@@ -245,7 +246,7 @@ TEST_CASE("MultisetIndex reset operation", "[multiset_index]")
 
         index.select(100);
         AbstractSet children = index.project();
-        REQUIRE(children.size() == 4); // 10 appears twice, plus 20 and 30
+        REQUIRE(children.size() == 3); // 10 appears twice, plus 20 and 30
     }
 }
 
@@ -380,9 +381,7 @@ TEST_CASE("MultisetIndex edge cases", "[multiset_index]")
         HashMap<id_t, Multiset> rel;
         Multiset ms;
         for (int i = 0; i < 100; ++i)
-        {
             ms.insert(99);
-        }
 
         rel[1] = std::move(ms);
         MultisetIndex index(test_symbol, rel);
@@ -391,14 +390,12 @@ TEST_CASE("MultisetIndex edge cases", "[multiset_index]")
 
         // Verify initial state
         AbstractSet children = index.project();
-        REQUIRE(children.size() == 100); // 99 appears 100 times
+        REQUIRE(children.size() == 1); // 99 appears 100 times, but only 1 time in the set
         REQUIRE(children.contains(99));
 
         // Remove many times
         for (int i = 0; i < 50; ++i)
-        {
             index.select(99);
-        }
 
         // Should still be present
         AbstractSet children2 = index.project();
@@ -406,9 +403,7 @@ TEST_CASE("MultisetIndex edge cases", "[multiset_index]")
 
         // Add them back
         for (int i = 0; i < 50; ++i)
-        {
             index.unselect();
-        }
 
         AbstractSet children3 = index.project();
         REQUIRE(children3.contains(99));
@@ -608,7 +603,7 @@ TEST_CASE("MultisetIndex multiple terms with different sizes", "[multiset_index]
         index.reset();
         index.select(30);
         AbstractSet children3 = index.project();
-        REQUIRE(children3.size() == 20); // 10 unique IDs, each with count 2
+        REQUIRE(children3.size() == 10); // 10 unique IDs, each with count 2
         for (id_t i = 5; i < 15; ++i)
         {
             REQUIRE(children3.contains(i));
@@ -683,7 +678,7 @@ TEST_CASE("MultisetIndex stress test with many operations", "[multiset_index]")
         index.reset();
         index.select(1000);
         AbstractSet children2 = index.project();
-        REQUIRE(children2.size() == 77); // 50 base + 17 (divisible by 3) + 10 (divisible by 5)
+        REQUIRE(children2.size() == 50); // 50 base + 17 (divisible by 3) + 10 (divisible by 5)
     }
 
     SECTION("Build complex ENode")

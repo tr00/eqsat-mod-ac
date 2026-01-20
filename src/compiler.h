@@ -80,7 +80,9 @@
 
 #include "query.h"
 #include "theory.h"
-#include "utils/hashmap.h"
+
+namespace eqsat
+{
 
 class Compiler
 {
@@ -102,3 +104,5 @@ class Compiler
 
     Vec<std::pair<Query, Subst>> compile_many(const Vec<RewriteRule>& rules);
 };
+
+} // namespace eqsat

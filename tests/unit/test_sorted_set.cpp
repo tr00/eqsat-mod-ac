@@ -3,6 +3,8 @@
 
 #include "sets/sorted_vec_set.h"
 
+using namespace eqsat;
+
 TEST_CASE("SortedSet insertion", "[sorted_set]")
 {
     SortedVecSet set;

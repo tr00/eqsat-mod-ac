@@ -4,6 +4,9 @@
 
 #include "parser.h"
 
+namespace eqsat
+{
+
 Parser::Parser(SymbolTable& symbols)
     : symbols(symbols)
     , current_token(0)
@@ -199,3 +202,5 @@ std::shared_ptr<Expr> Parser::parse_sexpr(const std::string& input)
 
     return expr;
 }
+
+} // namespace eqsat

@@ -2,8 +2,10 @@
 
 #include <algorithm>
 
-#include "../id.h"
-#include "utils/vec.h"
+#include "types.h"
+
+namespace eqsat
+{
 
 class SortedIterSet
 {
@@ -36,3 +38,5 @@ class SortedIterSet
             f(*it);
     }
 };
+
+} // namespace eqsat

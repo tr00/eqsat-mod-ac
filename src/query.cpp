@@ -1,7 +1,10 @@
 #include <algorithm>
 
-#include "permutation.h"
 #include "query.h"
+#include "utils/permutation.h"
+
+namespace eqsat
+{
 
 Constraint::Constraint(Symbol op, const Vec<var_t>& vars)
     : symbol(op)
@@ -56,6 +59,11 @@ void Query::add_constraint(const Constraint& constraint)
     constraints.push_back(constraint);
     var_t maxvar = *std::max_element(constraint.variables.begin(), constraint.variables.end());
     nvars = std::max(nvars, maxvar + 1);
+}
+
+void Query::add_constraint(Symbol op, const Vec<var_t>& vars)
+{
+    add_constraint(Constraint(op, vars));
 }
 
 void Query::add_head_var(var_t var)
@@ -123,3 +131,5 @@ Vec<std::pair<Symbol, uint32_t>> Query::get_required_indices() const
 
     return required;
 }
+
+} // namespace eqsat
