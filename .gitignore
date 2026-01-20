@@ -53,3 +53,7 @@ egraph_dump.txt
 dump*.txt
 perf.data*
 flamegraph.svg
+
+
+*.csv
+TASK.md
