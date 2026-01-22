@@ -75,6 +75,7 @@ set(LIB_SOURCES
     src/query.cpp
     src/compiler.cpp
     src/egraph.cpp
+    src/egraph_di.cpp
     src/handle.cpp
     src/utils/permutation.cpp
     src/engine.cpp

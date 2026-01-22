@@ -33,7 +33,7 @@ class UnionFind
     id_t make_set();
     id_t unify(id_t a, id_t b);
 
-    inline id_t find_root(id_t x) noexcept
+    inline id_t find_root_mut(id_t x) noexcept
     {
         // quick check which helps the branch predictor
         // since most of our ids are already canonical
@@ -50,11 +50,6 @@ class UnionFind
             x = vec[x];
 
         return x;
-    }
-
-    inline bool same(id_t a, id_t b) noexcept
-    {
-        return find_root(a) == find_root(b);
     }
 
     inline bool same(id_t a, id_t b) const noexcept

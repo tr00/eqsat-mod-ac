@@ -34,27 +34,9 @@ size_t Engine::intersect(State& state)
     if (state.fd != nullptr)
     {
         auto enode = state.fd->make_enode();
-        auto id = egraph.lookup(enode);
+        auto id = lookup_or_ephemeral(enode);
 
-        // DEBUG
-        /*
-        std::cerr << "FD lookup for enode: " << enode.symbol << " [";
-        for (size_t i = 0; i < enode.args.size(); ++i) {
-            if (i > 0) std::cerr << ", ";
-            std::cerr << enode.args[i];
-        }
-        std::cerr << "] -> " << (id.has_value() ? std::to_string(id.value()) : "NOT FOUND") << std::endl;
-        */
-
-        if (!id.has_value())
-        {
-            // Create ephemeral ID with MSB set
-            id_t ephemeral_id = ephemeral_counter++ | 0x80000000;
-            ephemeral_map.emplace(ephemeral_id, std::move(enode));
-            id = ephemeral_id;
-        }
-
-        sets.emplace_back(AbstractSet(SingletonSet(id.value())));
+        sets.emplace_back(AbstractSet(SingletonSet(id)));
     }
 
     for (const auto& index : state.indices)

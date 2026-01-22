@@ -3,6 +3,7 @@
 #include <memory>
 
 #include "database.h"
+#include "egraph_di.h"
 #include "indices/abstract_index.h"
 #include "query.h"
 
@@ -35,20 +36,17 @@ struct State
     id_t current() const;
 };
 
-class Engine
+class Engine : EGraphLookupDI
 {
   private:
     Vec<State, 0> states;
     Vec<var_t> head;
     const Database& db;
-    const Handle egraph;
-    uint32_t ephemeral_counter = 0;
-    HashMap<id_t, ENode> ephemeral_map;
 
   public:
-    Engine(const Database& db, const Handle handle)
-        : db(db)
-        , egraph(handle)
+    Engine(const Database& db, EGraph& egraph)
+        : EGraphLookupDI(egraph)
+        , db(db)
     {
     }
 
@@ -60,11 +58,6 @@ class Engine
 
     void execute(Vec<id_t>& buffer, const Query& query);
     void execute_rec(Vec<id_t>& results, size_t level);
-
-    const HashMap<id_t, ENode>& get_ephemeral_map() const
-    {
-        return ephemeral_map;
-    }
 };
 
 } // namespace eqsat

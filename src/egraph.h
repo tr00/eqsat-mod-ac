@@ -3,6 +3,7 @@
 #include <memory>
 
 #include "database.h"
+#include "egraph_di.h"
 #include "handle.h"
 #include "query.h"
 #include "theory.h"
@@ -16,13 +17,15 @@ class EGraph
 {
   private:
     Theory theory;
-    Database db;
+    Database db; // TODO: flatten database into egraph?
     UnionFind uf;
     HashMap<ENode, id_t> memo;
 
     Vec<Query> queries;
     Vec<Subst> substs;
     Vec<std::pair<Symbol, uint32_t>> required_indices;
+
+    HashMap<id_t, ENode> ephemeral_map;
 
     int enodes = 0;
 
@@ -32,6 +35,8 @@ class EGraph
     }
 
     friend class Handle;
+    friend class EGraphLookupDI;
+    friend class EGraphEquivalenceDI;
 
   public:
     EGraph(const Theory& theory);
@@ -52,19 +57,9 @@ class EGraph
 
     id_t unify(id_t a, id_t b);
 
-    bool is_equiv(id_t a, id_t b)
-    {
-        return uf.same(a, b);
-    }
-
     bool is_equiv(id_t a, id_t b) const
     {
         return uf.same(a, b);
-    }
-
-    id_t canonicalize(id_t id)
-    {
-        return uf.find_root(id);
     }
 
     id_t canonicalize(id_t id) const
@@ -72,8 +67,14 @@ class EGraph
         return uf.find_root(id);
     }
 
-    void apply_matches(const Vec<id_t>& matches, Subst& subst, const HashMap<id_t, ENode>& ephemeral_map);
-    void apply_match(const Vec<id_t>& match, Subst& subst, const HashMap<id_t, ENode>& ephemeral_map);
+    id_t canonicalize_mut(id_t id)
+    {
+        return uf.find_root_mut(id);
+    }
+
+    void apply_matches(const Vec<id_t>& matches, Subst& subst);
+    void apply_match(const Vec<id_t>& match, Subst& subst);
+
     bool rebuild();
 
     void saturate(size_t max_iters);

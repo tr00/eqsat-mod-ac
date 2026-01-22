@@ -40,7 +40,7 @@ TEST_CASE("Engine with single state - simple query", "[engine]")
         // find all (x, y, z) where add(x, y, z)
         Query query = QueryBuilder(theory, "Q").with_constraint(add, {0, 1, 2}).with_head_vars({0, 1, 2}).build();
 
-        Engine engine(db, Handle(egraph));
+        Engine engine(db, egraph);
         Vec<id_t> results;
         engine.execute(results, query);
 
@@ -77,7 +77,7 @@ TEST_CASE("Engine with single state - simple query", "[engine]")
     //     query.add_head_var(0); // x
     //     query.add_head_var(1); // y
 
-    //     Engine engine(db, Handle(egraph));
+    //     Engine engine(db, egraph);
     //     engine.prepare(query);
     //     Vec<id_t> results = engine.execute();
 
@@ -102,7 +102,7 @@ TEST_CASE("Engine with single state - empty database", "[engine]")
 
     Query query = QueryBuilder(theory, "Q").with_constraint(mul, {0, 1, 2}).with_head_vars({0, 1, 2}).build();
 
-    Engine engine(db, Handle(egraph));
+    Engine engine(db, egraph);
     Vec<id_t> results;
     engine.execute(results, query);
 
@@ -130,7 +130,7 @@ TEST_CASE("Engine with single state - single tuple", "[engine]")
     query.add_head_var(0);
     query.add_head_var(1);
 
-    Engine engine(db, Handle(egraph));
+    Engine engine(db, egraph);
     Vec<id_t> results;
     engine.execute(results, query);
 
@@ -163,7 +163,7 @@ TEST_CASE("Engine state intersection", "[engine]")
     query.add_head_var(1);
     query.add_head_var(2);
 
-    Engine engine(db, Handle(egraph));
+    Engine engine(db, egraph);
     Vec<id_t> results;
     engine.execute(results, query);
 
@@ -228,7 +228,7 @@ TEST_CASE("Engine multi-state join - two constraints", "[engine][multi-state]")
         query.add_head_var(3);
         query.add_head_var(4);
 
-        Engine engine(db, Handle(egraph));
+        Engine engine(db, egraph);
         Vec<id_t> results;
         engine.execute(results, query);
 
@@ -308,7 +308,7 @@ TEST_CASE("Engine multi-state join - three constraints", "[engine][multi-state]"
         query.add_head_var(3);
         query.add_head_var(4);
 
-        Engine engine(db, Handle(egraph));
+        Engine engine(db, egraph);
         Vec<id_t> results;
         engine.execute(results, query);
 
@@ -369,7 +369,7 @@ TEST_CASE("Engine multi-state - variable appears in multiple constraints", "[eng
     query.add_head_var(1);
     query.add_head_var(2);
 
-    Engine engine(db, Handle(egraph));
+    Engine engine(db, egraph);
     Vec<id_t> results;
     engine.execute(results, query);
 
@@ -427,7 +427,7 @@ TEST_CASE("Engine multi-state - empty intersection with backtracking", "[engine]
         query.add_constraint(Constraint(b, Vec<var_t>{2, 3, 4}));
         query.add_head_var(0);
 
-        Engine engine(db, Handle(egraph));
+        Engine engine(db, egraph);
         Vec<id_t> results;
         engine.execute(results, query);
 
@@ -464,7 +464,7 @@ TEST_CASE("Engine multi-state - shared variable at different positions", "[engin
         query.add_head_var(1);                                     // y
         query.add_head_var(3);                                     // w
 
-        Engine engine(db, Handle(egraph));
+        Engine engine(db, egraph);
         Vec<id_t> results;
         engine.execute(results, query);
 
@@ -533,7 +533,7 @@ TEST_CASE("Engine with non-identity permutations", "[engine][multi-state][permut
         query.add_head_var(3);
         query.add_head_var(4);
 
-        Engine engine(db, Handle(egraph));
+        Engine engine(db, egraph);
         Vec<id_t> results;
         engine.execute(results, query);
 
@@ -580,7 +580,7 @@ TEST_CASE("Engine with non-identity permutations", "[engine][multi-state][permut
         query.add_head_var(3);
         query.add_head_var(4);
 
-        Engine engine(db, Handle(egraph));
+        Engine engine(db, egraph);
         Vec<id_t> results;
         engine.execute(results, query);
 
@@ -654,7 +654,7 @@ TEST_CASE("Engine", "[engine]")
         db.populate_index(inv, 0);
         db.populate_index(mul, 2);
 
-        Engine engine(db, Handle(egraph));
+        Engine engine(db, egraph);
         Vec<id_t> results;
         engine.execute(results, query);
 

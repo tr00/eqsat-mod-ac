@@ -141,7 +141,7 @@ id_t EGraph::unify(id_t a, id_t b)
     return id;
 }
 
-void EGraph::apply_matches(const Vec<id_t>& matches, Subst& subst, const HashMap<id_t, ENode>& ephemeral_map)
+void EGraph::apply_matches(const Vec<id_t>& matches, Subst& subst)
 {
     size_t head_size = subst.head_size;
 
@@ -157,11 +157,11 @@ void EGraph::apply_matches(const Vec<id_t>& matches, Subst& subst, const HashMap
         for (size_t k = 0; k < head_size; ++k)
             match[k] = matches[j * head_size + k];
 
-        apply_match(match, subst, ephemeral_map);
+        apply_match(match, subst);
     }
 }
 
-void EGraph::apply_match(const Vec<id_t>& match, Subst& subst, const HashMap<id_t, ENode>& ephemeral_map)
+void EGraph::apply_match(const Vec<id_t>& match, Subst& subst)
 {
     // Materialize ephemeral IDs in the match vector
     Vec<id_t> materialized_match = match;
@@ -217,7 +217,7 @@ bool EGraph::rebuild()
 
 void EGraph::saturate(std::size_t max_iters)
 {
-    Engine engine(db, handle());
+    Engine engine(db, *this);
     HashMap<Symbol, Vec<id_t>> matches;
 
     for (const auto& query : queries)
@@ -243,7 +243,7 @@ void EGraph::saturate(std::size_t max_iters)
             auto it = std::find_if(substs.begin(), substs.end(), cmp);
             assert(it != substs.end());
 
-            apply_matches(match_vec, *it, engine.get_ephemeral_map());
+            apply_matches(match_vec, *it);
         }
 
         db.clear_indices();
