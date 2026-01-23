@@ -1,5 +1,6 @@
 #include "egraph_di.h"
 #include "egraph.h"
+#include "theory.h"
 
 namespace eqsat
 {
@@ -36,6 +37,21 @@ id_t EGraphEquivalenceDI::canonicalize(id_t id) const
 id_t EGraphEquivalenceDI::canonicalize_mut(id_t id)
 {
     return egraph.canonicalize(id);
+}
+
+id_t EGraphTermBankDI::add_enode(ENode enode)
+{
+    return egraph.add_enode(std::move(enode));
+}
+
+id_t EGraphTermBankDI::add_enode(Symbol op, Vec<id_t> children)
+{
+    return egraph.add_enode(op, std::move(children));
+}
+
+bool EGraphTheoryDI::is_ac(Symbol f)
+{
+    return egraph.theory.get_arity(f) == AC;
 }
 
 } // namespace eqsat

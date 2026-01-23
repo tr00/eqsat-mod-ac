@@ -35,8 +35,11 @@ class EGraph
     }
 
     friend class Handle;
-    friend class EGraphLookupDI;
+
+    friend class EGraphTermBank;
     friend class EGraphEquivalenceDI;
+    friend class EGraphLookupDI;
+    friend class EGraphTheoryDI;
 
   public:
     EGraph(const Theory& theory);

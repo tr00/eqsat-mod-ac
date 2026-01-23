@@ -7,10 +7,17 @@
 namespace eqsat
 {
 
-class EGraph;
-class UnionFind;
+// The idea here is that an e-graph is a very convoluted structure
+// which is made up of three major components,
+// and these components are independent in terms of storage,
+// but very intertwined via invariants and algorithms on the e-graph level.
+//
+// We can split the parts' storage from the other parts' logic by dependency inversion.
+// That is, a part can use some other part of the system with the established interface,
+// having e.g. the circular dependency: egraph --> database --> unionfind --> egraph
 
-// exposes only the enode lookup functionality
+class EGraph;
+
 class EGraphLookupDI
 {
 
@@ -27,7 +34,6 @@ class EGraphLookupDI
     id_t lookup_or_ephemeral(ENode);
 };
 
-// exposes only the equivalence relation
 class EGraphEquivalenceDI
 {
   private:
@@ -45,6 +51,35 @@ class EGraphEquivalenceDI
     id_t unify(id_t, id_t);
 
     bool is_equiv(id_t, id_t);
+};
+
+class EGraphTermBankDI
+{
+  private:
+    EGraph& egraph;
+
+  protected:
+    EGraphTermBankDI(EGraph& egraph)
+        : egraph(egraph)
+    {
+    }
+
+    id_t add_enode(ENode);
+    id_t add_enode(Symbol, Vec<id_t>);
+};
+
+class EGraphTheoryDI
+{
+  private:
+    EGraph& egraph;
+
+  protected:
+    EGraphTheoryDI(EGraph& egraph)
+        : egraph(egraph)
+    {
+    }
+
+    bool is_ac(Symbol f);
 };
 
 } // namespace eqsat
